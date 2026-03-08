@@ -119,39 +119,24 @@ const QrFirstpage = () => {
 
       <main className="flex-1 flex flex-col items-center p-6 -mt-8 relative z-20">
         {/* ส่วนเนื้อหาหลัก (Scanner) */}
-       
 
         {/* Footer / Login Buttons - ปรับให้จัดกึ่งกลางและมีระยะห่างสวยงาม */}
-        <div className="w-full max-w-sm mt-10 flex flex-col items-center justify-center">
-          <div className="flex items-center gap-4 mb-6 w-full">
+        {/* ส่วนปุ่มสำหรับบุคลากร (ปุ่มเดียวแบบเรียบง่าย) */}
+        <div className="w-full max-w-sm mt-10">
+          <div className="flex items-center gap-4 mb-6">
             <div className="h-px bg-gray-200 flex-1"></div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center whitespace-nowrap">
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
               สำหรับบุคลากร
             </span>
             <div className="h-px bg-gray-200 flex-1"></div>
           </div>
 
-          <div className="flex gap-3 w-full">
-            <button
-              onClick={() => navigate("/login")}
-              className="flex-1 bg-white hover:bg-[#302782] hover:text-white text-[#302782] py-4 rounded-2xl font-bold flex flex-col items-center gap-2 transition-all shadow-sm border border-gray-100 group"
-            >
-              <div className="p-2 bg-gray-50 group-hover:bg-white/20 rounded-full transition-colors">
-                <User size={20} />
-              </div>
-              <span className="text-xs">Teacher Login</span>
-            </button>
-
-            <button
-              onClick={() => navigate("/login")}
-              className="flex-1 bg-white hover:bg-[#302782] hover:text-white text-[#302782] py-4 rounded-2xl font-bold flex flex-col items-center gap-2 transition-all shadow-sm border border-gray-100 group"
-            >
-              <div className="p-2 bg-gray-50 group-hover:bg-white/20 rounded-full transition-colors">
-                <ShieldCheck size={20} />
-              </div>
-              <span className="text-xs">Staff Login</span>
-            </button>
-          </div>
+          <button
+            onClick={() => navigate("/login")} // กดแล้วเด้งไปหน้า login ทันที
+            className="w-full bg-[#302782] text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-[#251f66] transition-all active:scale-[0.98] shadow-lg shadow-indigo-900/20"
+          >
+            <User size={20} /> เข้าสู่ระบบสำหรับบุคลากร
+          </button>
         </div>
       </main>
 
