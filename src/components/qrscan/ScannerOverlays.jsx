@@ -45,7 +45,7 @@ export const LoadingOverlay = () => (
 // 3. CameraErrorOverlay: แสดงเมื่อกล้องมีปัญหา
 export const CameraErrorOverlay = ({ message }) => (
   <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900/90 backdrop-blur-lg p-10 text-center z-[150]">
-    <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-8 text-red-400 border border-white/10 rotate-3">
+    <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-8 text-red-400 border border-white/10">
       <AlertCircle size={44} strokeWidth={2.5} />
     </div>
     
