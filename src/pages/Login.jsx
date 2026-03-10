@@ -45,10 +45,10 @@ return (
           </button>
         </div>
 
-        {/* ปรับ Padding ของหัวข้อให้สมดุลบน Tablet (md) */}
-        <div className="px-8 md:px-16 lg:px-20 pt-4 pb-4">
-          <h1 className="text-3xl md:text-4xl font-black text-[#302782] tracking-tight">
-            เข้าสู่ระบบ <span className="text-[#B2BB1E]">.</span>
+        {/* ปรับ Padding ของหัวข้อให้สมดุลบน Tablet (md) และจอใหญ่ (lg/xl) */}
+        <div className="px-8 md:px-16 lg:px-20 pt-4 pb-4 lg:pt-8 lg:pb-8 text-center mt-4">
+          <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black text-[#302782] tracking-tight">
+            เข้าสู่<span className="text-[#B2BB1E]">ระบบ</span>
           </h1>
         </div>
 

@@ -169,6 +169,12 @@ const CalendarView = ({
           border-color: #302782 !important;
           color: #302782 !important;
         }
+        
+        /* ขยับช่องว่างให้ปุ่ม < และ > ไม่ติดกัน รวมไปถึงปุ่ม เดือน/สัปดาห์ด้วย */
+        .fc .fc-next-button,
+        .fc .fc-timeGridWeek-button {
+          margin-left: 8px !important;
+        }
 
         /* ✅ แก้ไขส่วนนี้: บังคับให้ปุ่มที่ถูกเลือก (เดือน/สัปดาห์) มีตัวหนังสือสีขาวเสมอ */
         .fc .fc-button-primary.fc-button-active,
@@ -182,6 +188,7 @@ const CalendarView = ({
           background-color: #B2BB1E !important; 
           color: #FFFFFF !important; 
           border: none !important;
+          margin-left: 12px !important;
         }
         
         /* Grid Appearance */

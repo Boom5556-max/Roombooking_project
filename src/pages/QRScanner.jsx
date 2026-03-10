@@ -85,11 +85,11 @@ const QRScanner = () => {
 
 const TabButton = ({ active, onClick, icon, label }) => (
   <Button
-    variant={active ? "secondary" : "ghost"}
+    variant="none"
     size="none"
     onClick={onClick}
-    className={`flex-1 py-3 sm:py-3.5 rounded-xl text-[11px] sm:text-xs font-bold gap-2 transition-all duration-200 ${
-      active ? "bg-white shadow-md text-[#302782]" : "text-gray-500 hover:bg-gray-50"
+    className={`flex-1 flex justify-center items-center py-3 sm:py-3.5 rounded-xl text-[11px] sm:text-xs font-bold gap-2 transition-all duration-200 ${
+      active ? "bg-[#302782] shadow-md text-white scale-100" : "text-gray-500 hover:bg-gray-50 scale-95"
     }`}
   >
     {icon}

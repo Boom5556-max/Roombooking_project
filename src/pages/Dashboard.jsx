@@ -92,10 +92,10 @@ const Dashboard = () => {
               </h3>
             </div>
 
-            {/* Form Grid: 1 คอลัมน์บนมือถือ, 2 บนแท็บเล็ต, 4 บน Desktop */}
+            {/* Form Grid: 1 คอลัมน์บนมือถือ, 2 บนแท็บเล็ต, 3 บน Desktop ขนาดกลาง, 4 บนจอกว้างพิเศษ */}
             <form
               onSubmit={handleSmartSearch}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
             >
               {/* 1. วันที่ */}
               <div className="space-y-2">
@@ -105,15 +105,10 @@ const Dashboard = () => {
                   วันที่เข้าใช้งาน
                 </label>
                 <div className="relative">
-                  <Calendar
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    size={16}
-                  />
                   <input
                     required
                     type="date"
-                    // เพิ่ม min-h-[48px] และ appearance-none
-                    className="w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl min-h-[48px] pl-11 pr-4 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-sm font-bold transition-all appearance-none"
+                    className="relative w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl min-h-[48px] pl-12 pr-4 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-sm font-bold transition-all [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:left-3 [&::-webkit-calendar-picker-indicator]:w-6 [&::-webkit-calendar-picker-indicator]:h-6 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-80 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:invert"
                     onChange={(e) =>
                       setSearchQuery({ ...searchQuery, date: e.target.value })
                     }
@@ -126,20 +121,13 @@ const Dashboard = () => {
                 <label className="text-[11px] text-gray-300 ml-2 font-bold uppercase tracking-wide">
                   ช่วงเวลา (เริ่ม - สิ้นสุด)
                 </label>
-                <div className="flex gap-3">
-                  {" "}
-                  {/* เพิ่ม gap-2 เป็น gap-3 ไม่ให้ช่องเริ่ม-สิ้นสุดชิดกันเกินไป */}
+                <div className="flex gap-2 sm:gap-3">
                   {/* เริ่ม */}
                   <div className="relative flex-1">
-                    <Clock
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      size={14}
-                    />
                     <input
                       required
                       type="time"
-                      // ปรับ pl-9 เป็น pl-8 บนมือถือ เพื่อเพิ่มพื้นที่ให้ตัวเลข และเพิ่ม appearance-none
-                      className="w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl min-h-[48px] pl-8 sm:pl-9 pr-2 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-xs sm:text-sm font-bold transition-all appearance-none"
+                      className="relative w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl min-h-[48px] pl-10 sm:pl-11 pr-2 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-xs sm:text-[13px] font-bold transition-all [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:left-2 [&::-webkit-calendar-picker-indicator]:w-5 [&::-webkit-calendar-picker-indicator]:h-5 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-80 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:invert"
                       onChange={(e) =>
                         setSearchQuery({
                           ...searchQuery,
@@ -150,14 +138,10 @@ const Dashboard = () => {
                   </div>
                   {/* สิ้นสุด */}
                   <div className="relative flex-1">
-                    <Clock
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      size={14}
-                    />
                     <input
                       required
                       type="time"
-                      className="w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl min-h-[48px] pl-8 sm:pl-9 pr-2 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-xs sm:text-sm font-bold transition-all appearance-none"
+                      className="relative w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl min-h-[48px] pl-10 sm:pl-11 pr-2 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-xs sm:text-[13px] font-bold transition-all [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:left-2 [&::-webkit-calendar-picker-indicator]:w-5 [&::-webkit-calendar-picker-indicator]:h-5 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-80 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:invert"
                       onChange={(e) =>
                         setSearchQuery({
                           ...searchQuery,
@@ -182,14 +166,19 @@ const Dashboard = () => {
                   <input
                     required
                     type="number"
+                    min="1"
                     placeholder="เช่น 50"
                     className="w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl min-h-[48px] pl-11 pr-4 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-sm font-bold placeholder:text-gray-400 transition-all appearance-none"
-                    onChange={(e) =>
-                      setSearchQuery({
-                        ...searchQuery,
-                        capacity: e.target.value,
-                      })
-                    }
+                    onChange={(e) => {
+                      // Prevent negative numbers
+                      const val = e.target.value;
+                      if (val === "" || parseInt(val, 10) >= 1) {
+                        setSearchQuery({
+                          ...searchQuery,
+                          capacity: val,
+                        });
+                      }
+                    }}
                   />
                 </div>
               </div>

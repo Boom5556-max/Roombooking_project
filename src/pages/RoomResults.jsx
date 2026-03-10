@@ -104,9 +104,8 @@ const RoomResults = () => {
                 key={room.room_id}
                 className="bg-white rounded-[32px] sm:rounded-[45px] p-6 sm:p-8 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden"
               >
-                <div className="flex justify-between items-start mb-6">
+                <div className="flex justify-start mb-6">
                   <span className="bg-[#B2BB1E] text-white text-[10px] sm:text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">ว่าง</span>
-                  <Bookmark className="text-gray-100 group-hover:text-[#B2BB1E] transition-colors" size={24} />
                 </div>
                 
                 <h3 className="text-3xl sm:text-4xl font-black text-[#302782] mb-2">{room.room_id}</h3>

@@ -163,7 +163,7 @@ const TabButton = ({ active, onClick, icon, label }) => (
     onClick={onClick}
     className={`flex-1 py-3 rounded-xl text-xs font-bold flex justify-center items-center gap-2 transition-all duration-300 ${
       active
-        ? "bg-white shadow-md text-[#302782] scale-100"
+        ? "bg-[#302782] shadow-md text-white scale-100"
         : "text-gray-400 hover:text-gray-600 hover:bg-gray-100/50 scale-95"
     }`}
   >

@@ -63,7 +63,7 @@ const RoomCard = ({ room }) => {
           </span>
 
           {isCurrentlyInRepair && (
-            <span className="text-[10px] sm:text-xs bg-[#302782] px-3 sm:px-4 py-1.5 rounded-xl text-[#FFFFFF] font-black flex items-center gap-2 shadow-sm animate-pulse-subtle">
+            <span className="text-[10px] sm:text-xs bg-red-800 px-3 sm:px-4 py-1.5 rounded-xl text-white font-black flex items-center gap-2 shadow-sm animate-pulse-subtle">
               <Wrench size={12} strokeWidth={3} /> กำลังปรับปรุง
             </span>
           )}

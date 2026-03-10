@@ -29,7 +29,7 @@ const LoginForm = ({
       <form onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
         {/* Email Field - เพิ่ม inputMode และ autoComplete เพื่อช่วยคีย์บอร์ดมือถือ */}
         <InputField
-          label="KU Email"
+          label="กรอกอีเมล์ ku เพื่อขอรหัส OTP"
           icon={Mail}
           type="email"
           inputMode="email"
@@ -62,7 +62,7 @@ const LoginForm = ({
         {/* ส่วน Verification Code - เพิ่ม inputMode เป็น numeric เพื่อให้เด้งแป้นตัวเลข */}
         <div className="relative">
           <InputField
-            label="Verification Code"
+            label="กรอก OTP"
             icon={Lock}
             type="text"
             inputMode="numeric"
