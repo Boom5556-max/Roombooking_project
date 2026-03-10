@@ -162,17 +162,18 @@ const Rooms = () => {
               rooms.map((room) => (
                 <div
                   key={room.room_id}
-                  className="relative group bg-white rounded-[35px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
+                  // จุดที่ 1: เติม pb-16 (เว้นระยะด้านล่าง) เข้าไปที่ท้ายสุดของ className ครับ
+                  className="relative group bg-white rounded-[35px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 pb-16 hover:border-[#B2BB1E] hover:ring-2 hover:ring-[#B2BB1E]"
                 >
-                  {/* ตัว RoomCard เดิม */}
                   <RoomCard room={room} />
 
-                  {/* Staff Actions Overlay: ปรับให้ Responsive */}
+                  {/* Staff Actions Overlay */}
                   {userRole === "staff" && (
-                    <div className="RoomCard top-6 right-6 flex gap-3 z-10">
+                    // จุดที่ 2: ปรับจาก bottom-5 เป็น bottom-3 เพื่อให้ปุ่มลงมาอยู่ตรงกลางของพื้นที่ว่างพอดี
+                    <div className="absolute bottom-3 left-5 flex gap-2 z-10">
                       <button
                         onClick={() => openModal(room)}
-                        className="p-3 bg-[#FFFFFF] shadow-sm rounded-2xl text-gray-500 hover:text-[#302782] transition-colors border border-gray-200"
+                        className="p-3 rounded-2xl text-gray-400 hover:text-[#302782] hover:bg-gray-100 transition-all duration-200"
                         title="แก้ไข"
                       >
                         <Edit3 size={24} />
@@ -180,7 +181,7 @@ const Rooms = () => {
 
                       <button
                         onClick={() => handleDelete(room.room_id)}
-                        className="p-3 bg-[#FFFFFF] shadow-sm rounded-2xl text-gray-500 hover:text-red-600 transition-colors border border-gray-200"
+                        className="p-3 rounded-2xl text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
                         title="ลบ"
                       >
                         <Trash2 size={24} />
@@ -192,7 +193,9 @@ const Rooms = () => {
             ) : (
               <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white rounded-[40px] border-2 border-dashed border-gray-200">
                 <AlertCircle size={48} className="text-gray-300 mb-4" />
-                <p className="text-gray-400 font-bold">ไม่พบข้อมูลห้องเรียน</p>
+                <p className="text-gray-400 font-bold">
+                  ไม่พบข้อมูลห้องตามที่ท่านต้องการ
+                </p>
               </div>
             )}
           </div>
