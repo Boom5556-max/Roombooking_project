@@ -105,10 +105,14 @@ const Dashboard = () => {
                   วันที่เข้าใช้งาน
                 </label>
                 <div className="relative">
+                  <Calendar
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FFFFFF]/70 pointer-events-none"
+                    size={20}
+                  />
                   <input
                     required
                     type="date"
-                    className="relative w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl min-h-[48px] pl-12 pr-4 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-sm font-bold transition-all [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:left-3 [&::-webkit-calendar-picker-indicator]:w-6 [&::-webkit-calendar-picker-indicator]:h-6 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-80 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:invert"
+                    className="w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl h-[48px] pl-12 pr-4 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-sm font-bold transition-all appearance-none [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                     onChange={(e) =>
                       setSearchQuery({ ...searchQuery, date: e.target.value })
                     }
@@ -123,11 +127,15 @@ const Dashboard = () => {
                 </label>
                 <div className="flex gap-2 sm:gap-3">
                   {/* เริ่ม */}
-                  <div className="relative flex-1">
+                  <div className="relative flex-1 min-w-0">
+                    <Clock
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-[#FFFFFF]/70 pointer-events-none"
+                      size={18}
+                    />
                     <input
                       required
                       type="time"
-                      className="relative w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl min-h-[48px] pl-10 sm:pl-11 pr-2 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-xs sm:text-[13px] font-bold transition-all [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:left-2 [&::-webkit-calendar-picker-indicator]:w-5 [&::-webkit-calendar-picker-indicator]:h-5 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-80 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:invert"
+                      className="w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl h-[48px] pl-10 pr-2 sm:pr-4 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-xs sm:text-[13px] font-bold transition-all appearance-none [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-time-value]:text-left"
                       onChange={(e) =>
                         setSearchQuery({
                           ...searchQuery,
@@ -137,11 +145,15 @@ const Dashboard = () => {
                     />
                   </div>
                   {/* สิ้นสุด */}
-                  <div className="relative flex-1">
+                  <div className="relative flex-1 min-w-0">
+                    <Clock
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-[#FFFFFF]/70 pointer-events-none"
+                      size={18}
+                    />
                     <input
                       required
                       type="time"
-                      className="relative w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl min-h-[48px] pl-10 sm:pl-11 pr-2 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-xs sm:text-[13px] font-bold transition-all [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:left-2 [&::-webkit-calendar-picker-indicator]:w-5 [&::-webkit-calendar-picker-indicator]:h-5 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-80 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:invert"
+                      className="w-full bg-[#FFFFFF]/10 border border-[#FFFFFF]/10 rounded-xl sm:rounded-2xl h-[48px] pl-10 pr-2 sm:pr-4 text-[#FFFFFF] focus:bg-[#FFFFFF] focus:text-[#302782] outline-none text-xs sm:text-[13px] font-bold transition-all appearance-none [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-time-value]:text-left"
                       onChange={(e) =>
                         setSearchQuery({
                           ...searchQuery,
