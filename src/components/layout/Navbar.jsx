@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Calendar as CalendarIcon, Bell, QrCode, LogOut, Users } from 'lucide-react';
 import { jwtDecode } from "jwt-decode";
 import ActionModal from "../common/ActionModal";
+import ProfileDropdown from "./ProfileDropdown";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -78,19 +79,23 @@ const Navbar = () => {
         <div className="hidden md:flex gap-2 lg:gap-4 items-center">
           <NavItemsGroup navigate={navigate} getNavStyle={getNavStyle} userRole={userRole} />
           
-          <div className="ml-4 pl-4 border-l border-[#FFFFFF]/10 flex items-center">
-            <button
-              onClick={handleLogoutClick}
-              className="w-10 h-10 flex items-center justify-center text-[#FFFFFF]/40 hover:text-red-400 transition-colors rounded-xl hover:bg-red-400/10"
-              title="ออกจากระบบ"
-            >
-              <LogOut size={22} />
-            </button>
+          <div className="ml-2 flex items-center gap-2">
+            {userRole === "staff" && <ProfileDropdown isMobile={false} />}
+            <div className="pl-4 border-l border-[#FFFFFF]/10 flex items-center">
+              <button
+                onClick={handleLogoutClick}
+                className="w-10 h-10 flex items-center justify-center text-[#FFFFFF]/40 hover:text-red-400 transition-colors rounded-xl hover:bg-red-400/10"
+                title="ออกจากระบบ"
+              >
+                <LogOut size={22} />
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Logout สำหรับมือถือ (แสดงเฉพาะปุ่ม Logout ด้านบนขวา) */}
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center gap-2">
+            {userRole === "staff" && <ProfileDropdown isMobile={true} />}
             <button
               onClick={handleLogoutClick}
               className="w-10 h-10 flex items-center justify-center text-[#FFFFFF]/60"

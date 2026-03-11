@@ -37,6 +37,10 @@ api.interceptors.response.use(
           text: 'บัญชีของคุณถูกเข้าสู่ระบบจากอุปกรณ์อื่น คุณได้ถูกออกจากระบบ',
           confirmButtonText: 'ตกลง',
           confirmButtonColor: '#302782',
+          customClass: {
+            popup: 'rounded-3xl',
+            confirmButton: 'rounded-lg'
+          }
         }).then(() => {
           window.location.href = '/login';
         });
