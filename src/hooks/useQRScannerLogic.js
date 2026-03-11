@@ -8,7 +8,17 @@ export const useQRScannerLogic = (activeTab, showAlert) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [scanResult, setScanResult] = useState("");
   const [isScanningFile, setIsScanningFile] = useState(false);
+  const [isCameraActive, setIsCameraActive] = useState(false);
   const qrScannerRef = useRef(null);
+
+  const startCamera = useCallback(() => {
+    setIsCameraActive(true);
+    setErrorMsg("");
+  }, []);
+
+  const stopCamera = useCallback(() => {
+    setIsCameraActive(false);
+  }, []);
 
   // สกัด Room ID จาก URL หรือข้อความตรงๆ
   const extractRoomId = (text) => {
@@ -33,6 +43,7 @@ export const useQRScannerLogic = (activeTab, showAlert) => {
     // ปิดกล้องทันทีที่เจอ QR เพื่อไม่ให้ทรัพยากรเครื่องค้าง
     if (qrScannerRef.current && qrScannerRef.current.isScanning) {
         qrScannerRef.current.stop().catch(err => console.error("Stop Error:", err));
+        setIsCameraActive(false);
     }
 
     setTimeout(() => {
@@ -81,11 +92,11 @@ export const useQRScannerLogic = (activeTab, showAlert) => {
   };
 
   useEffect(() => {
-    if (activeTab === "camera") {
+    if (activeTab === "camera" && isCameraActive) {
       const scanner = new Html5Qrcode("reader");
       qrScannerRef.current = scanner;
 
-      const startCamera = async () => {
+      const initCamera = async () => {
         try {
           await scanner.start(
             { facingMode: "environment" },
@@ -104,9 +115,10 @@ export const useQRScannerLogic = (activeTab, showAlert) => {
           setErrorMsg(err.toString().includes("NotAllowedError") 
             ? "ถูกปฏิเสธการเข้าถึงกล้อง" 
             : "ไม่สามารถเปิดกล้องได้");
+          setIsCameraActive(false);
         }
       };
-      startCamera();
+      initCamera();
     }
 
     // Cleanup: ปิดกล้องเมื่อออกจาก Component หรือเปลี่ยน Tab
@@ -115,7 +127,7 @@ export const useQRScannerLogic = (activeTab, showAlert) => {
         qrScannerRef.current.stop().catch(() => {});
       }
     };
-  }, [activeTab, handleProcessScan]);
+  }, [activeTab, isCameraActive, handleProcessScan]);
 
   const handleFileChange = async (e) => {
   const file = e.target.files?.[0];
@@ -141,5 +153,15 @@ export const useQRScannerLogic = (activeTab, showAlert) => {
   }
 };
 
-  return { errorMsg, scanResult, isScanningFile, handleFileChange, setScanResult, setErrorMsg };
+  return { 
+    errorMsg, 
+    scanResult, 
+    isScanningFile, 
+    handleFileChange, 
+    setScanResult, 
+    setErrorMsg,
+    isCameraActive,
+    startCamera,
+    stopCamera
+  };
 };

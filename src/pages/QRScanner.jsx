@@ -16,7 +16,8 @@ const QRScanner = () => {
 
   const { 
     errorMsg, scanResult, isScanningFile, 
-    handleFileChange, setScanResult, setErrorMsg 
+    handleFileChange, setScanResult, setErrorMsg,
+    isCameraActive, startCamera, stopCamera
   } = useQRScannerLogic(activeTab, showAlert); // ส่ง showAlert ไปให้ Hook ใช้ด้วย
   
   return (
@@ -34,7 +35,7 @@ const QRScanner = () => {
           />
           <TabButton 
             active={activeTab === "file"} 
-            onClick={() => { setActiveTab("file"); setScanResult(""); setErrorMsg(""); }}
+            onClick={() => { setActiveTab("file"); setScanResult(""); setErrorMsg(""); stopCamera(); }}
             icon={<ImageIcon size={16} />}
             label="คลังภาพ"
           />
@@ -46,8 +47,22 @@ const QRScanner = () => {
               
               {activeTab === "camera" ? (
                 <div className="w-full h-full relative">
-                  <div id="reader" className="w-full h-full object-cover"></div>
-                  {errorMsg && <CameraErrorOverlay message={errorMsg} />}
+                  {!isCameraActive ? (
+                    <div className="flex flex-col items-center justify-center h-full w-full bg-black z-10 absolute inset-0">
+                      <Camera size={48} className="text-gray-500 mb-4" />
+                      <button 
+                        onClick={startCamera} 
+                        className="bg-[#302782] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#251f66] transition-colors active:scale-95 flex items-center gap-2"
+                      >
+                        <Camera size={20} /> แตะเพื่อเปิดกล้อง
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <div id="reader" className="w-full h-full object-cover"></div>
+                      {errorMsg && <CameraErrorOverlay message={errorMsg} />}
+                    </>
+                  )}
                 </div>
               ) : (
                 <GalleryUpload onFileChange={handleFileChange} disabled={isScanningFile} />

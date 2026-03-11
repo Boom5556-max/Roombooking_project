@@ -34,6 +34,9 @@ const QrFirstpage = () => {
     handleFileChange,
     setScanResult,
     setErrorMsg,
+    isCameraActive,
+    startCamera,
+    stopCamera
   } = useQRScannerLogic(activeTab, showAlert); // 3. ส่ง showAlert เข้า Hook
 
   return (
@@ -66,6 +69,7 @@ const QrFirstpage = () => {
                 setActiveTab("file");
                 setScanResult("");
                 setErrorMsg("");
+                stopCamera();
               }}
               icon={<ImageIcon size={16} />}
               label="เลือกจากคลังภาพ"
@@ -75,14 +79,28 @@ const QrFirstpage = () => {
           <div className="w-full aspect-square bg-gray-900 rounded-[32px] overflow-hidden shadow-2xl border-[6px] border-white relative">
             {activeTab === "camera" ? (
               <div className="w-full h-full relative flex items-center justify-center bg-black">
-                <div id="reader" className="w-full h-full object-cover"></div>
-                {errorMsg && <CameraErrorOverlay message={errorMsg} />}
-                {!errorMsg && !scanResult && (
-                  <div className="absolute inset-0 pointer-events-none border-[40px] border-black/40 z-10">
-                    <div className="w-full h-full border-2 border-[#B2BB1E]/50 relative">
-                      <div className="absolute top-0 left-0 w-full h-0.5 bg-[#B2BB1E] shadow-[0_0_10px_#B2BB1E] animate-[scan_2s_ease-in-out_infinite]"></div>
-                    </div>
+                {!isCameraActive ? (
+                  <div className="flex flex-col items-center justify-center h-full w-full z-10">
+                    <Camera size={48} className="text-gray-500 mb-4" />
+                    <button 
+                      onClick={startCamera} 
+                      className="bg-[#302782] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#251f66] transition-colors active:scale-95 flex items-center gap-2"
+                    >
+                      <Camera size={20} /> แตะเพื่อเปิดกล้อง
+                    </button>
                   </div>
+                ) : (
+                  <>
+                    <div id="reader" className="w-full h-full object-cover"></div>
+                    {errorMsg && <CameraErrorOverlay message={errorMsg} />}
+                    {!errorMsg && !scanResult && (
+                      <div className="absolute inset-0 pointer-events-none border-[40px] border-black/40 z-10">
+                        <div className="w-full h-full border-2 border-[#B2BB1E]/50 relative">
+                          <div className="absolute top-0 left-0 w-full h-0.5 bg-[#B2BB1E] shadow-[0_0_10px_#B2BB1E] animate-[scan_2s_ease-in-out_infinite]"></div>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             ) : (
