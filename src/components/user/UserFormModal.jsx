@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   Save,
@@ -51,7 +52,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
     }, 200);
   };
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center bg-[#302782]/30 backdrop-blur-md p-0 sm:p-4 font-sans">
       <form
         onSubmit={handleSubmit}
@@ -63,12 +64,6 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
             <h2 className="text-2xl md:text-3xl font-black text-[#302782] tracking-tight">
               {user ? "แก้ไขโปรไฟล์" : "เพิ่มผู้ใช้งานใหม่"}
             </h2>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="h-1 w-8 bg-[#B2BB1E] rounded-full" />
-              <p className="text-xs font-black text-gray-400 uppercase tracking-widest">
-                Account Management
-              </p>
-            </div>
           </div>
           <button
             type="button"
@@ -223,7 +218,8 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
           </Button>
         </div>
       </form>
-    </div>
+    </div>,
+    document.body
   );
 };
 

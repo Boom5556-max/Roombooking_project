@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Check } from "lucide-react";
 
 const ActionModal = ({
@@ -25,7 +26,7 @@ const ActionModal = ({
     }
   }, [autoClose, onClose]);
 
-  return (
+  return createPortal(
     <div 
       className="fixed inset-0 z-[3000] flex items-center justify-center bg-[#302782]/20 backdrop-blur-md p-4 animate-in fade-in duration-200" 
       onClick={onClose}
@@ -64,7 +65,8 @@ const ActionModal = ({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

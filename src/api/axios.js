@@ -20,30 +20,38 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let isRedirecting = false;
+
 // เพิ่ม Response Interceptor ตรวจสอบ SESSION_SUPERSEDED
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
       if (error.response.data && error.response.data.code === 'SESSION_SUPERSEDED') {
-        // ล้างข้อมูลออกจาก LocalStorage
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        if (!isRedirecting) {
+          isRedirecting = true;
+          
+          // ล้างข้อมูลออกจาก LocalStorage
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
 
-        // แจ้งเตือนผู้ใช้แล้ว Redirect ไปหน้า Login
-        Swal.fire({
-          icon: 'warning',
-          title: 'ถูกออกจากระบบ',
-          text: 'บัญชีของคุณถูกเข้าสู่ระบบจากอุปกรณ์อื่น คุณได้ถูกออกจากระบบ',
-          confirmButtonText: 'ตกลง',
-          confirmButtonColor: '#302782',
-          customClass: {
-            popup: 'rounded-3xl',
-            confirmButton: 'rounded-lg'
-          }
-        }).then(() => {
-          window.location.href = '/login';
-        });
+          // แจ้งเตือนผู้ใช้แล้ว Redirect ไปหน้า Login
+          Swal.fire({
+            icon: 'warning',
+            title: 'ถูกออกจากระบบ',
+            text: 'บัญชีของคุณถูกเข้าสู่ระบบจากอุปกรณ์อื่น คุณได้ถูกออกจากระบบ',
+            confirmButtonText: 'ตกลง',
+            confirmButtonColor: '#302782',
+            customClass: {
+              popup: 'rounded-3xl',
+              confirmButton: 'rounded-lg'
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+          }).then(() => {
+            window.location.href = '/login';
+          });
+        }
       }
     }
     return Promise.reject(error);

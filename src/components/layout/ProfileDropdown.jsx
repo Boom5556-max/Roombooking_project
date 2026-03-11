@@ -1,10 +1,132 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { UserCircle, Mail, User, Shield } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { UserCircle, Mail, User, Shield, Edit3, Trash2, Check, AlertCircle } from 'lucide-react';
+import UserFormModal from '../user/UserFormModal';
+import ActionModal from '../common/ActionModal';
+import api from '../../api/axios';
 
 const ProfileDropdown = ({ isMobile }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
+  const triggerRef = useRef(null);
   const dropdownRef = useRef(null);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    title: "",
+    icon: null,
+    onConfirm: null,
+    showConfirm: true,
+    showButtons: null,
+    autoClose: false,
+    variant: "primary",
+    showBg: true,
+  });
+
+  const toggleDropdown = () => {
+    if (!isOpen && triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      const scrollY = window.scrollY || window.pageYOffset;
+      
+      // Calculate right position
+      let rightPos = window.innerWidth - rect.right;
+      // If the dropdown width (up to 280px) plus the right position exceeds screen width,
+      // force it to snap to the right edge with a small margin (16px).
+      if (rightPos + 280 > window.innerWidth) {
+        rightPos = 16;
+      }
+      
+      // Calculate position relative to trigger button for both mobile and desktop.
+      // Top navbar location is the same, so it always drops down.
+      setDropdownPosition({
+        top: rect.bottom + scrollY + 10,
+        right: rightPos
+      });
+    }
+    setIsOpen(!isOpen);
+  };
+
+  const showAlert = (
+    icon,
+    onConfirmAction = null,
+    showConfirm = true,
+    showButtons = null,
+    autoClose = false,
+    variant = "primary",
+    showBg = true
+  ) => {
+    setAlertConfig({
+      isOpen: true,
+      title,
+      icon,
+      onConfirm: () => {
+        setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+        if (onConfirmAction) {
+          onConfirmAction();
+        }
+      },
+      showConfirm,
+      showButtons,
+      autoClose,
+      variant,
+      showBg,
+    });
+  };
+
+  const updateUser = async (userId, data) => {
+    try {
+      await api.put(`/users/edit/${userId}`, data);
+      const newUserData = { ...userData, ...data };
+      setUserData(newUserData);
+      localStorage.setItem("user", JSON.stringify(newUserData));
+      return { success: true };
+    } catch (err) {
+      return { success: false, message: err.response?.data?.message || "แก้ไขไม่สำเร็จ" };
+    }
+  };
+
+  const handleDeleteAccount = () => {
+    setIsOpen(false);
+    showAlert(
+      `คุณแน่ใจหรือไม่ที่จะลบบัญชีนี้?`,
+      <Trash2 size={50} className="text-red-500" />,
+      async () => {
+        try {
+          await api.patch(`/users/delete/${userData.user_id}`);
+          setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+          
+          setTimeout(() => {
+             showAlert(
+               "ลบบัญชีสำเร็จ", 
+               <Check size={50} className="text-[#B2BB1E]" />,
+               () => {
+                 localStorage.removeItem("token");
+                 localStorage.removeItem("user");
+                 window.location.replace("/");
+               },
+               true, // showConfirm
+               true, // showButtons
+               false, // autoClose
+               "primary",
+               true
+             );
+          }, 150);
+        } catch (err) {
+          setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+          setTimeout(() => {
+            showAlert("ลบไม่สำเร็จ", <AlertCircle size={50} className="text-red-500" />, null, null, null, true, "danger", false);
+          }, 150);
+        }
+      },
+      true, // showConfirm
+      true, // showButtons
+      false, // autoClose
+      "danger",
+      true
+    );
+  };
 
   useEffect(() => {
     // Load current user data from localStorage
@@ -19,24 +141,42 @@ const ProfileDropdown = ({ isMobile }) => {
 
     // Close click outside
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      // ตรวจสอบว่าคลิกนอกทั้งตัวปุ่มกด (trigger) และตัวกล่องเมนู (dropdown)
+      if (
+        isOpen && 
+        triggerRef.current && 
+        !triggerRef.current.contains(event.target) &&
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target)
+      ) {
         setIsOpen(false);
       }
     };
+    
+    // Resize window handle
+    const handleResize = () => {
+      if (isOpen) setIsOpen(false);
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isOpen]);
 
   if (!userData) return null;
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative">
       {/* Trigger Button */}
       <button 
-        onClick={() => setIsOpen(!isOpen)}
+        ref={triggerRef}
+        onClick={toggleDropdown}
         className={`flex items-center justify-center transition-all duration-300 ${
-          isMobile 
-            ? "w-12 h-12 sm:w-14 sm:h-14 hover:text-[#B2BB1E] text-[#FFFFFF]/60 mt-1" 
+          isMobile
+            ? "w-12 h-12 sm:w-14 sm:h-14 hover:text-[#B2BB1E] text-[#FFFFFF]/60 mt-1"
             : "w-10 h-10 text-[#FFFFFF]/80 hover:text-[#B2BB1E] bg-[#FFFFFF]/10 rounded-full hover:bg-[#FFFFFF]/20"
         } ${isOpen ? "text-[#B2BB1E]" : ""}`}
         title="โปรไฟล์ของฉัน"
@@ -44,9 +184,17 @@ const ProfileDropdown = ({ isMobile }) => {
         <UserCircle size={isMobile ? 24 : 24} />
       </button>
 
-      {/* Dropdown Menu */}
-      {isOpen && (
-        <div className={`absolute ${isMobile ? "bottom-16 right-0" : "top-14 right-0"} w-[280px] bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] border border-gray-100 p-5 z-[1100] animate-in fade-in slide-in-from-[${isMobile ? "bottom" : "top"}]-2 duration-200`}>
+      {/* Dropdown Menu - rendered via Portal to avoid clipping issues */}
+      {isOpen && createPortal(
+        <div 
+          ref={dropdownRef}
+          style={{
+            position: 'absolute',
+            top: `${dropdownPosition.top}px`,
+            right: `${dropdownPosition.right}px`,
+          }}
+          className="w-[calc(100vw-32px)] max-w-[280px] bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] border border-gray-100 p-5 z-[2500] animate-in fade-in duration-200"
+        >
           
           <div className="flex flex-col items-center justify-center pb-4 border-b border-gray-100">
             <div className="w-16 h-16 bg-[#302782]/10 rounded-full flex items-center justify-center text-[#302782] mb-3">
@@ -83,7 +231,49 @@ const ProfileDropdown = ({ isMobile }) => {
             </div>
           </div>
           
-        </div>
+          <div className="pt-4 mt-4 border-t border-gray-100 flex flex-col gap-2">
+            <button 
+              onClick={() => { setIsOpen(false); setIsEditModalOpen(true); }} 
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-gray-500 hover:text-[#302782] hover:bg-[#302782]/5 rounded-xl transition-all"
+            >
+              <Edit3 size={18} />
+              แก้ไขโปรไฟล์
+            </button>
+            <button 
+              onClick={handleDeleteAccount} 
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-red-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+            >
+              <Trash2 size={18} />
+              ลบบัญชีผู้ใช้
+            </button>
+          </div>
+          
+        </div>,
+        document.body
+      )}
+
+      {/* Modals */}
+      {isEditModalOpen && (
+        <UserFormModal
+          user={userData}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={updateUser}
+          showAlert={showAlert}
+        />
+      )}
+
+      {alertConfig.isOpen && (
+        <ActionModal
+          icon={alertConfig.icon}
+          title={alertConfig.title}
+          onClose={() => setAlertConfig((prev) => ({ ...prev, isOpen: false }))}
+          onConfirm={alertConfig.onConfirm}
+          showConfirm={alertConfig.showConfirm}
+          showButtons={alertConfig.showButtons}
+          autoClose={alertConfig.autoClose}
+          variant={alertConfig.variant}
+          showBg={alertConfig.showBg}
+        />
       )}
     </div>
   );
