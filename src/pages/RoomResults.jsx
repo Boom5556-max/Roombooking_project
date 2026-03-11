@@ -22,6 +22,7 @@ const RoomResults = () => {
   const navigate = useNavigate();
   const searchQuery = location.state;
   const [bookingStatus, setBookingStatus] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const {
     rooms,
@@ -42,6 +43,7 @@ const RoomResults = () => {
       setSelectedRoom(null);
     } else {
       setBookingStatus("error");
+      setErrorMessage(result?.message || "ขออภัย ห้องนี้อาจถูกจองไปแล้วในช่วงเวลานี้");
     }
   };
 
@@ -183,10 +185,10 @@ const RoomResults = () => {
         </div>
       )}
 
-      {/* 🚩 Success & Error Pop-ups (Reuse logic) */}
       <StatusModal 
         isOpen={bookingStatus !== null} 
         status={bookingStatus} 
+        errorMessage={errorMessage}
         onClose={() => {
           if (bookingStatus === "success") navigate("/dashboard");
           setBookingStatus(null);
@@ -228,7 +230,7 @@ const EmptyState = () => (
   </div>
 );
 
-const StatusModal = ({ isOpen, status, onClose }) => {
+const StatusModal = ({ isOpen, status, errorMessage, onClose }) => {
   if (!isOpen) return null;
   const isSuccess = status === "success";
   const user = JSON.parse(localStorage.getItem("user"));
@@ -244,7 +246,7 @@ const StatusModal = ({ isOpen, status, onClose }) => {
         <p className="text-gray-500 font-bold text-sm sm:text-base mb-8">
           {isSuccess 
             ? (isTeacher ? "คำขอจองถูกส่งแล้ว กรุณารอการอนุมัติ" : "การจองของคุณเสร็จสมบูรณ์") 
-            : "ขออภัย ห้องนี้อาจถูกจองไปแล้วในช่วงเวลานี้"}
+            : (errorMessage || "ขออภัย ห้องนี้อาจถูกจองไปแล้วในช่วงเวลานี้")}
         </p>
         <button
           onClick={onClose}

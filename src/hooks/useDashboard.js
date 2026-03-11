@@ -47,8 +47,11 @@ export const useDashboard = () => {
           console.error("Dashboard Fetch Error:", err);
           // จัดการกรณี Token หมดอายุ (401)
           if (err.response?.status === 401) {
-            localStorage.removeItem("token");
-            window.location.href = "/login";
+            // ปล่อยให้ axios interceptor จัดการแจ้งเตือนและ redirect ถ้าเป็น SESSION_SUPERSEDED
+            if (err.response?.data?.code !== 'SESSION_SUPERSEDED') {
+              localStorage.removeItem("token");
+              window.location.href = "/login";
+            }
           }
         }
       };
