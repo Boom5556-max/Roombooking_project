@@ -237,8 +237,8 @@ const StatusModal = ({ isOpen, status, errorMessage, onClose }) => {
   const isTeacher = user?.role === "teacher";
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-[#302782]/40 backdrop-blur-sm p-4 animate-in fade-in duration-300">
-      <div className="bg-white dark:bg-gray-800 rounded-[40px] sm:rounded-[45px] p-8 sm:p-10 w-full max-w-sm shadow-2xl text-center animate-in zoom-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300">
+      <div className="bg-white dark:bg-gray-800/80 backdrop-blur-xl rounded-[40px] p-8 w-full max-w-sm shadow-2xl text-center animate-in zoom-in duration-300 border border-white/50">
         <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center mx-auto mb-6 ${isSuccess ? 'bg-[#B2BB1E]/10 text-[#B2BB1E]' : 'bg-red-50 dark:bg-red-500/10 text-red-500'}`}>
           {isSuccess ? <Check size={40} strokeWidth={3} /> : <AlertCircle size={40} strokeWidth={3} />}
         </div>
