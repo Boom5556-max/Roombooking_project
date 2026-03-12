@@ -138,7 +138,7 @@ const RoomResults = () => {
 
       {/* 🚩 Booking Modal - ปรับเป็น Full Screen ในมือถือ */}
       {selectedRoom && (
-        <div className="fixed inset-0 bg-[#302782]/80 backdrop-blur-md z-[100] flex items-center justify-center p-0 sm:p-4 animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#302782]/20 backdrop-blur-md p-4 sm:p-6 animate-in fade-in duration-300">
           <div className="bg-white w-full h-full sm:h-auto sm:max-w-lg sm:rounded-[40px] md:rounded-[50px] p-6 sm:p-10 shadow-2xl overflow-y-auto">
             <div className="flex justify-between items-center mb-6 sm:mb-8">
               <h3 className="text-xl sm:text-2xl font-black text-[#302782] flex items-center gap-3">

@@ -29,24 +29,29 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
     // ปิด Modal ตัวหลักก่อน
     onClose();
 
-    // หน่วงเวลา 200ms เพื่อให้แน่ใจว่า DOM ทำงานต่อเนื่องได้ปกติ
-    // ใน handleSubmit ของ UserFormModal.jsx
+    // หน่วงเวลา 200ms
     setTimeout(() => {
       if (result.success) {
         showAlert(
-          "บันทึกข้อมูลสำเร็จ",
-          <Check size={50} className="text-[#B2BB1E]" />,
-          null,
-          null, // <--- ปรับจาก false เป็น null เพื่อบอกว่าไม่ต้องโชว์ปุ่ม
+          "บันทึกข้อมูลสำเร็จ", // 1. title
+          <Check size={50} className="text-[#B2BB1E]" />, // 2. icon
+          null,   // 3. onConfirmAction
+          false,  // 4. showConfirm (ซ่อนปุ่มตกลง)
+          false,  // 5. showButtons (ซ่อนปุ่มทั้งหมด)
+          true,   // 6. autoClose (ให้ปิดตัวเองอัตโนมัติ)
+          "primary", // 7. variant
+          true    // 8. showBg
         );
       } else {
         showAlert(
-          "เกิดข้อผิดพลาด",
+          result.message || "เกิดข้อผิดพลาด", // เอาข้อความ error จาก Backend มาโชว์ได้ด้วยครับ
           <AlertCircle size={50} className="text-red-500" />,
-          null,
-          null, // <--- ปรับจาก false เป็น null
-          false,
-          "danger",
+          null,   // onConfirmAction
+          false,  // showConfirm 
+          false,  // showButtons 
+          true,   // autoClose (ให้ปิดตัวเองอัตโนมัติ)
+          "danger",  // variant
+          true    // showBg
         );
       }
     }, 200);

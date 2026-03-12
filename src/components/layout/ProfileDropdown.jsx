@@ -48,7 +48,9 @@ const ProfileDropdown = ({ isMobile }) => {
     setIsOpen(!isOpen);
   };
 
+  // เพิ่ม title เป็นพารามิเตอร์ตัวแรก
   const showAlert = (
+    title, 
     icon,
     onConfirmAction = null,
     showConfirm = true,
@@ -59,7 +61,7 @@ const ProfileDropdown = ({ isMobile }) => {
   ) => {
     setAlertConfig({
       isOpen: true,
-      title,
+      title, // จะได้ใช้งานได้ถูกต้อง
       icon,
       onConfirm: () => {
         setAlertConfig((prev) => ({ ...prev, isOpen: false }));
@@ -77,13 +79,50 @@ const ProfileDropdown = ({ isMobile }) => {
 
   const updateUser = async (userId, data) => {
     try {
-      await api.put(`/users/edit/${userId}`, data);
+      const res = await api.put(`/users/edit/${userId}`, data);
       const newUserData = { ...userData, ...data };
       setUserData(newUserData);
       localStorage.setItem("user", JSON.stringify(newUserData));
+      
+      // 1. สั่งปิด Modal ฟอร์มแก้ไขก่อน
+      setIsEditModalOpen(false);
+      
+      // 2. หน่วงเวลา 150ms ให้ฟอร์มปิดสนิท แล้วค่อยเรียกกล่องแจ้งเตือน (ป้องกันการทับกัน)
+      setTimeout(() => {
+        showAlert(
+          res.data?.message || "แก้ไขโปรไฟล์สำเร็จ", 
+          <Check size={50} className="text-[#B2BB1E]" />,
+          null, // onConfirmAction
+          false, // showConfirm 
+          false, // showButtons 
+          true, // autoClose 
+          "primary",
+          true
+        );
+      }, 150);
+
       return { success: true };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || "แก้ไขไม่สำเร็จ" };
+      const errorMsg = err.response?.data?.message || "เกิดข้อผิดพลาดในการแก้ไขข้อมูล";
+      
+      // 1. สั่งปิด Modal ฟอร์มแก้ไขก่อนเช่นกัน (หรือถ้าไม่อยากให้ฟอร์มปิดตอน error ก็เอาบรรทัดนี้ออกได้ครับ)
+      setIsEditModalOpen(false);
+      
+      // 2. หน่วงเวลาโชว์แจ้งเตือน Error
+      setTimeout(() => {
+        showAlert(
+          errorMsg,
+          <AlertCircle size={50} className="text-red-500" />,
+          null, 
+          false, 
+          false, 
+          true, 
+          "danger",
+          true
+        );
+      }, 150);
+
+      return { success: false, message: errorMsg };
     }
   };
 

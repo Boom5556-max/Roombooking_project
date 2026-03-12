@@ -116,33 +116,44 @@ const Notification = () => {
 };
 
   const handleCancelClick = (bookingId) => {
-  // 1. เรียก Modal เพื่อยืนยันก่อน (มีปุ่มปกติ)
-  showAlert(
-    "คุณแน่ใจหรือไม่ที่จะยกเลิกการจองนี้?",
-    <Trash2 size={50} className="text-red-500" />,
-    async () => {
-      // 2. เมื่อกดตกลงแล้ว ให้ปิด Modal ยืนยัน
-      setAlertConfig((prev) => ({ ...prev, isOpen: false }));
-      setSelectedBooking(null);
-      
-      const result = await handleCancelBooking(bookingId);
-      
-      // 3. แสดงผลลัพธ์แบบ "มีแต่ข้อความ" (ไม่มีปุ่ม)
-      setTimeout(() => {
-        setAlertConfig({
-          isOpen: true,
-          title: result?.success ? "ยกเลิกการจองสำเร็จ" : "เกิดข้อผิดพลาด",
-          icon: result?.success ? <CheckCircle size={50} className="text-green-500"/> : <XCircle size={50} className="text-red-500"/>,
-          showButtons: false,     // <--- ซ่อนปุ่ม
-          autoClose: true,        // <--- ปิดอัตโนมัติ
-          variant: result?.success ? "primary" : "danger"
-        });
-      }, 150);
-    },
-    true, // showConfirm
-    "danger"
-  );
-};
+    // 1. เช็ค Role เพื่อกำหนดข้อความแจ้งเตือน และ ข้อความตอนสำเร็จ
+    const confirmMessage = 
+      userRole === "staff" 
+        ? "คุณต้องการไม่อนุมัติคำขอนี้ใช่หรือไม่?" 
+        : "คุณแน่ใจหรือไม่ที่จะยกเลิกการจองนี้?";
+
+    const successMessage = 
+      userRole === "staff" 
+        ? "ไม่อนุมัติการจองสำเร็จ" 
+        : "ยกเลิกการจองสำเร็จ";
+
+    // 2. เรียก Modal เพื่อยืนยันก่อน (มีปุ่มปกติ)
+    showAlert(
+      confirmMessage,
+      <Trash2 size={50} className="text-red-500" />,
+      async () => {
+        // 3. เมื่อกดตกลงแล้ว ให้ปิด Modal ยืนยัน
+        setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+        setSelectedBooking(null);
+        
+        const result = await handleCancelBooking(bookingId);
+        
+        // 4. แสดงผลลัพธ์แบบ "มีแต่ข้อความ" (ไม่มีปุ่ม)
+        setTimeout(() => {
+          setAlertConfig({
+            isOpen: true,
+            title: result?.success ? successMessage : "เกิดข้อผิดพลาด",
+            icon: result?.success ? <CheckCircle size={50} className="text-green-500"/> : <XCircle size={50} className="text-red-500"/>,
+            showButtons: false,     // <--- ซ่อนปุ่ม
+            autoClose: true,        // <--- ปิดอัตโนมัติ
+            variant: result?.success ? "primary" : "danger"
+          });
+        }, 150);
+      },
+      true, // showConfirm
+      "danger"
+    );
+  };
 
   const handleBanClick = (bookingId) => {
   showAlert(
