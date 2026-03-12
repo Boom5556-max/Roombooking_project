@@ -53,22 +53,22 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center bg-[#302782]/30 backdrop-blur-md p-0 sm:p-4 font-sans">
+    <div className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center bg-[#302782]/30 dark:bg-black/40 backdrop-blur-md p-0 sm:p-4 font-sans">
       <form
         onSubmit={handleSubmit}
-        className="bg-[#FFFFFF] w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 md:p-10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-white flex flex-col max-h-[92vh] animate-in slide-in-from-bottom sm:zoom-in duration-300"
+        className="bg-[#FFFFFF] dark:bg-gray-800 w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 md:p-10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-white dark:border-gray-700 flex flex-col max-h-[92vh] animate-in slide-in-from-bottom sm:zoom-in duration-300"
       >
         {/* Header Section */}
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-black text-[#302782] tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-black text-[#302782] dark:text-white tracking-tight">
               {user ? "แก้ไขโปรไฟล์" : "เพิ่มผู้ใช้งานใหม่"}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-3 bg-gray-50 hover:bg-red-50 hover:text-red-500 rounded-2xl text-gray-400 transition-all active:scale-90"
+            className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-red-50 hover:text-red-500 rounded-2xl text-gray-400 transition-all active:scale-90"
           >
             <X size={20} />
           </button>
@@ -88,12 +88,12 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
               />
               <input
                 disabled={!!user}
-                className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-[20px] outline-none focus:bg-white focus:border-[#B2BB1E] font-bold text-[#302782] transition-all disabled:opacity-60 text-base"
+                className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all disabled:opacity-60 text-base"
                 value={formData.user_id}
                 onChange={(e) =>
                   setFormData({ ...formData, user_id: e.target.value })
                 }
-                placeholder="T001 หรือ S001"
+                placeholder="T000XXXXXXX"
                 required
               />
             </div>
@@ -107,7 +107,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
               </label>
               <div className="relative">
                 <select
-                  className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-[20px] outline-none focus:bg-white focus:border-[#B2BB1E] font-bold text-[#302782] cursor-pointer appearance-none transition-all text-base"
+                  className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white cursor-pointer appearance-none transition-all text-base"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -132,7 +132,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
                 ชื่อจริง
               </label>
               <input
-                className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-[20px] outline-none focus:bg-white focus:border-[#B2BB1E] font-bold text-[#302782] transition-all text-base"
+                className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all text-base"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -149,7 +149,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
               นามสกุล
             </label>
             <input
-              className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-[20px] outline-none focus:bg-white focus:border-[#B2BB1E] font-bold text-[#302782] transition-all text-base"
+              className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all text-base"
               value={formData.surname}
               onChange={(e) =>
                 setFormData({ ...formData, surname: e.target.value })
@@ -171,7 +171,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
               />
               <input
                 type="email"
-                className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-[20px] outline-none focus:bg-white focus:border-[#B2BB1E] font-bold text-[#302782] transition-all text-base"
+                className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all text-base"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -228,10 +228,9 @@ const RoleOption = ({ selected, label, onClick }) => (
   <div
     onClick={onClick}
     className={`p-4 rounded-[20px] border-2 cursor-pointer transition-all flex items-center justify-center gap-2 font-black text-sm
-      ${
-        selected
-          ? "border-[#B2BB1E] bg-[#B2BB1E]/5 text-[#302782]"
-          : "border-gray-50 bg-gray-50 text-gray-400 hover:border-gray-200"
+      ${selected
+        ? "border-[#B2BB1E] bg-[#B2BB1E]/5 text-[#302782] dark:text-white"
+        : "border-gray-50 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-400 hover:border-gray-200"
       }`}
   >
     <UserCheck

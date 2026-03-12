@@ -14,7 +14,7 @@ const RoomSelector = ({ rooms, selectedRoom, onSelect }) => {
         <select
           value={selectedRoom || ""}
           onChange={(e) => onSelect(e.target.value)}
-          className="w-full bg-[#FFFFFF] border border-gray-200 text-[#302782] text-sm sm:text-base font-bold rounded-[16px] sm:rounded-[20px] py-3.5 sm:py-4 px-4 sm:px-5 appearance-none cursor-pointer focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 outline-none shadow-sm hover:border-gray-300 transition-all active:scale-[0.99]"
+          className="w-full bg-[#FFFFFF] dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-[#302782] dark:text-white text-sm sm:text-base font-bold rounded-[16px] sm:rounded-[20px] py-3.5 sm:py-4 px-4 sm:px-5 appearance-none cursor-pointer focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 outline-none shadow-sm hover:border-gray-300 transition-all active:scale-[0.99]"
         >
           <option value="" className="text-gray-400">
             ห้องเรียนทั้งหมด 

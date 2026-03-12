@@ -2,4 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-
+@layer base {
+  *,
+  *::before,
+  *::after {
+    transition-property: background-color, border-color;
+    transition-duration: 200ms;
+    transition-timing-function: ease-in-out;
+  }
+}

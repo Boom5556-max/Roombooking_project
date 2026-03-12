@@ -23,7 +23,7 @@ const InputField = ({ label, icon: Icon, error, ...props }) => {
         <input
           {...props}
           className={`
-          w-full bg-white text-[#302782] text-sm sm:text-base md:text-lg 
+          w-full bg-white dark:bg-gray-700 text-[#302782] dark:text-white text-sm sm:text-base md:text-lg 
           font-bold rounded-[16px] sm:rounded-[20px] 
           py-4 sm:py-5 min-h-[56px] /* เพิ่ม min-h เพื่อความชัวร์บน Tablet */
           outline-none transition-all duration-300
@@ -33,9 +33,9 @@ const InputField = ({ label, icon: Icon, error, ...props }) => {
           ${
           error
           ? "border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10"
-          : "border-gray-100 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 focus:bg-white"
+          : "border-gray-100 dark:border-gray-600 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 focus:bg-white dark:focus:bg-gray-600"
           }
-          ${props.disabled ? "bg-gray-50 cursor-not-allowed opacity-60" : ""}
+          ${props.disabled ? "bg-gray-50 dark:bg-gray-800 cursor-not-allowed opacity-60" : ""}
           ${props.className || ""}`}
         />
       </div>

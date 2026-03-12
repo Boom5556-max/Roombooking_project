@@ -60,7 +60,7 @@ const Navbar = () => {
   return (
     <>
       {/* --- Desktop & Tablet Header --- */}
-      <nav className="bg-[#302782] w-full px-4 sm:px-8 py-3 flex justify-between items-center shadow-[0_4px_20px_rgba(0,0,0,0.15)] sticky top-0 z-[1000] border-b border-[#FFFFFF]/5 backdrop-blur-md font-sans flex-none">
+      <nav className="bg-[#302782] dark:bg-gray-950 w-full px-4 sm:px-8 py-3 flex justify-between items-center shadow-[0_4px_20px_rgba(0,0,0,0.15)] sticky top-0 z-[1000] border-b border-[#FFFFFF]/5 backdrop-blur-md font-sans flex-none">
         
         {/* Logo Section - ปรับขนาดตัวอักษรตามหน้าจอ */}
         <div
@@ -106,7 +106,7 @@ const Navbar = () => {
       </nav>
 
       {/* --- Mobile Bottom Navigation (แสดงเฉพาะหน้าจอเล็ก < 768px) --- */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#302782]/95 backdrop-blur-lg border-t border-white/10 z-[1000] px-2 pb-safe">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#302782]/95 dark:bg-gray-950/95 backdrop-blur-lg border-t border-white/10 z-[1000] px-2 pb-safe">
         <div className="flex justify-around items-center h-16">
           <NavItemsGroup navigate={navigate} getNavStyle={getNavStyle} userRole={userRole} isMobile={true} />
         </div>

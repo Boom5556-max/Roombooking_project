@@ -30,17 +30,17 @@ const RoomCard = ({ room }) => {
   return (
     <div
       onClick={handleCardClick}
-      className={`group relative bg-[#FFFFFF] rounded-[28px] sm:rounded-[32px] p-5 sm:p-6 flex justify-between items-center border transition-all duration-300 mb-4 font-sans
+      className={`group relative bg-[#FFFFFF] dark:bg-gray-800 rounded-[28px] sm:rounded-[32px] p-5 sm:p-6 flex justify-between items-center border transition-all duration-300 mb-4 font-sans
         ${isDisabledForUser 
           ? "opacity-60 grayscale cursor-not-allowed border-gray-100 bg-gray-50/50 shadow-none" 
-          : "hover:border-[#B2BB1E] hover:shadow-[0_15px_40px_-12px_rgba(48,39,130,0.12)] cursor-pointer border-gray-100 shadow-[0_4px_15px_-4px_rgba(0,0,0,0.03)] active:scale-[0.98]"
+          : "hover:border-[#B2BB1E] hover:shadow-[0_15px_40px_-12px_rgba(48,39,130,0.12)] cursor-pointer border-gray-100 dark:border-gray-700 shadow-[0_4px_15px_-4px_rgba(0,0,0,0.03)] active:scale-[0.98]"
         }
         ${isCurrentlyInRepair && userRole === "staff" ? "border-amber-200 bg-amber-50/20" : ""} `}
     >
       <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
         {/* ชื่อห้องและประเภท */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <h3 className={`text-xl sm:text-2xl font-black leading-none tracking-tight ${isDisabledForUser ? "text-gray-400" : "text-[#302782]"}`}>
+          <h3 className={`text-xl sm:text-2xl font-black leading-none tracking-tight ${isDisabledForUser ? "text-gray-400" : "text-[#302782] dark:text-white"}`}>
             {room.room_id}
           </h3>
           <span className="text-gray-200 text-lg sm:text-xl font-light">|</span>
@@ -57,7 +57,7 @@ const RoomCard = ({ room }) => {
         {/* Badges Area */}
         <div className="flex flex-wrap items-center gap-2 mt-2">
           <span className={`text-[10px] sm:text-xs px-3 sm:px-4 py-1.5 rounded-xl font-black flex items-center gap-1.5 ${
-            isDisabledForUser ? "bg-gray-200 text-gray-400" : "bg-gray-50 text-[#302782] border border-gray-100"
+            isDisabledForUser ? "bg-gray-200 text-gray-400" : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-white border border-gray-100 dark:border-gray-600"
           }`}>
             <Users size={12} strokeWidth={3} /> {room.capacity} ที่นั่ง
           </span>
@@ -78,10 +78,10 @@ const RoomCard = ({ room }) => {
           </span>
         )}
 
-        <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 shrink-0 ${
+         <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 shrink-0 ${
           isDisabledForUser 
             ? "bg-gray-100 text-gray-300" 
-            : "bg-gray-50 text-gray-300 group-hover:bg-[#302782] group-hover:text-[#FFFFFF] group-hover:shadow-lg group-hover:shadow-[#302782]/20"
+            : "bg-gray-50 dark:bg-gray-700 text-gray-300 group-hover:bg-[#302782] group-hover:text-[#FFFFFF] group-hover:shadow-lg group-hover:shadow-[#302782]/20"
         }`}>
           {isDisabledForUser ? (
             <Lock size={24} sm:size={28} strokeWidth={2.5} />

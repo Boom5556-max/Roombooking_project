@@ -63,7 +63,7 @@ const RoomStatus = () => {
 
   return (
     // ใช้ fixed inset-0 เพื่อล็อกหน้าจอให้ไม่เลื่อนไปมาบน Mobile Browser
-    <div className="fixed inset-0 bg-[#302782] flex flex-col font-sans overflow-hidden">
+    <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
       
       {/* --- Adaptive Header --- */}
       <header className="px-4 sm:px-8 py-4 sm:py-6 text-white flex items-center justify-between z-20">
@@ -79,7 +79,7 @@ const RoomStatus = () => {
       </header>
 
       {/* --- Content Area --- */}
-      <div className="flex-grow bg-[#FFFFFF] rounded-t-[40px] sm:rounded-t-[60px] relative shadow-[0_-10px_50px_rgba(0,0,0,0.3)] border-t-[6px] border-[#B2BB1E] overflow-hidden">
+      <div className="flex-grow bg-[#FFFFFF] dark:bg-gray-800 rounded-t-[40px] sm:rounded-t-[60px] relative shadow-[0_-10px_50px_rgba(0,0,0,0.3)] border-t-[6px] border-[#B2BB1E] overflow-hidden">
         
         {/* Scroll Container: จำกัดความกว้างเพื่อความสวยงามบนจอใหญ่ */}
         <div className="h-full overflow-y-auto px-6 py-8">
@@ -91,7 +91,7 @@ const RoomStatus = () => {
                 <p className="text-[#B2BB1E] font-black text-xs sm:text-sm uppercase tracking-tighter">
                   {roomDetail?.room_type || "ประเภทห้องเรียน"}
                 </p>
-                <h2 className="text-[#302782] text-5xl sm:text-7xl font-black leading-tight drop-shadow-sm">
+                <h2 className="text-[#302782] dark:text-white text-5xl sm:text-7xl font-black leading-tight drop-shadow-sm">
                   {id}
                 </h2>
               </div>
@@ -152,7 +152,7 @@ const RoomStatus = () => {
 // --- Sub-components (Responsive & Styled) ---
 
 const EmptyScheduleState = ({ isAvailable }) => (
-  <div className="py-16 text-center bg-gray-50 rounded-[40px] border-2 border-dashed border-gray-100 flex flex-col items-center justify-center group">
+  <div className="py-16 text-center bg-gray-50 dark:bg-gray-700/50 rounded-[40px] border-2 border-dashed border-gray-100 dark:border-gray-600 flex flex-col items-center justify-center group">
     <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm transition-transform group-hover:rotate-12">
        <CalendarIcon size={32} className="text-gray-300" />
     </div>

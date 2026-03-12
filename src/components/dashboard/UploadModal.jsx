@@ -78,20 +78,20 @@ const UploadModal = ({ isOpen, onClose }) => {
       {!importResult && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-2 sm:p-4 bg-gray-900/60 backdrop-blur-sm font-sans">
           <div
-            className={`bg-white shadow-2xl relative rounded-[32px] sm:rounded-[40px] p-5 sm:p-8 mx-auto border border-white/20 transition-all duration-300 flex flex-col max-h-[95vh] ${
+            className={`bg-white dark:bg-gray-800 shadow-2xl relative rounded-[32px] sm:rounded-[40px] p-5 sm:p-8 mx-auto border border-white/20 dark:border-gray-700 transition-all duration-300 flex flex-col max-h-[95vh] ${
               step === "preview" ? "w-full max-w-5xl" : "w-full max-w-md"
             }`}
           >
             {/* Close Button */}
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-400 z-10"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 z-10"
             >
               <X size={18} />
             </button>
 
             <header className="mb-4 sm:mb-6 pr-8">
-              <h2 className="text-lg sm:text-xl font-bold text-[#302782]">
+              <h2 className="text-lg sm:text-xl font-bold text-[#302782] dark:text-white">
                 {step === "preview" ? "ตรวจสอบตารางเรียน" : "นำเข้าตารางเรียน"}
               </h2>
               <p className="text-[10px] sm:text-xs font-medium text-gray-400">
@@ -100,7 +100,7 @@ const UploadModal = ({ isOpen, onClose }) => {
             </header>
 
             {step === "upload" ? (
-              <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-[24px] p-8 sm:p-12 bg-gray-50/50">
+              <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-100 dark:border-gray-600 rounded-[24px] p-8 sm:p-12 bg-gray-50/50 dark:bg-gray-700/50">
                 <input
                   type="file"
                   id="file-upload"
@@ -157,28 +157,28 @@ const UploadModal = ({ isOpen, onClose }) => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-y-auto pr-1 custom-scrollbar mb-4">
                   {/* Valid Data Table */}
                   <div className="flex flex-col gap-2">
-                    <h3 className="font-bold text-[#B2BB1E] text-[11px] sm:text-xs flex items-center gap-1.5 px-1 sticky top-0 bg-white py-1 z-10">
+                    <h3 className="font-bold text-[#B2BB1E] text-[11px] sm:text-xs flex items-center gap-1.5 px-1 sticky top-0 bg-white dark:bg-gray-800 py-1 z-10">
                       <CheckCircle2 size={16} /> รายการที่ถูกต้อง (
                       {validData.length})
                     </h3>
-                    <div className="border border-gray-100 rounded-2xl bg-white shadow-sm overflow-hidden">
+                    <div className="border border-gray-100 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
                       <table className="w-full text-[11px] sm:text-xs text-left border-collapse">
-                        <thead className="bg-gray-50 text-gray-500 font-bold border-b">
+                        <thead className="bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-bold border-b dark:border-gray-600">
                           <tr>
                             <th className="p-2 sm:p-3">วิชา/เวลา</th>
                             <th className="p-2 sm:p-3">ห้อง</th>
                             <th className="p-2 sm:p-3 text-center">ลบ</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50">
+                        <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                           {validData.length > 0 ? (
                             validData.map((item, idx) => (
                               <tr
                                 key={idx}
-                                className="hover:bg-gray-50/50 transition-colors"
+                                className="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors"
                               >
                                 <td className="p-2 sm:p-3">
-                                  <span className="font-bold text-[#302782] block truncate max-w-[120px] sm:max-w-[180px]">
+                                  <span className="font-bold text-[#302782] dark:text-white block truncate max-w-[120px] sm:max-w-[180px]">
                                     {item.subject_name}
                                   </span>
                                   <span className="text-[9px] text-gray-500 block">
@@ -186,7 +186,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                                     {item.end_time})
                                   </span>
                                 </td>
-                                <td className="p-2 sm:p-3 font-bold text-gray-600">
+                                <td className="p-2 sm:p-3 font-bold text-gray-600 dark:text-gray-300">
                                   {item.room_id}
                                 </td>
                                 <td className="p-2 sm:p-3 text-center">
@@ -216,13 +216,13 @@ const UploadModal = ({ isOpen, onClose }) => {
 
                   {/* Invalid Data Table */}
                   <div className="flex flex-col gap-2">
-                    <h3 className="font-bold text-red-500 text-[11px] sm:text-xs flex items-center gap-1.5 px-1 sticky top-0 bg-white py-1 z-10">
+                    <h3 className="font-bold text-red-500 text-[11px] sm:text-xs flex items-center gap-1.5 px-1 sticky top-0 bg-white dark:bg-gray-800 py-1 z-10">
                       <AlertCircle size={16} /> รายการที่มีปัญหา (
                       {invalidData.length})
                     </h3>
-                    <div className="border border-red-50 rounded-2xl bg-red-50/10 shadow-sm overflow-hidden">
+                    <div className="border border-red-50 dark:border-gray-700 rounded-2xl bg-red-50/10 dark:bg-gray-800 shadow-sm overflow-hidden">
                       <table className="w-full text-[11px] sm:text-xs text-left border-collapse">
-                        <thead className="bg-red-50 text-red-700 font-bold border-b">
+                        <thead className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 font-bold border-b dark:border-gray-600">
                           <tr>
                             <th className="p-2 sm:p-3 w-10 text-center">แถว</th>
                             <th className="p-2 sm:p-3">
@@ -230,15 +230,15 @@ const UploadModal = ({ isOpen, onClose }) => {
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                           {invalidData.length > 0 ? (
                             invalidData.map((item, idx) => (
-                              <tr key={idx} className="bg-white/60">
+                              <tr key={idx} className="bg-white/60 dark:bg-gray-800/60">
                                 <td className="p-2 sm:p-3 font-bold text-gray-400 text-center">
                                   {item.row}
                                 </td>
                                 <td className="p-2 sm:p-3">
-                                  <span className="font-bold text-[#302782] block text-[10px] sm:text-[11px]">
+                                  <span className="font-bold text-[#302782] dark:text-white block text-[10px] sm:text-[11px]">
                                     {item.room || "ข้อมูลไม่ครบ"}
                                   </span>
                                   <span className="text-red-600 leading-tight block text-[9px] sm:text-[10px]">
@@ -264,7 +264,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Control Buttons */}
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t border-gray-100">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                   <Button
                     onClick={() => setStep("upload")}
                     variant="danger"
@@ -319,7 +319,7 @@ const UploadModal = ({ isOpen, onClose }) => {
 };
 
 const StatCard = ({ label, value, color }) => (
-  <div className="bg-gray-50/50 p-2 sm:p-4 rounded-[16px] sm:rounded-[20px] border border-gray-100 text-center shadow-sm">
+  <div className="bg-gray-50/50 dark:bg-gray-700/50 p-2 sm:p-4 rounded-[16px] sm:rounded-[20px] border border-gray-100 dark:border-gray-600 text-center shadow-sm">
     <p className="text-[7px] sm:text-[8px] uppercase tracking-wider font-bold text-gray-400 mb-1">
       {label}
     </p>

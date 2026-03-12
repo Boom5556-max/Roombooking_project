@@ -21,14 +21,14 @@ const BookingRoom = () => {
   } = useBookingLogic(id);
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] flex items-center justify-center p-0 sm:p-4 md:p-8 font-sans">
+    <div className="min-h-screen bg-[#F0F2F5] dark:bg-gray-900 flex items-center justify-center p-0 sm:p-4 md:p-8 font-sans">
       {/* Container: เต็มจอในมือถือ, เป็น Card ในจอใหญ่ */}
-      <div className="bg-white w-full max-w-xl min-h-screen sm:min-h-0 sm:rounded-[32px] shadow-2xl overflow-hidden relative border border-gray-100 transition-all">
+      <div className="bg-white dark:bg-gray-800 w-full max-w-xl min-h-screen sm:min-h-0 sm:rounded-[32px] shadow-2xl overflow-hidden relative border border-gray-100 dark:border-gray-700 transition-all">
         
         {/* Header Section */}
-        <div className="px-6 py-8 sm:px-10 sm:pt-10 sm:pb-6 flex justify-between items-center border-b border-gray-50 bg-white sticky top-0 z-10">
+        <div className="px-6 py-8 sm:px-10 sm:pt-10 sm:pb-6 flex justify-between items-center border-b border-gray-50 dark:border-gray-700 bg-white dark:bg-gray-800 sticky top-0 z-10">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#302782] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#302782] dark:text-white tracking-tight">
               จองห้องเรียน
             </h1>
             <p className="text-xs sm:text-sm font-medium text-gray-400 mt-1">
@@ -37,7 +37,7 @@ const BookingRoom = () => {
           </div>
           <button
             onClick={() => navigate(-1)}
-            className="p-2.5 bg-gray-50 hover:bg-red-50 hover:text-red-500 rounded-full text-gray-400 transition-all duration-200"
+            className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-red-50 hover:text-red-500 rounded-full text-gray-400 transition-all duration-200"
           >
             <X size={22} />
           </button>

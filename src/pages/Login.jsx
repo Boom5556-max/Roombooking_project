@@ -28,17 +28,17 @@ const Login = () => {
 
 return (
     // เพิ่ม h-auto เพื่อให้ scroll ได้ดีเวลาคีย์บอร์ดบัง
-    <div className="min-h-[100dvh] flex flex-col lg:flex-row font-sans bg-[#FFFFFF] overflow-y-auto text-[#302782]">
+    <div className="min-h-[100dvh] flex flex-col lg:flex-row font-sans bg-[#FFFFFF] dark:bg-gray-900 overflow-y-auto text-[#302782] dark:text-white">
       
       <Loginpic />
 
       {/* เพิ่ม md:flex-grow-0 เพื่อคุมความกว้างบนแท็บเล็ตไม่ให้กว้างเกินไป */}
-      <div className="w-full lg:w-[45%] bg-[#FFFFFF] flex flex-col relative flex-grow md:justify-center">
+      <div className="w-full lg:w-[45%] bg-[#FFFFFF] dark:bg-gray-900 flex flex-col relative flex-grow md:justify-center">
         
         {/* Header ย่อขนาดลงบนแท็บเล็ต */}
         <div className="h-16 flex items-center px-6 md:px-10 flex-shrink-0">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2.5 text-gray-400 hover:text-[#302782] transition-all font-bold text-sm group">
-            <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#302782]/10 transition-all">
+          <button onClick={() => navigate("/")} className="flex items-center gap-2.5 text-gray-400 hover:text-[#302782] dark:hover:text-[#B2BB1E] transition-all font-bold text-sm group">
+            <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded-xl group-hover:bg-[#302782]/10 dark:group-hover:bg-[#B2BB1E]/10 transition-all">
               <ArrowLeft size={18} />
             </div>
             <span>กลับไปหน้าสแกน</span>
@@ -47,7 +47,7 @@ return (
 
         {/* ปรับ Padding ของหัวข้อให้สมดุลบน Tablet (md) และจอใหญ่ (lg/xl) */}
         <div className="px-8 md:px-16 lg:px-20 pt-4 pb-4 lg:pt-8 lg:pb-8 text-center mt-4">
-          <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black text-[#302782] tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black text-[#302782] dark:text-white tracking-tight">
             เข้าสู่<span className="text-[#B2BB1E]">ระบบ</span>
           </h1>
         </div>

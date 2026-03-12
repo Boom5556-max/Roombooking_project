@@ -13,7 +13,7 @@ const RoomDetail = () => {
 
   // 1. หน้า Loading
   if (isLoading) return (
-    <div className="min-h-screen bg-[#302782] flex flex-col items-center justify-center text-[#FFFFFF] p-4">
+    <div className="min-h-screen bg-[#302782] dark:bg-gray-950 flex flex-col items-center justify-center text-[#FFFFFF] p-4">
       <Loader2 className="animate-spin mb-4 text-[#B2BB1E]" size={48} />
       <p className="text-lg sm:text-xl font-medium text-center">กำลังโหลดข้อมูลห้อง {id}...</p>
     </div>
@@ -21,7 +21,7 @@ const RoomDetail = () => {
 
   // 2. หน้า Error
   if (error || !room) return (
-    <div className="min-h-screen bg-[#FFFFFF] flex flex-col items-center justify-center p-6 text-center font-sans">
+    <div className="min-h-screen bg-[#FFFFFF] dark:bg-gray-900 flex flex-col items-center justify-center p-6 text-center font-sans">
       <div className="bg-red-50 p-8 rounded-[40px] max-w-md mx-auto">
         <AlertTriangle className="text-red-500 mx-auto mb-4" size={64} />
         <h2 className="text-xl sm:text-2xl font-bold text-gray-700 mb-6">
@@ -39,7 +39,7 @@ const RoomDetail = () => {
   );
 
   return (
-    <div className="fixed inset-0 bg-[#302782] flex flex-col font-sans overflow-hidden">
+    <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
       <Navbar />
       
       {/* Header Section */}
@@ -56,15 +56,15 @@ const RoomDetail = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-grow bg-[#FFFFFF] rounded-t-[40px] sm:rounded-t-[60px] p-4 sm:p-6 lg:p-10 xl:p-12 relative shadow-2xl overflow-y-auto">
+      <div className="flex-grow bg-[#FFFFFF] dark:bg-gray-800 rounded-t-[40px] sm:rounded-t-[60px] p-4 sm:p-6 lg:p-10 xl:p-12 relative shadow-2xl overflow-y-auto">
         {/* 🟢 แก้ตรงนี้: เปลี่ยนจาก max-w-4xl เป็น max-w-6xl ให้รับกับจอโน้ตบุ๊ก และเพิ่ม w-full */}
         <div className="w-full max-w-6xl mx-auto">
           
           {/* Room Card */}
-          <div className="bg-gray-50 rounded-[30px] sm:rounded-[40px] p-6 sm:p-10 lg:p-12 mt-2 flex flex-col items-center min-h-[450px] sm:min-h-[500px] border border-gray-100 shadow-sm">
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-[30px] sm:rounded-[40px] p-6 sm:p-10 lg:p-12 mt-2 flex flex-col items-center min-h-[450px] sm:min-h-[500px] border border-gray-100 dark:border-gray-600 shadow-sm">
             
-            <h2 className="text-gray-600 text-xl sm:text-3xl font-black mb-8 sm:mb-12 text-center leading-tight">
-              {room.name || "ไม่ระบุชื่อห้อง"} <span className="text-gray-300 hidden sm:inline mx-2">|</span> <br className="sm:hidden" /> <span className="text-[#302782]">{room.id || id}</span>
+            <h2 className="text-gray-600 dark:text-gray-300 text-xl sm:text-3xl font-black mb-8 sm:mb-12 text-center leading-tight">
+              {room.name || "ไม่ระบุชื่อห้อง"} <span className="text-gray-300 dark:text-gray-600 hidden sm:inline mx-2">|</span> <br className="sm:hidden" /> <span className="text-[#302782] dark:text-[#B2BB1E]">{room.id || id}</span>
             </h2>
 
             {/* ส่วนข้อมูลห้อง */}
@@ -82,7 +82,7 @@ const RoomDetail = () => {
               <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {room.facilities && room.facilities.length > 0 ? (
                   room.facilities.map((item, index) => (
-                    <div key={index} className="flex items-center gap-3 text-gray-600 font-bold text-sm sm:text-base bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div key={index} className="flex items-center gap-3 text-gray-600 dark:text-gray-300 font-bold text-sm sm:text-base bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
                       <CheckCircle2 size={20} className="text-[#B2BB1E] shrink-0" />
                       <span className="truncate">{item}</span>
                     </div>
@@ -98,14 +98,14 @@ const RoomDetail = () => {
             <div className="w-full max-w-2xl mx-auto space-y-4 mt-auto pt-8 border-t border-gray-200/60">
               {room.repair === true || room.repair === 1 ? (
                 /* 🚩 กรณีห้องซ่อม */
-                <div className="w-full p-6 bg-red-50 border-2 border-red-100 rounded-[25px] sm:rounded-[30px] flex flex-col items-center gap-2 shadow-sm animate-pulse">
+                <div className="w-full p-6 bg-red-50 dark:bg-red-500/10 border-2 border-red-100 dark:border-red-900/30 rounded-[25px] sm:rounded-[30px] flex flex-col items-center gap-2 shadow-sm animate-pulse">
                   <div className="flex items-center gap-3">
                     <AlertTriangle className="text-red-500" size={24} />
-                    <span className="text-red-600 font-black text-lg sm:text-xl">
+                    <span className="text-red-600 dark:text-red-400 font-black text-lg sm:text-xl">
                       ห้องนี้ปิดปรับปรุง
                     </span>
                   </div>
-                  <p className="text-red-400 text-xs sm:text-sm font-bold text-center">
+                  <p className="text-red-400 dark:text-red-500 text-xs sm:text-sm font-bold text-center">
                     ขออภัย ไม่สามารถตรวจสอบตารางหรือจองได้ในขณะนี้
                   </p>
                 </div>
@@ -115,7 +115,7 @@ const RoomDetail = () => {
                   <Button 
                     variant="secondary" 
                     onClick={() => navigate(`/calendar/${room.id || id}`)} 
-                    className="w-full text-base sm:text-lg font-bold py-4 rounded-[20px] shadow-sm hover:shadow-md active:scale-95 transition-all bg-white border-2 border-gray-100 text-gray-600"
+                    className="w-full text-base sm:text-lg font-bold py-4 rounded-[20px] shadow-sm hover:shadow-md active:scale-95 transition-all bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-gray-600 dark:text-gray-300"
                   >
                     ตรวจสอบตาราง
                   </Button>

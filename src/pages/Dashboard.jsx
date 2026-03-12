@@ -34,17 +34,17 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] flex flex-col relative font-sans pb-20 md:pb-0">
+    <div className="min-h-screen bg-[#FFFFFF] dark:bg-gray-900 flex flex-col relative font-sans pb-20 md:pb-0">
       <Navbar />
 
       {/* Container หลัก: ปรับ Padding ตามขนาดจอ */}
       <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full flex-grow">
         {/* Header: ปรับการจัดวางชื่อสิทธิ์ผู้ใช้ */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold border-b-2 border-[#B2BB1E] inline-block text-[#302782]">
+          <h2 className="text-xl sm:text-2xl font-bold border-b-2 border-[#B2BB1E] inline-block text-[#302782] dark:text-white">
             ภาพรวมระบบ
           </h2>
-          <span className="text-[10px] sm:text-xs text-gray-500 font-bold bg-gray-50 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-gray-100 uppercase tracking-wider">
+          <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold bg-gray-50 dark:bg-gray-800 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-gray-100 dark:border-gray-700 uppercase tracking-wider">
             สิทธิ์ผู้ใช้งาน: {role}
           </span>
         </div>
@@ -62,17 +62,17 @@ const Dashboard = () => {
           variant="secondary"
           size="none"
           onClick={() => navigate("/Rooms")}
-          className="w-full p-4 sm:p-5 rounded-2xl sm:rounded-3xl justify-between flex mb-6 border border-gray-100 bg-[#FFFFFF] hover:bg-gray-50 transition-all active:scale-[0.98]"
+          className="w-full p-4 sm:p-5 rounded-2xl sm:rounded-3xl justify-between flex mb-6 border border-gray-100 dark:border-gray-700 bg-[#FFFFFF] dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-[0.98]"
         >
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="bg-[#B2BB1E] p-2.5 sm:p-3 rounded-xl sm:rounded-2xl text-[#FFFFFF]">
               <LayoutGrid size={20} className="sm:w-6 sm:h-6" />
             </div>
             <div className="text-left">
-              <p className="font-bold text-base sm:text-lg text-[#302782] leading-none">
+              <p className="font-bold text-base sm:text-lg text-[#302782] dark:text-white leading-none">
                 ดูรายการห้องเรียน
               </p>
-              <p className="text-gray-500 text-xs sm:text-sm mt-1">
+              <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mt-1">
                 ตรวจสอบตารางการใช้ห้องทั้งหมด
               </p>
             </div>
@@ -82,7 +82,7 @@ const Dashboard = () => {
 
         {/* Smart Search Section */}
         {(role === "staff" || role === "teacher") && (
-          <div className="bg-[#302782] rounded-[30px] sm:rounded-[40px] p-6 sm:p-8 mb-6 shadow-xl">
+          <div className="bg-[#302782] dark:bg-gray-800 rounded-[30px] sm:rounded-[40px] p-6 sm:p-8 mb-6 shadow-xl dark:border dark:border-gray-700">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-[#B2BB1E] rounded-xl text-[#FFFFFF]">
                 <Search size={18} />
@@ -213,11 +213,11 @@ const Dashboard = () => {
         {role === "staff" && (
           <div
             onClick={() => setIsModalOpen(true)}
-            className="bg-gray-50 rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 border-2 border-dashed border-gray-200 cursor-pointer hover:border-[#B2BB1E] hover:bg-white transition-all group"
+            className="bg-gray-50 dark:bg-gray-800 rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 border-2 border-dashed border-gray-200 dark:border-gray-700 cursor-pointer hover:border-[#B2BB1E] hover:bg-white dark:hover:bg-gray-700 transition-all group"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base sm:text-lg font-bold text-[#302782] flex items-center gap-2">
+                <h3 className="text-base sm:text-lg font-bold text-[#302782] dark:text-white flex items-center gap-2">
                   <FilePlus size={20} className="text-[#B2BB1E]" />{" "}
                   ระบบจัดการไฟล์
                 </h3>
@@ -235,11 +235,11 @@ const Dashboard = () => {
 
         {/* Teacher Empty State */}
         {role === "teacher" && (
-          <div className="p-6 sm:p-8 text-center bg-gray-50 rounded-[30px] sm:rounded-[40px] border border-gray-100 mt-6">
+          <div className="p-6 sm:p-8 text-center bg-gray-50 dark:bg-gray-800 rounded-[30px] sm:rounded-[40px] border border-gray-100 dark:border-gray-700 mt-6">
             <div className="bg-[#FFFFFF] w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 text-[#B2BB1E] shadow-sm">
               <CheckCircle2 size={24} className="sm:w-7 sm:h-7" />
             </div>
-            <p className="text-[#302782] font-bold text-sm sm:text-base">
+            <p className="text-[#302782] dark:text-white font-bold text-sm sm:text-base">
               ระบบจองห้องเรียนออนไลน์
             </p>
           </div>
@@ -250,8 +250,8 @@ const Dashboard = () => {
 
       {/* Booking Guidelines Footer: ปรับ Grid ให้รองรับมือถือ */}
       <footer className="mt-8 sm:mt-12 mb-24 md:mb-8 px-4 w-full max-w-7xl mx-auto">
-        <div className="bg-[#FFFFFF] rounded-[24px] sm:rounded-[30px] p-6 sm:p-8 border border-gray-100 shadow-sm">
-          <div className="flex items-center gap-3 mb-6 text-[#302782]">
+        <div className="bg-[#FFFFFF] dark:bg-gray-800 rounded-[24px] sm:rounded-[30px] p-6 sm:p-8 border border-gray-100 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center gap-3 mb-6 text-[#302782] dark:text-white">
             <div className="p-2 bg-gray-50 rounded-xl">
               <FilePlus size={20} />
             </div>
@@ -320,7 +320,7 @@ const Dashboard = () => {
 
 // Helper Component เพื่อลดโค้ดซ้ำและจัดการสไตล์ทีเดียว
 const GuideItem = ({ num, text, color = "bg-[#302782]" }) => (
-  <div className="flex gap-3 text-xs sm:text-sm text-gray-600 font-medium items-start">
+  <div className="flex gap-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium items-start">
     <span
       className={`flex-none w-5 h-5 sm:w-6 sm:h-6 ${color} text-[#FFFFFF] text-[9px] sm:text-[10px] font-bold rounded-full flex items-center justify-center mt-0.5`}
     >

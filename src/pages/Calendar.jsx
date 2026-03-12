@@ -58,12 +58,12 @@ const Calendar = () => {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center font-sans bg-[#FFFFFF]">
+      <div className="h-screen flex flex-col items-center justify-center font-sans bg-[#FFFFFF] dark:bg-gray-900">
         <div className="relative">
             <div className="w-16 h-16 border-4 border-gray-100 rounded-full"></div>
             <div className="w-16 h-16 border-4 border-t-[#302782] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin absolute top-0"></div>
         </div>
-        <p className="text-lg font-bold text-[#302782] mt-6 tracking-tight">กำลังจัดเตรียมตารางเรียน...</p>
+        <p className="text-lg font-bold text-[#302782] dark:text-white mt-6 tracking-tight">กำลังจัดเตรียมตารางเรียน...</p>
       </div>
     );
   }
@@ -93,7 +93,7 @@ const Calendar = () => {
   };
 
   return (
-    <div className="h-screen bg-[#FDFDFF] flex flex-col overflow-hidden font-sans">
+    <div className="h-screen bg-[#FDFDFF] dark:bg-gray-900 flex flex-col overflow-hidden font-sans">
       <Navbar />
 
       {/* Main Container: จำกัดความสูงเท่าพื้นที่ที่เหลือ */}
@@ -115,7 +115,7 @@ const Calendar = () => {
               className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 h-12 rounded-2xl font-bold text-sm transition-all shadow-sm active:scale-95 ${
                 isCancelMode
                   ? "bg-[#B2BB1E] text-white ring-4 ring-[#B2BB1E]/20"
-                  : "bg-white text-[#302782] border border-gray-200 hover:border-[#302782]"
+                  : "bg-white dark:bg-gray-800 text-[#302782] dark:text-white border border-gray-200 dark:border-gray-700 hover:border-[#302782]"
               }`}
             >
               {isCancelMode ? <X size={18} /> : <Settings2 size={18} />}
@@ -125,7 +125,7 @@ const Calendar = () => {
         </div>
 
         {/* Calendar Box: พื้นที่นี้จะขยายใหญ่ที่สุด */}
-        <div className="flex-grow bg-white rounded-[24px] sm:rounded-[32px] shadow-sm overflow-hidden border border-gray-100">
+        <div className="flex-grow bg-white dark:bg-gray-800 rounded-[24px] sm:rounded-[32px] shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
           <CalendarView
             events={events}
             isCancelMode={isCancelMode}
@@ -185,12 +185,12 @@ const Calendar = () => {
       {/* Alert Modal: Responsive Size */}
       {alertConfig.show && (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-[#302782]/20 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[32px] p-8 w-full max-w-xs sm:max-w-sm shadow-2xl text-center border border-white scale-in">
+          <div className="bg-white dark:bg-gray-800 rounded-[32px] p-8 w-full max-w-xs sm:max-w-sm shadow-2xl text-center border border-white dark:border-gray-700 scale-in">
             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-12">
               <AlertCircle size={32} strokeWidth={2.5} />
             </div>
-            <h3 className="text-xl font-bold text-[#302782] mb-2">{alertConfig.title}</h3>
-            <p className="text-gray-500 text-sm mb-8 leading-relaxed font-medium">{alertConfig.msg}</p>
+            <h3 className="text-xl font-bold text-[#302782] dark:text-white mb-2">{alertConfig.title}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed font-medium">{alertConfig.msg}</p>
             <button
               onClick={() => setAlertConfig({ ...alertConfig, show: false })}
               className="w-full py-4 bg-[#302782] text-white rounded-xl font-bold text-base active:scale-95 transition-all"

@@ -38,8 +38,8 @@ const CalendarView = ({
           ${isCancelMode && isClosed && hasPermission ? "already-closed-active" : ""}`}
       >
         <span className={`w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0 ${dotColor}`}></span>
-        <span className="fc-event-time-bold text-[9px] sm:text-[0.8rem]">{eventInfo.timeText}</span>
-        <span className="fc-event-title-light text-[10px] sm:text-[0.85rem]">
+        <span className="fc-event-time-bold text-[9px] sm:text-[0.8rem] dark:text-white">{eventInfo.timeText}</span>
+        <span className="fc-event-title-light text-[10px] sm:text-[0.85rem] dark:text-gray-100">
           {isClosed ? `(งด) ${eventInfo.event.title}` : eventInfo.event.title}
         </span>
       </div>
@@ -47,7 +47,7 @@ const CalendarView = ({
   };
 
   return (
-    <div className="flex-grow w-full h-full bg-[#FFFFFF] p-2 sm:p-4 md:p-6 flex flex-col relative font-sans overflow-hidden">
+    <div className="flex-grow w-full h-full bg-[#FFFFFF] dark:bg-gray-800 p-2 sm:p-4 md:p-6 flex flex-col relative font-sans overflow-hidden">
       <div className="calendar-container flex-grow h-full">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -116,11 +116,20 @@ const CalendarView = ({
           color: inherit; 
         }
 
+        .dark .fc-event-inline-wrapper:not(.is-closed):not(.elevated-clean):not(.elevated-restore) {
+          color: #FFFFFF !important;
+        }
+
         /* --- Special Status Classes --- */
         .is-closed {
           background-color: #F9FAFB !important; 
           color: #9CA3AF !important; 
           border: 1px solid #F3F4F6 !important;
+        }
+        .dark .is-closed {
+          background-color: #374151 !important;
+          color: #9CA3AF !important;
+          border: 1px solid #4B5563 !important;
         }
 
         .elevated-clean {
@@ -130,12 +139,22 @@ const CalendarView = ({
           z-index: 50 !important;
           box-shadow: 0 4px 12px rgba(48, 39, 130, 0.1) !important;
         }
+        .dark .elevated-clean {
+          background-color: #1F2937 !important;
+          color: #FFFFFF !important;
+          border-color: #B2BB1E !important;
+        }
 
         .elevated-restore {
           background-color: #FFFFFF !important;
           border: 1.5px solid #B2BB1E !important; 
           z-index: 50 !important;
           box-shadow: 0 4px 12px rgba(178, 187, 30, 0.15) !important;
+        }
+        .dark .elevated-restore {
+          background-color: #374151 !important;
+          color: #9CA3AF !important;
+          border-color: #B2BB1E !important;
         }
 
         /* Hide Default FC Backgrounds */
@@ -152,10 +171,12 @@ const CalendarView = ({
           }
         ` : ""}
 
-        /* --- UI Components Customization --- */
         .fc .fc-toolbar-title { 
           font-weight: 700; 
           color: #302782; 
+        }
+        .dark .fc .fc-toolbar-title {
+          color: #FFFFFF;
         }
         .fc .fc-button-primary { 
           background-color: #FFFFFF !important; 
@@ -164,6 +185,11 @@ const CalendarView = ({
           border-radius: 10px !important; 
           font-weight: 600 !important;
           transition: all 0.2s;
+        }
+        .dark .fc .fc-button-primary {
+          background-color: #374151 !important;
+          color: #D1D5DB !important;
+          border: 1px solid #4B5563 !important;
         }
         .fc .fc-button-primary:hover {
           border-color: #302782 !important;
@@ -191,9 +217,11 @@ const CalendarView = ({
           margin-left: 12px !important;
         }
         
-        /* Grid Appearance */
         .fc-theme-standard td, .fc-theme-standard th { 
           border-color: #F1F5F9 !important; 
+        }
+        .dark .fc-theme-standard td, .dark .fc-theme-standard th {
+          border-color: #374151 !important;
         }
         .fc-col-header-cell-cushion {
           color: #94A3B8 !important;
@@ -202,9 +230,21 @@ const CalendarView = ({
           letter-spacing: 0.05em;
           padding: 10px 0 !important;
         }
+        .dark .fc-col-header-cell {
+          background-color: #1F2937 !important;
+        }
         .fc-daygrid-day-number {
           color: #475569 !important;
           font-weight: 700 !important;
+        }
+        .dark .fc-daygrid-day-number {
+          color: #D1D5DB !important;
+        }
+        .dark .fc-daygrid-day-frame {
+          background-color: #1F2937;
+        }
+        .dark .fc-day-today .fc-daygrid-day-frame {
+          background-color: #374151 !important;
         }
         .fc-daygrid-event-dot { 
           display: none !important; 
