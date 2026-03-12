@@ -38,7 +38,17 @@ const Navbar = () => {
       "คุณแน่ใจหรือไม่ที่จะออกจากระบบ?",
       <LogOut size={50} className="text-red-500" />,
       () => {
+        // 1. บังคับเปลี่ยนค่าใน localStorage กลับเป็นโหมดสว่าง
+        localStorage.setItem('theme', 'light');
+        
+        // 2. ลบคลาส dark ออกจากหน้าเว็บทันที
+        document.documentElement.classList.remove('dark');
+        
+        // 3. ลบ Token ออกจากระบบ
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        
+        // 4. กลับไปหน้า Login
         window.location.replace("/");
       }
     );
@@ -80,7 +90,8 @@ const Navbar = () => {
           <NavItemsGroup navigate={navigate} getNavStyle={getNavStyle} userRole={userRole} />
           
           <div className="ml-2 flex items-center gap-2">
-            {userRole === "staff" && <ProfileDropdown isMobile={false} />}
+            {/* แก้ไข: ลบเงื่อนไข userRole === "staff" ออก เพื่อให้ทุกคนเห็น Dropdown Profile */}
+            <ProfileDropdown isMobile={false} />
             <div className="pl-4 border-l border-[#FFFFFF]/10 flex items-center">
               <button
                 onClick={handleLogoutClick}
@@ -95,7 +106,8 @@ const Navbar = () => {
 
         {/* Logout สำหรับมือถือ (แสดงเฉพาะปุ่ม Logout ด้านบนขวา) */}
         <div className="md:hidden flex items-center gap-2">
-            {userRole === "staff" && <ProfileDropdown isMobile={true} />}
+            {/* แก้ไข: ลบเงื่อนไข userRole === "staff" ออก เพื่อให้ทุกคนเห็น Dropdown Profile */}
+            <ProfileDropdown isMobile={true} />
             <button
               onClick={handleLogoutClick}
               className="w-10 h-10 flex items-center justify-center text-[#FFFFFF]/60"

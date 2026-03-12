@@ -40,7 +40,7 @@ const CalendarView = ({
         <span className={`w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0 ${dotColor}`}></span>
         <span className="fc-event-time-bold text-[9px] sm:text-[0.8rem] dark:text-white">{eventInfo.timeText}</span>
         <span className="fc-event-title-light text-[10px] sm:text-[0.85rem] dark:text-gray-100">
-          {isClosed ? `(งด) ${eventInfo.event.title}` : eventInfo.event.title}
+          {isClosed ? ` ${eventInfo.event.title}` : eventInfo.event.title}
         </span>
       </div>
     );

@@ -187,26 +187,26 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
             </div>
           </div>
 
-          {/* Role selection with Custom Card Style */}
-          <div className="flex flex-col gap-2 pb-2">
-            <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
-              สิทธิ์การเข้าถึงระบบ
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <RoleOption
-                selected={formData.role === "teacher"}
-                label="อาจารย์"
-                value="teacher"
-                onClick={() => setFormData({ ...formData, role: "teacher" })}
-              />
-              <RoleOption
-                selected={formData.role === "staff"}
-                label="เจ้าหน้าที่"
-                value="staff"
-                onClick={() => setFormData({ ...formData, role: "staff" })}
-              />
+          {/* Role selection - ซ่อนเมื่ออยู่ในโหมดแก้ไข (!!user เป็น true) */}
+          {!user && (
+            <div className="flex flex-col gap-2 pb-2">
+              <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                สิทธิ์การเข้าถึงระบบ
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <RoleOption
+                  selected={formData.role === "teacher"}
+                  label="อาจารย์"
+                  onClick={() => setFormData({ ...formData, role: "teacher" })}
+                />
+                <RoleOption
+                  selected={formData.role === "staff"}
+                  label="เจ้าหน้าที่"
+                  onClick={() => setFormData({ ...formData, role: "staff" })}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Action Button */}
@@ -228,14 +228,15 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
   );
 };
 
-// Component เสริมสำหรับเลือก Role ให้ดูพรีเมียมขึ้น
+// Component เสริมสำหรับเลือก Role ให้ดูพรีเมียมขึ้น (เอา disabled ออกเพราะใช้เงื่อนไข !user ซ่อนไปแล้ว)
 const RoleOption = ({ selected, label, onClick }) => (
   <div
     onClick={onClick}
-    className={`p-4 rounded-[20px] border-2 cursor-pointer transition-all flex items-center justify-center gap-2 font-black text-sm
-      ${selected
-        ? "border-[#B2BB1E] bg-[#B2BB1E]/5 text-[#302782] dark:text-white"
-        : "border-gray-50 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-400 hover:border-gray-200"
+    className={`p-4 rounded-[20px] border-2 cursor-pointer transition-all flex items-center justify-center gap-2 font-black text-sm hover:border-gray-300 dark:hover:border-gray-500
+      ${
+        selected
+          ? "border-[#B2BB1E] bg-[#B2BB1E]/5 text-[#302782] dark:text-white"
+          : "border-gray-50 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-400"
       }`}
   >
     <UserCheck

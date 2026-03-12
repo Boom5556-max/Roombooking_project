@@ -124,7 +124,7 @@ const Notification = () => {
 
     const successMessage = 
       userRole === "staff" 
-        ? "ไม่อนุมัติการจองสำเร็จ" 
+        ? "ไม่อนุมัติคำขอสำเร็จ"
         : "ยกเลิกการจองสำเร็จ";
 
     // 2. เรียก Modal เพื่อยืนยันก่อน (มีปุ่มปกติ)
@@ -238,7 +238,7 @@ const Notification = () => {
                 variant="approved"
               />
               <StaffSection
-                title="ไม่อนุมัติ/ยกเลิก"
+                title="ไม่อนุมัติ"
                 icon={XCircle}
                 data={historyRequests}
                 color="text-gray-400"
