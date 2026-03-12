@@ -23,7 +23,7 @@ const BookingRoom = () => {
   return (
     <div className="min-h-screen bg-[#F0F2F5] dark:bg-gray-900 flex items-center justify-center p-0 sm:p-4 md:p-8 font-sans">
       {/* Container: เต็มจอในมือถือ, เป็น Card ในจอใหญ่ */}
-      <div className="bg-white dark:bg-gray-800 w-full max-w-xl min-h-screen sm:min-h-0 sm:rounded-[32px] shadow-2xl overflow-hidden relative border border-gray-100 dark:border-gray-700 transition-all">
+      <div className="bg-white dark:bg-gray-800 w-full max-w-xl min-h-screen sm:min-h-0 rounded-[32px] sm:rounded-[40px] shadow-2xl overflow-hidden relative border border-gray-100 dark:border-gray-700 transition-all">
         
         {/* Header Section */}
         <div className="px-6 py-8 sm:px-10 sm:pt-10 sm:pb-6 flex justify-between items-center border-b border-gray-50 dark:border-gray-700 bg-white dark:bg-gray-800 sticky top-0 z-10">
@@ -56,7 +56,7 @@ const BookingRoom = () => {
                   setFormData({ ...formData, room_id: e.target.value });
                   setShowStatus(false);
                 }}
-                className="w-full bg-gray-50 border-2 border-transparent rounded-2xl py-4 px-5 outline-none focus:bg-white focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 appearance-none text-[#302782] font-bold transition-all cursor-pointer text-base"
+                className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 appearance-none text-[#302782] dark:text-white font-bold transition-all cursor-pointer text-base"
               >
                 <option value="" disabled>เลือกห้องเรียน</option>
                 {rooms.map((r) => (
@@ -75,7 +75,7 @@ const BookingRoom = () => {
               type="date"
               required
               min={new Date().toISOString().split("T")[0]}
-              className="w-full bg-gray-50 border-2 border-transparent rounded-2xl py-4 px-5 outline-none focus:bg-white focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 text-[#302782] font-semibold transition-all text-base"
+              className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 text-[#302782] dark:text-white font-semibold transition-all text-base"
               value={formData.date}
               onChange={(e) => {
                 setFormData({ ...formData, date: e.target.value });
@@ -90,7 +90,7 @@ const BookingRoom = () => {
               <input
                 type="time"
                 required
-                className="w-full bg-gray-50 border-2 border-transparent rounded-2xl py-4 px-5 outline-none focus:bg-white focus:border-[#B2BB1E] text-[#302782] font-semibold transition-all"
+                className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] text-[#302782] dark:text-white font-semibold transition-all"
                 value={formData.start_time}
                 onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
               />
@@ -99,7 +99,7 @@ const BookingRoom = () => {
               <input
                 type="time"
                 required
-                className="w-full bg-gray-50 border-2 border-transparent rounded-2xl py-4 px-5 outline-none focus:bg-white focus:border-[#B2BB1E] text-[#302782] font-semibold transition-all"
+                className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] text-[#302782] dark:text-white font-semibold transition-all"
                 value={formData.end_time}
                 onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
               />
@@ -112,7 +112,7 @@ const BookingRoom = () => {
               rows="3"
               placeholder="เช่น ติวสอบ, ประชุมโปรเจกต์..."
               required
-              className="w-full bg-gray-50 border-2 border-transparent rounded-2xl py-4 px-5 outline-none focus:bg-white focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 text-[#302782] resize-none font-medium transition-all leading-relaxed"
+              className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 text-[#302782] dark:text-white resize-none font-medium transition-all leading-relaxed"
               value={formData.purpose}
               onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
             ></textarea>
@@ -142,7 +142,7 @@ const BookingRoom = () => {
                   <p className="text-sm font-bold text-red-600 leading-relaxed">{serverMessage}</p>
                 </div>
               ) : (
-                <div className={`p-5 rounded-2xl text-center font-bold text-lg ${serverMessage.includes("✅") ? "bg-[#B2BB1E]/10 text-[#B2BB1E]" : "bg-red-50 text-red-600"}`}>
+                <div className={`p-5 rounded-2xl text-center font-bold text-lg ${serverMessage.includes("✅") ? "bg-[#B2BB1E]/10 text-[#B2BB1E]" : "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400"}`}>
                   {serverMessage}
                 </div>
               )}

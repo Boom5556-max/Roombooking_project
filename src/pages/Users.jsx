@@ -149,7 +149,7 @@ const Users = () => {
                 users.map((u) => (
                   <div
                     key={u.user_id}
-                    className="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-[30px] sm:rounded-[35px] shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-md transition-shadow"
+                    className="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-[30px] sm:rounded-[35px] shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group"
                   >
                     <div className="flex items-center gap-4 sm:gap-5 w-full">
                       {/* User Icon - ซ่อนในมือถือขนาดเล็กมากถ้าต้องการประหยัดพื้นที่ */}
