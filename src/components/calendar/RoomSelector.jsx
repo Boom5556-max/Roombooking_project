@@ -36,7 +36,7 @@ const RoomSelector = ({ rooms, selectedRoom, onSelect }) => {
         </select>
 
         {/* Custom Arrow: ปรับตำแหน่งให้เหมาะสม */}
-        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-[#302782]/40">
+        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-[#302782]/40 dark:text-[#B2BB1E]">
           <ChevronDown size={18} strokeWidth={3} />
         </div>
       </div>

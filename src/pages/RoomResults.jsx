@@ -138,49 +138,54 @@ const RoomResults = () => {
 
       {/* 🚩 Booking Modal - ปรับเป็น Full Screen ในมือถือ */}
       {selectedRoom && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#302782]/20 backdrop-blur-md p-4 sm:p-6 animate-in fade-in duration-300">
-          <div className="bg-white w-full h-full sm:h-auto sm:max-w-lg sm:rounded-[40px] md:rounded-[50px] p-6 sm:p-10 shadow-2xl overflow-y-auto">
-            <div className="flex justify-between items-center mb-6 sm:mb-8">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#302782]/20 dark:bg-black/60 backdrop-blur-md p-4 sm:p-6 animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-gray-800 w-full max-w-lg max-h-[90vh] rounded-[40px] md:rounded-[50px] p-6 sm:p-10 shadow-2xl flex flex-col relative border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <div className="flex justify-between items-center mb-6 sm:mb-8 flex-shrink-0">
               <h3 className="text-xl sm:text-2xl font-black text-[#302782] dark:text-white flex items-center gap-3">
                 <FileText className="text-[#B2BB1E]" /> รายละเอียดการจอง
               </h3>
               <button
                 onClick={() => { setSelectedRoom(null); setPurpose(""); }}
                 className="p-2 text-gray-400 hover:text-red-500 font-bold text-3xl transition-colors"
+                aria-label="Close"
               >
                 ×
               </button>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-700 p-5 sm:p-6 rounded-3xl border border-gray-100 dark:border-gray-600 mb-6 sm:mb-8 grid grid-cols-2 gap-4">
-              <div className="col-span-2 border-b border-gray-200 pb-3 mb-1">
-                <p className="text-[10px] text-gray-400 font-black uppercase">ห้องที่เลือก</p>
-                <p className="text-xl sm:text-2xl font-black text-[#302782]">{selectedRoom.room_id}</p>
+            <div className="flex-grow overflow-y-auto pr-2 -mr-2 space-y-6 sm:space-y-8">
+              <div className="bg-gray-50 dark:bg-white/5 p-5 sm:p-6 rounded-3xl border border-gray-100 dark:border-white/10 grid grid-cols-2 gap-4">
+                <div className="col-span-2 border-b border-gray-200 dark:border-white/10 pb-3 mb-1">
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 font-black uppercase">ห้องที่เลือก</p>
+                  <p className="text-xl sm:text-2xl font-black text-[#302782] dark:text-white">{selectedRoom.room_id}</p>
+                </div>
+                <InfoDetail label="วันที่" value={searchQuery.date} />
+                <InfoDetail label="เวลา" value={`${searchQuery.start_time} - ${searchQuery.end_time}`} />
               </div>
-              <InfoDetail label="วันที่" value={searchQuery.date} />
-              <InfoDetail label="เวลา" value={`${searchQuery.start_time} - ${searchQuery.end_time}`} />
+
+              <div className="space-y-3">
+                <label className="text-xs font-black text-gray-400 dark:text-gray-500 ml-2 uppercase tracking-widest">วัตถุประสงค์ในการเข้าใช้งาน</label>
+                <textarea
+                  rows="4"
+                  className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-white/10 rounded-2xl sm:rounded-[30px] p-5 sm:p-6 outline-none transition-all font-medium text-[#302782] dark:text-white text-sm sm:text-base resize-none"
+                  placeholder="ระบุชื่อวิชา หรือกิจกรรม..."
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                />
+              </div>
             </div>
 
-            <div className="space-y-3 mb-8 sm:mb-10">
-              <label className="text-xs font-black text-gray-400 ml-2 uppercase">วัตถุประสงค์ในการเข้าใช้งาน</label>
-              <textarea
-                rows="4"
-                className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-gray-600 rounded-2xl sm:rounded-[30px] p-5 sm:p-6 outline-none transition-all font-medium text-[#302782] dark:text-white text-sm sm:text-base"
-                placeholder="ระบุชื่อวิชา หรือกิจกรรม..."
-                value={purpose}
-                onChange={(e) => setPurpose(e.target.value)}
-              />
+            <div className="pt-6 sm:pt-10 flex-shrink-0">
+              <button
+                disabled={isSubmitting}
+                onClick={onBookingClick}
+                className={`w-full py-4 sm:py-5 rounded-2xl sm:rounded-[30px] font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all shadow-lg active:scale-95 ${
+                  isSubmitting ? "bg-gray-100 dark:bg-gray-700 text-gray-400" : "bg-[#B2BB1E] text-white hover:bg-[#302782]"
+                }`}
+              >
+                {isSubmitting ? "กำลังบันทึก..." : "ยืนยันการจอง"} <Send size={20} />
+              </button>
             </div>
-
-            <button
-              disabled={isSubmitting}
-              onClick={onBookingClick}
-              className={`w-full py-4 sm:py-5 rounded-2xl sm:rounded-[30px] font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all shadow-lg active:scale-95 ${
-                isSubmitting ? "bg-gray-100 text-gray-400" : "bg-[#B2BB1E] text-white hover:bg-[#302782]"
-              }`}
-            >
-              {isSubmitting ? "กำลังบันทึก..." : "ยืนยันการจอง"} <Send size={20} />
-            </button>
           </div>
         </div>
       )}
@@ -201,14 +206,14 @@ const RoomResults = () => {
 // --- Sub-components for better Clean Code & Responsibility ---
 
 const Badge = ({ icon, text }) => (
-  <div className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-50 dark:bg-gray-800 text-[#302782] dark:text-gray-200 rounded-xl text-[10px] sm:text-xs font-black border border-gray-100 dark:border-gray-700">
+  <div className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-50 dark:bg-white/5 text-[#302782] dark:text-white rounded-xl text-[10px] sm:text-xs font-black border border-gray-100 dark:border-white/10">
     {icon} {text}
   </div>
 );
 
 const InfoBox = ({ label, value, icon }) => (
-  <div className="bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded-2xl sm:rounded-[28px] border border-gray-100 dark:border-gray-600">
-    <p className="text-[9px] sm:text-[10px] text-gray-400 font-black mb-1 uppercase tracking-tighter">{label}</p>
+  <div className="bg-gray-50 dark:bg-white/5 p-3 sm:p-4 rounded-2xl sm:rounded-[28px] border border-gray-100 dark:border-white/10">
+    <p className="text-[9px] sm:text-[10px] text-gray-400 dark:text-gray-500 font-black mb-1 uppercase tracking-tighter">{label}</p>
     <p className="text-[#302782] dark:text-white font-black text-sm sm:text-lg flex items-center gap-2 truncate">
       {icon} {value}
     </p>
@@ -217,8 +222,8 @@ const InfoBox = ({ label, value, icon }) => (
 
 const InfoDetail = ({ label, value }) => (
   <div>
-    <p className="text-[10px] text-gray-400 font-black uppercase">{label}</p>
-    <p className="text-xs sm:text-sm font-black text-[#302782]">{value}</p>
+    <p className="text-[10px] text-gray-400 dark:text-gray-500 font-black uppercase">{label}</p>
+    <p className="text-xs sm:text-sm font-black text-[#302782] dark:text-white">{value}</p>
   </div>
 );
 

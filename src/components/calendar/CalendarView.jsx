@@ -210,6 +210,13 @@ const CalendarView = ({
           border-color: #302782 !important;
         }
 
+        .dark .fc .fc-button-primary.fc-button-active,
+        .dark .fc .fc-button-primary.fc-button-active:hover {
+          background-color: #B2BB1E !important;
+          color: #FFFFFF !important;
+          border-color: #B2BB1E !important;
+        }
+
         .fc .fc-today-button { 
           background-color: #B2BB1E !important; 
           color: #FFFFFF !important; 

@@ -252,9 +252,6 @@ const Dashboard = () => {
       <footer className="mt-8 sm:mt-12 mb-24 md:mb-8 px-4 w-full max-w-7xl mx-auto">
         <div className="bg-[#FFFFFF] dark:bg-gray-800 rounded-[24px] sm:rounded-[30px] p-6 sm:p-8 border border-gray-100 dark:border-gray-700 shadow-sm">
           <div className="flex items-center gap-3 mb-6 text-[#302782] dark:text-white">
-            <div className="p-2 bg-gray-50 rounded-xl">
-              
-            </div>
             <h2 className="text-lg sm:text-xl font-bold">
               ระเบียบการให้บริการ
             </h2>
@@ -267,7 +264,7 @@ const Dashboard = () => {
                 text={
                   <>
                     ให้บริการ{" "}
-                    <span className="text-[#302782] font-bold">
+                    <span className="text-[#B2BB1E] font-bold">
                       จันทร์ – ศุกร์ (08.30 - 16.30 น.)
                     </span>
                   </>
@@ -278,7 +275,7 @@ const Dashboard = () => {
                 text={
                   <>
                     ทำรายการล่วงหน้าอย่างน้อย{" "}
-                    <span className="text-[#302782] font-bold underline">
+                    <span className="text-[#B2BB1E] font-bold underline">
                       3 วันทำการ
                     </span>
                   </>
@@ -300,12 +297,12 @@ const Dashboard = () => {
               <GuideItem
                 num="04"
                 text="ยกเลิกการจองล่วงหน้าอย่างน้อย 1 วัน"
-                color="bg-[#302782]"
+                color="bg-[#B2BB1E]"
               />
               <GuideItem
                 num="05"
                 text="สำหรับอาจารย์และเจ้าหน้าที่ คณะวิทยาศาสตร์ ศรีราชา"
-                color="bg-[#302782]"
+                color="bg-[#B2BB1E]"
               />
             </div>
           </div>
@@ -319,7 +316,7 @@ const Dashboard = () => {
 };
 
 // Helper Component เพื่อลดโค้ดซ้ำและจัดการสไตล์ทีเดียว
-const GuideItem = ({ num, text, color = "bg-[#302782]" }) => (
+const GuideItem = ({ num, text, color = "bg-[#B2BB1E]" }) => (
   <div className="flex gap-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium items-start">
     <span
       className={`flex-none w-5 h-5 sm:w-6 sm:h-6 ${color} text-[#FFFFFF] text-[9px] sm:text-[10px] font-bold rounded-full flex items-center justify-center mt-0.5`}

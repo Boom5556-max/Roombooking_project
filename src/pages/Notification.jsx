@@ -218,7 +218,7 @@ const Notification = () => {
                 title="รออนุมัติ"
                 icon={ClockIcon}
                 data={pendingRequests}
-                color="text-[#302782]"
+                color="text-[#302782] dark:text-white"
                 getFullName={getFullName}
                 onSelect={setSelectedBooking}
                 variant="pending"
@@ -255,7 +255,7 @@ const Notification = () => {
                     <SectionTitle
                       title="รออนุมัติ"
                       icon={ClockIcon}
-                      colorClass="text-[#302782]"
+                      colorClass="text-[#302782] dark:text-white"
                     />
                     {pendingRequests.length > 0 ? (
                       pendingRequests.map((req) => (

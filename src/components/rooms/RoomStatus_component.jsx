@@ -50,8 +50,8 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
   <div
     className={`rounded-[40px] p-6 sm:p-10 border-2 transition-all duration-500 shadow-[0_15px_45px_-15px_rgba(0,0,0,0.08)] ${
       !isAvailable
-        ? "bg-[#FFFFFF] border-red-100"
-        : "bg-[#FFFFFF] border-[#B2BB1E]/20"
+        ? "bg-[#FFFFFF] dark:bg-white/5 border-red-100 dark:border-white/10"
+        : "bg-[#FFFFFF] dark:bg-white/5 border-[#B2BB1E]/20 dark:border-white/10"
     } animate-in fade-in zoom-in-95 duration-500`}
   >
     <div className="flex justify-between items-start mb-8 sm:mb-12">
@@ -78,7 +78,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
       <div className="space-y-6 sm:space-y-8 animate-in slide-in-from-bottom-4 duration-700">
         {/* เวลา */}
         <div className="flex items-center gap-6">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#302782]/5 rounded-[28px] flex items-center justify-center text-[#302782] border border-[#302782]/5 flex-shrink-0">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#302782]/5 dark:bg-white/5 rounded-[28px] flex items-center justify-center text-[#302782] dark:text-white border border-[#302782]/5 dark:border-white/10 flex-shrink-0">
             <Clock size={32} strokeWidth={2.5} className="sm:w-10 sm:h-10" />
           </div>
           <div>
@@ -91,23 +91,23 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
 
         {/* ผู้จอง & จำนวนคน */}
         <div className="flex gap-3 sm:gap-6">
-          <div className="flex-[2] min-w-0 bg-gray-50/70 p-5 rounded-[28px] border border-gray-100 group transition-all">
+          <div className="flex-[2] min-w-0 bg-gray-50/70 dark:bg-white/5 p-5 rounded-[28px] border border-gray-100 dark:border-white/10 group transition-all">
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2.5">ผู้รับผิดชอบ</p>
             <div className="flex items-center gap-3">
-              <div className="p-1.5 bg-white rounded-lg shadow-sm">
+              <div className="p-1.5 bg-white dark:bg-white/10 rounded-lg shadow-sm">
                 <User size={16} className="text-[#B2BB1E]" />
               </div>
-              <p className="text-sm sm:text-lg font-black text-[#302782] truncate">
+              <p className="text-sm sm:text-lg font-black text-[#302782] dark:text-white truncate">
                 {item.full_name}
               </p>
             </div>
           </div>
 
-          <div className="flex-[1] min-w-0 bg-gray-50/70 p-5 rounded-[28px] border border-gray-100">
+          <div className="flex-[1] min-w-0 bg-gray-50/70 dark:bg-white/5 p-5 rounded-[28px] border border-gray-100 dark:border-white/10">
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2.5">จำนวนคน</p>
             <div className="flex items-center gap-3 justify-center sm:justify-start">
               <Users size={16} className="text-[#B2BB1E]" />
-              <p className="text-sm sm:text-lg font-black text-[#302782]">
+              <p className="text-sm sm:text-lg font-black text-[#302782] dark:text-white">
                 {item.student_count || capacity || 0}
               </p>
             </div>
@@ -127,7 +127,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
       </div>
     ) : (
       <div className="text-center py-12">
-        <div className="w-20 h-20 bg-[#B2BB1E]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 bg-[#B2BB1E]/10 dark:bg-[#B2BB1E]/5 rounded-full flex items-center justify-center mx-auto mb-6">
             <CalendarDays size={40} className="text-[#B2BB1E]" />
         </div>
         <p className="text-[#B2BB1E] text-3xl sm:text-4xl font-black mb-3 tracking-tighter italic">
@@ -143,13 +143,13 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
 
 // 4. ScheduleItem: รายการ Timeline ตารางเวลา
 export const ScheduleItem = ({ item, capacity }) => (
-  <div className="flex items-center gap-4 sm:gap-8 p-5 sm:p-7 bg-[#FFFFFF] rounded-[32px] border border-gray-100 transition-all hover:border-[#B2BB1E]/30 hover:shadow-[0_20px_40px_-20px_rgba(0,0,0,0.1)] group">
+  <div className="flex items-center gap-4 sm:gap-8 p-5 sm:p-7 bg-[#FFFFFF] dark:bg-white/5 rounded-[32px] border border-gray-100 dark:border-white/10 transition-all hover:border-[#B2BB1E]/30 dark:hover:border-[#B2BB1E]/50 hover:shadow-[0_20px_40px_-20px_rgba(0,0,0,0.1)] group">
     {/* Time Slot */}
-    <div className="flex flex-col items-center min-w-[85px] sm:min-w-[110px] border-r-2 border-dashed border-gray-100 pr-5 sm:pr-8">
-      <span className="text-lg sm:text-xl font-black text-[#302782]">
+    <div className="flex flex-col items-center min-w-[85px] sm:min-w-[110px] border-r-2 border-dashed border-gray-100 dark:border-white/10 pr-5 sm:pr-8">
+      <span className="text-lg sm:text-xl font-black text-[#302782] dark:text-white">
         {item.start_time}
       </span>
-      <div className="h-4 w-[2px] bg-gray-100 my-1 rounded-full" />
+      <div className="h-4 w-[2px] bg-gray-100 dark:bg-white/10 my-1 rounded-full" />
       <span className="text-sm sm:text-base font-bold text-gray-400">
         {item.end_time}
       </span>
@@ -157,27 +157,27 @@ export const ScheduleItem = ({ item, capacity }) => (
 
     {/* Booking Info */}
     <div className="flex-grow min-w-0">
-      <h4 className="text-base sm:text-xl font-black text-[#302782] mb-3 truncate group-hover:text-[#B2BB1E] transition-colors">
+      <h4 className="text-base sm:text-xl font-black text-[#302782] dark:text-white mb-3 truncate group-hover:text-[#B2BB1E] transition-colors">
         {item.purpose || "รายการจองทั่วไป"}
       </h4>
       
       <div className="flex flex-wrap items-center gap-y-2 gap-x-5">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-7 h-7 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="w-7 h-7 bg-gray-50 dark:bg-white/5 rounded-lg flex items-center justify-center flex-shrink-0">
             <User size={14} className="text-[#B2BB1E]" />
           </div>
-          <p className="text-xs sm:text-sm font-bold text-gray-500 truncate max-w-[150px] sm:max-w-none">
+          <p className="text-xs sm:text-sm font-bold text-gray-500 dark:text-gray-400 truncate max-w-[150px] sm:max-w-none">
             {item.full_name || `${item.first_name} ${item.last_name}`}
           </p>
         </div>
         
-        <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100/50">
-          <Users size={14} className="text-[#302782]" />
-          <span className="text-[10px] sm:text-xs font-black text-[#302782] uppercase">
+        <div className="flex items-center gap-2 bg-gray-50 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-gray-100/50 dark:border-white/10">
+          <Users size={14} className="text-[#302782] dark:text-[#B2BB1E]" />
+          <span className="text-[10px] sm:text-xs font-black text-[#302782] dark:text-white uppercase">
             {capacity || 0} Seats
           </span>
         </div>
       </div>
     </div>
   </div>
-);
+);
