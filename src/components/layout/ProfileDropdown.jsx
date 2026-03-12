@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { UserCircle, Mail, User, Shield, Edit3, Trash2, Check, AlertCircle } from 'lucide-react';
 import UserFormModal from '../user/UserFormModal';
 import ActionModal from '../common/ActionModal';
+import DeleteAccountModal from '../common/DeleteAccountModal';
 import api from '../../api/axios';
 
 const ProfileDropdown = ({ isMobile }) => {
@@ -13,6 +14,7 @@ const ProfileDropdown = ({ isMobile }) => {
   const dropdownRef = useRef(null);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [alertConfig, setAlertConfig] = useState({
     isOpen: false,
     title: "",
@@ -50,6 +52,7 @@ const ProfileDropdown = ({ isMobile }) => {
 
   // เพิ่ม title เป็นพารามิเตอร์ตัวแรก
   const showAlert = (
+    
     title, 
     icon,
     onConfirmAction = null,
@@ -128,43 +131,51 @@ const ProfileDropdown = ({ isMobile }) => {
 
   const handleDeleteAccount = () => {
     setIsOpen(false);
-    showAlert(
-      `คุณแน่ใจหรือไม่ที่จะลบบัญชีนี้?`,
-      <Trash2 size={50} className="text-red-500" />,
-      async () => {
-        try {
-          await api.patch(`/users/delete/${userData.user_id}`);
-          setAlertConfig((prev) => ({ ...prev, isOpen: false }));
-          
-          setTimeout(() => {
-             showAlert(
-               "ลบบัญชีสำเร็จ", 
-               <Check size={50} className="text-[#B2BB1E]" />,
-               () => {
-                 localStorage.removeItem("token");
-                 localStorage.removeItem("user");
-                 window.location.replace("/");
-               },
-               true, // showConfirm
-               true, // showButtons
-               false, // autoClose
-               "primary",
-               true
-             );
-          }, 150);
-        } catch (err) {
-          setAlertConfig((prev) => ({ ...prev, isOpen: false }));
-          setTimeout(() => {
-            showAlert("ลบไม่สำเร็จ", <AlertCircle size={50} className="text-red-500" />, null, null, null, true, "danger", false);
-          }, 150);
-        }
-      },
-      true, // showConfirm
-      true, // showButtons
-      false, // autoClose
-      "danger",
-      true
-    );
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDeleteFromModal = () => {
+    setIsDeleteModalOpen(false);
+    // Final confirmation via ActionModal
+    setTimeout(() => {
+      showAlert(
+        `เมื่อลบแล้วจะไม่สามารถกู้คืนได้\nคุณแน่ใจหรือไม่?`,
+        <Trash2 size={50} className="text-red-500" />,
+        async () => {
+          try {
+            await api.patch(`/users/delete/${userData.user_id}`);
+            setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+
+            setTimeout(() => {
+              showAlert(
+                "ลบบัญชีสำเร็จ",
+                <Check size={50} className="text-[#B2BB1E]" />,
+                () => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  window.location.replace("/");
+                },
+                true,
+                true,
+                false,
+                "primary",
+                true
+              );
+            }, 150);
+          } catch (err) {
+            setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+            setTimeout(() => {
+              showAlert("ลบไม่สำเร็จ", <AlertCircle size={50} className="text-red-500" />, null, null, null, true, "danger", false);
+            }, 150);
+          }
+        },
+        true,
+        true,
+        false,
+        "danger",
+        true
+      );
+    }, 150);
   };
 
   useEffect(() => {
@@ -298,6 +309,14 @@ const ProfileDropdown = ({ isMobile }) => {
           onClose={() => setIsEditModalOpen(false)}
           onSave={updateUser}
           showAlert={showAlert}
+        />
+      )}
+
+      {isDeleteModalOpen && (
+        <DeleteAccountModal
+          userData={userData}
+          onConfirmDelete={handleConfirmDeleteFromModal}
+          onClose={() => setIsDeleteModalOpen(false)}
         />
       )}
 
