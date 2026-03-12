@@ -5,23 +5,23 @@ import { Clock, CheckCircle2, XCircle, ChevronRight, Hash } from "lucide-react";
 export const BookingCard = ({ req, variant, onClick, getFullName }) => {
   const styles = {
     pending: {
-      borderColor: "border-gray-100",
-      statusColor: "text-[#302782]",
-      bgColor: "bg-[#302782]/5",
+      borderColor: "border-gray-100 dark:border-gray-600",
+      statusColor: "text-[#302782] dark:text-[#B2BB1E]",
+      bgColor: "bg-[#302782]/5 dark:bg-[#302782]/20",
       Icon: Clock,
       label: "รออนุมัติ"
     },
     approved: {
-      borderColor: "border-[#B2BB1E]/20",
+      borderColor: "border-[#B2BB1E]/20 dark:border-[#B2BB1E]/40",
       statusColor: "text-[#B2BB1E]",
-      bgColor: "bg-[#B2BB1E]/5",
+      bgColor: "bg-[#B2BB1E]/5 dark:bg-[#B2BB1E]/10",
       Icon: CheckCircle2,
       label: "อนุมัติแล้ว"
     },
     rejected: {
-      borderColor: "border-gray-100",
-      statusColor: "text-gray-400",
-      bgColor: "bg-gray-100",
+      borderColor: "border-gray-100 dark:border-gray-600",
+      statusColor: "text-gray-400 dark:text-gray-400",
+      bgColor: "bg-gray-100 dark:bg-gray-700/50",
       Icon: XCircle,
       label: "ยกเลิกแล้ว"
     },
@@ -32,7 +32,7 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
   return (
     <div
       onClick={() => onClick(req)}
-      className={`group p-4 sm:p-5 rounded-[24px] sm:rounded-[32px] bg-[#FFFFFF] border ${borderColor} flex items-center gap-4 transition-all cursor-pointer mb-3 sm:mb-4 shadow-[0_4px_12px_-6px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.1)] active:scale-[0.98] w-full overflow-hidden`}
+      className={`group p-4 sm:p-5 rounded-[24px] sm:rounded-[32px] bg-[#FFFFFF] dark:bg-gray-700 border ${borderColor} flex items-center gap-4 transition-all cursor-pointer mb-3 sm:mb-4 shadow-[0_4px_12px_-6px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.1)] active:scale-[0.98] w-full overflow-hidden`}
     >
       {/* Icon Area: แสดงสถานะด้วยสีพื้นหลังอ่อนๆ */}
       <div className={`w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 flex items-center justify-center rounded-2xl ${bgColor} ${statusColor} transition-transform group-hover:scale-110`}>
@@ -42,7 +42,7 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
       {/* Content Area: การจัดการตัวหนังสือ */}
       <div className="flex-grow min-w-0">
         <div className="flex items-center justify-between mb-0.5 sm:mb-1">
-          <h3 className="font-black text-base sm:text-lg text-[#302782] truncate flex items-center gap-2">
+          <h3 className="font-black text-base sm:text-lg text-[#302782] dark:text-white truncate flex items-center gap-2">
             <span className="text-gray-300"></span>{req.room_id || "---"}
           </h3>
           
@@ -64,7 +64,7 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
       </div>
       
       {/* Arrow Icon: จางๆ แต่จะชัดขึ้นเมื่อ Hover */}
-      <div className="hidden sm:flex w-10 h-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-50 text-gray-300 group-hover:text-[#302782] group-hover:bg-gray-100 transition-all">
+      <div className="hidden sm:flex w-10 h-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-600 text-gray-300 group-hover:text-[#302782] dark:group-hover:text-[#B2BB1E] group-hover:bg-gray-100 dark:group-hover:bg-gray-500 transition-all">
         <ChevronRight size={20} strokeWidth={3} />
       </div>
     </div>
@@ -75,28 +75,28 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
 export const SectionTitle = ({ title, icon: Icon, colorClass }) => (
   <div className="flex items-center gap-3 mt-10 mb-6 px-1">
     {Icon && (
-      <div className={`p-2 rounded-xl bg-white shadow-sm border border-gray-50 ${colorClass || "text-[#302782]"}`}>
+      <div className={`p-2 rounded-xl bg-white dark:bg-gray-700 shadow-sm border border-gray-50 dark:border-gray-600 ${colorClass || "text-[#302782]"}`}>
         <Icon size={20} strokeWidth={2.5} />
       </div>
     )}
     <h2 className={`text-xl font-black tracking-tight ${colorClass || "text-[#302782]"}`}>
       {title}
     </h2>
-    <div className="flex-grow h-[1px] bg-gradient-to-r from-gray-100 to-transparent ml-2" />
+    <div className="flex-grow h-[1px] bg-gradient-to-r from-gray-100 dark:from-gray-600 to-transparent ml-2" />
   </div>
 );
 
 // 3. DetailItem: รายการข้อมูลใน Modal
 export const DetailItem = ({ icon: Icon, label, value }) => (
-  <div className="flex items-center gap-4 p-4 bg-[#FFFFFF] rounded-[20px] border border-gray-50 shadow-sm transition-all hover:border-[#B2BB1E]/30">
-    <div className="text-[#302782] bg-gray-50 p-2.5 rounded-xl flex-shrink-0">
+  <div className="flex items-center gap-4 p-4 bg-[#FFFFFF] dark:bg-gray-700 rounded-[20px] border border-gray-50 dark:border-gray-600 shadow-sm transition-all hover:border-[#B2BB1E]/30">
+    <div className="text-[#302782] dark:text-[#B2BB1E] bg-gray-50 dark:bg-gray-600 p-2.5 rounded-xl flex-shrink-0">
       <Icon size={20} strokeWidth={2.5} />
     </div>
     <div className="min-w-0">
       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">
         {label}
       </p>
-      <p className="text-sm sm:text-base font-bold text-[#302782] leading-tight truncate">
+      <p className="text-sm sm:text-base font-bold text-[#302782] dark:text-white leading-tight truncate">
         {value || "-"}
       </p>
     </div>
@@ -115,7 +115,7 @@ export const EditField = ({ label, value, onChange, type = "text", icon: Icon })
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-50 bg-gray-50/50 outline-none focus:bg-white focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 text-base font-bold text-[#302782] transition-all placeholder:text-gray-300`}
+        className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 text-base font-bold text-[#302782] dark:text-white transition-all placeholder:text-gray-300`}
       />
     </div>
   </div>

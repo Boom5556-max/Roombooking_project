@@ -12,16 +12,16 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[3000] flex items-center justify-center bg-[#302782]/20 backdrop-blur-md p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[3000] flex items-center justify-center bg-[#302782]/20 dark:bg-black/40 backdrop-blur-md p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-[28px] w-full max-w-md shadow-2xl border border-gray-100 overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-gray-800 rounded-[28px] w-full max-w-md shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4">
-          <h2 className="text-xl font-black text-[#302782]">ลบบัญชีผู้ใช้</h2>
+          <h2 className="text-xl font-black text-[#302782] dark:text-white">ลบบัญชีผู้ใช้</h2>
           <button
             onClick={onClose}
             className="w-9 h-9 flex items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all"
@@ -31,7 +31,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
         </div>
 
         {/* Warning Section */}
-        <div className="mx-6 mb-5 p-4 bg-red-50 border border-red-200 rounded-2xl">
+        <div className="mx-6 mb-5 p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-2xl">
           <div className="flex items-start gap-3">
             <div className="shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
               <AlertTriangle size={20} className="text-red-500" />
@@ -58,9 +58,9 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
 
         {/* Confirmation Input Section */}
         <div className="px-6 pb-6">
-          <label className="block text-sm font-bold text-gray-600 mb-2">
+          <label className="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
             พิมพ์{" "}
-            <span className="font-black text-[#302782] bg-[#302782]/5 px-2 py-0.5 rounded-lg text-xs tracking-wide select-all">
+            <span className="font-black text-[#302782] dark:text-[#B2BB1E] bg-[#302782]/5 dark:bg-[#B2BB1E]/10 px-2 py-0.5 rounded-lg text-xs tracking-wide select-all">
               {confirmText}
             </span>{" "}
             เพื่อยืนยัน
@@ -70,7 +70,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={confirmText}
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-sm font-medium text-gray-700 placeholder:text-gray-300 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-500 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 dark:focus:ring-red-500/20 transition-all"
             autoFocus
           />
 

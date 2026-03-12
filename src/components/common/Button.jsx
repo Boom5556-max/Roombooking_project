@@ -26,10 +26,10 @@ const Button = ({
     secondary: "bg-[#302782] text-[#FFFFFF] shadow-[0_8px_20px_-8px_rgba(48,39,130,0.4)] hover:shadow-[0_12px_24px_-10px_rgba(48,39,130,0.5)]",
     
     // ปุ่มขอบขาว (Outline-like)
-    danger: "bg-[#FFFFFF] text-gray-500 border border-gray-200 shadow-sm hover:border-[#302782] hover:text-[#302782]",
+    danger: "bg-[#FFFFFF] dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600 shadow-sm hover:border-[#302782] hover:text-[#302782] dark:hover:text-white",
     
     // ปุ่มพื้นเทาอ่อน
-    dangerLight: "bg-gray-50 text-gray-500 border border-transparent hover:bg-gray-100",
+    dangerLight: "bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-transparent hover:bg-gray-100 dark:hover:bg-gray-600",
     
     // ปุ่ม Ghost (มักใช้กับปุ่มปิดหรือเมนูย่อย)
     ghost: "bg-transparent hover:bg-gray-50 text-gray-400 hover:text-[#302782]",

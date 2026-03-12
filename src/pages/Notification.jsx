@@ -181,23 +181,23 @@ const Notification = () => {
 };
 
   return (
-    <div className="fixed inset-0 bg-[#302782] flex flex-col font-sans overflow-hidden">
+    <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
       <Navbar />
 
       {/* Tabs สำหรับ User Role: Teacher */}
       {userRole === "teacher" && (
-        <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-4 bg-[#302782]">
+        <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-4 bg-[#302782] dark:bg-gray-950">
           {/* ✅ ปรับความกว้างของ Tabs ให้สอดคล้องกับเนื้อหาด้านล่าง */}
           <div className="flex gap-3 w-full max-w-7xl mx-auto">
             <button
               onClick={() => setActiveTab("current")}
-              className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "current" ? "bg-white text-[#302782] shadow-lg" : "bg-white/10 text-white hover:bg-white/20"}`}
+              className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "current" ? "bg-white dark:bg-gray-800 text-[#302782] dark:text-white shadow-lg" : "bg-white/10 text-white hover:bg-white/20"}`}
             >
               การจองของฉัน
             </button>
             <button
               onClick={() => setActiveTab("history")}
-              className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "history" ? "bg-white text-[#302782] shadow-lg" : "bg-white/10 text-white hover:bg-white/20"}`}
+              className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "history" ? "bg-white dark:bg-gray-800 text-[#302782] dark:text-white shadow-lg" : "bg-white/10 text-white hover:bg-white/20"}`}
             >
               ประวัติการจอง
             </button>
@@ -207,7 +207,7 @@ const Notification = () => {
 
       {/* Main Content Area */}
       <div
-        className={`flex-grow overflow-y-auto bg-white p-4 sm:p-8 lg:px-12 xl:px-16 shadow-inner transition-all duration-500 
+        className={`flex-grow overflow-y-auto bg-white dark:bg-gray-800 p-4 sm:p-8 lg:px-12 xl:px-16 shadow-inner transition-all duration-500 
         ${userRole === "staff" ? "rounded-t-[40px] sm:rounded-t-[50px] mt-4" : "rounded-b-none sm:rounded-b-[50px]"}`}
       >
         {/* ✅ เปลี่ยนจาก max-w-4xl เป็น max-w-7xl เพื่อให้หน้าจอโน้ตบุ๊กแสดงผลได้กว้างขึ้น */}
@@ -360,7 +360,7 @@ const Notification = () => {
 
 // Component เสริมสำหรับแสดงเมื่อไม่มีข้อมูล
 const EmptyState = () => (
-  <p className="text-gray-400 text-sm text-center py-8 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+  <p className="text-gray-400 text-sm text-center py-8 bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-600">
     ไม่มีรายการในขณะนี้
   </p>
 );

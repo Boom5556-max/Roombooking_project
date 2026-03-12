@@ -21,12 +21,12 @@ const QRScanner = () => {
   } = useQRScannerLogic(activeTab, showAlert); // ส่ง showAlert ไปให้ Hook ใช้ด้วย
   
   return (
-    <div className="fixed inset-0 bg-[#302782] flex flex-col font-sans overflow-hidden">
+    <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
       <Navbar />
       
-      <div className="flex-grow bg-[#FFFFFF] rounded-t-[40px] sm:rounded-t-[50px] p-4 sm:p-8 flex flex-col items-center shadow-2xl relative transition-all duration-500">
+      <div className="flex-grow bg-[#FFFFFF] dark:bg-gray-800 rounded-t-[40px] sm:rounded-t-[50px] p-4 sm:p-8 flex flex-col items-center shadow-2xl relative transition-all duration-500">
         
-        <div className="flex bg-gray-100 p-1 rounded-2xl mb-6 sm:mb-10 w-full max-w-[300px] shadow-sm">
+        <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-2xl mb-6 sm:mb-10 w-full max-w-[300px] shadow-sm">
           <TabButton 
             active={activeTab === "camera"} 
             onClick={() => { setActiveTab("camera"); setScanResult(""); }}
@@ -43,7 +43,7 @@ const QRScanner = () => {
 
         <div className="w-full flex flex-col items-center justify-center flex-grow">
           <div className="w-full max-w-[280px] xs:max-w-[320px] sm:max-w-sm">
-            <div className="relative w-full aspect-square bg-black rounded-[40px] sm:rounded-[50px] overflow-hidden shadow-2xl border-[4px] sm:border-[6px] border-[#FFFFFF]">
+            <div className="relative w-full aspect-square bg-black rounded-[40px] sm:rounded-[50px] overflow-hidden shadow-2xl border-[4px] sm:border-[6px] border-[#FFFFFF] dark:border-gray-600">
               
               {activeTab === "camera" ? (
                 <div className="w-full h-full relative">
@@ -113,12 +113,12 @@ const TabButton = ({ active, onClick, icon, label }) => (
 );
 
 const GalleryUpload = ({ onFileChange, disabled }) => (
-  <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors group">
+  <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors group">
     <div className="bg-[#B2BB1E]/10 group-hover:bg-[#B2BB1E]/20 p-6 sm:p-8 rounded-full mb-4 transition-all transform group-active:scale-95">
       <ImageIcon size={48} className="text-[#302782] sm:w-[56px] sm:h-[56px]" />
     </div>
     <div className="text-center px-4">
-      <p className="text-[#302782] font-bold text-sm sm:text-base">อัปโหลดรูปภาพ</p>
+      <p className="text-[#302782] dark:text-white font-bold text-sm sm:text-base">อัปโหลดรูปภาพ</p>
       <p className="text-gray-400 text-[10px] sm:text-xs mt-1">รองรับ JPG, PNG</p>
     </div>
     <input 

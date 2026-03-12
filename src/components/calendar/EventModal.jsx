@@ -9,19 +9,19 @@ const EventModal = ({ event, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#302782]/30 backdrop-blur-md font-sans transition-all"
+      className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#302782]/30 dark:bg-black/40 backdrop-blur-md font-sans transition-all"
       onClick={onClose}
     >
       <div
-        className="bg-[#FFFFFF] w-full sm:max-w-sm rounded-t-[40px] sm:rounded-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.2)] overflow-hidden border-t sm:border border-white animate-in slide-in-from-bottom duration-300"
+        className="bg-[#FFFFFF] dark:bg-gray-800 w-full sm:max-w-sm rounded-t-[40px] sm:rounded-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.2)] overflow-hidden border-t sm:border border-white dark:border-gray-700 animate-in slide-in-from-bottom duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Mobile Handle Bar (แถบเล็กๆ ด้านบนให้ความรู้สึกเหมือนแอป iOS/Android) */}
-        <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-2 sm:hidden" />
+        <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mt-4 mb-2 sm:hidden" />
 
         {/* Header */}
-        <div className="px-6 sm:px-8 pt-4 sm:pt-8 pb-4 flex justify-between items-center border-b border-gray-50">
-          <h3 className="font-bold text-lg sm:text-xl text-[#302782] flex items-center gap-3">
+        <div className="px-6 sm:px-8 pt-4 sm:pt-8 pb-4 flex justify-between items-center border-b border-gray-50 dark:border-gray-700">
+          <h3 className="font-bold text-lg sm:text-xl text-[#302782] dark:text-white flex items-center gap-3">
             <div className="p-2 bg-[#B2BB1E]/10 rounded-xl">
                <Info size={22} className="text-[#B2BB1E]" />
             </div>
@@ -29,7 +29,7 @@ const EventModal = ({ event, onClose }) => {
           </h3>
           <button
             onClick={onClose}
-            className="p-2.5 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-400 transition-colors active:scale-90"
+            className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 transition-colors active:scale-90"
           >
             <X size={20} />
           </button>
@@ -41,7 +41,7 @@ const EventModal = ({ event, onClose }) => {
             <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
               วิชา / วัตถุประสงค์
             </p>
-            <h4 className="text-[#302782] font-extrabold text-xl sm:text-2xl leading-tight">
+            <h4 className="text-[#302782] dark:text-white font-extrabold text-xl sm:text-2xl leading-tight">
               {title}
             </h4>
           </div>
@@ -62,12 +62,12 @@ const EventModal = ({ event, onClose }) => {
             />
 
             <div className="flex items-start gap-4 group">
-              <div className="bg-gray-50 p-3.5 rounded-2xl text-[#302782] border border-gray-100 shrink-0 group-hover:bg-[#302782] group-hover:text-white transition-colors">
+              <div className="bg-gray-50 dark:bg-gray-700 p-3.5 rounded-2xl text-[#302782] dark:text-white border border-gray-100 dark:border-gray-600 shrink-0 group-hover:bg-[#302782] group-hover:text-white transition-colors">
                 <Clock size={20} />
               </div>
               <div className="pt-0.5">
                 <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-1">วันและเวลา</p>
-                <p className="text-sm sm:text-base font-bold text-[#302782]">
+                <p className="text-sm sm:text-base font-bold text-[#302782] dark:text-white">
                   {props.fullDate || "ไม่ระบุวันที่"}
                 </p>
                 <div className="inline-block bg-[#B2BB1E]/10 px-3 py-1 rounded-lg mt-2">
@@ -93,7 +93,7 @@ const EventModal = ({ event, onClose }) => {
         </div>
 
         {/* Footer Button (เฉพาะมือถือจะแสดงเด่นขึ้น) */}
-        <div className="p-6 bg-gray-50/50 sm:hidden">
+        <div className="p-6 bg-gray-50/50 dark:bg-gray-700/50 sm:hidden">
             <button 
                 onClick={onClose}
                 className="w-full bg-[#302782] text-white font-bold py-4 rounded-2xl shadow-lg active:scale-[0.98] transition-all"
@@ -126,12 +126,12 @@ const EventModal = ({ event, onClose }) => {
 // Helper Component สำหรับแสดงแถวข้อมูล
 const InfoRow = ({ icon, label, value, color = "text-[#302782]" }) => (
     <div className="flex items-start gap-4 group">
-      <div className={`bg-gray-50 p-3.5 rounded-2xl ${color} border border-gray-100 shrink-0 group-hover:scale-110 transition-transform`}>
+      <div className={`bg-gray-50 dark:bg-gray-700 p-3.5 rounded-2xl ${color} border border-gray-100 dark:border-gray-600 shrink-0 group-hover:scale-110 transition-transform`}>
         {icon}
       </div>
       <div className="pt-0.5">
         <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-1">{label}</p>
-        <p className={`text-sm sm:text-base font-bold ${color === 'text-[#B2BB1E]' ? 'text-[#302782]' : color}`}>
+        <p className={`text-sm sm:text-base font-bold ${color === 'text-[#B2BB1E]' ? 'text-[#302782] dark:text-white' : color}`}>
           {value}
         </p>
       </div>

@@ -40,8 +40,8 @@ const QrFirstpage = () => {
   } = useQRScannerLogic(activeTab, showAlert); // 3. ส่ง showAlert เข้า Hook
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
-      <header className="bg-[#302782] text-white pt-12 pb-16 px-6 rounded-b-[40px] shadow-lg flex flex-col items-center justify-center relative z-10">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-sans">
+      <header className="bg-[#302782] dark:bg-gray-950 text-white pt-12 pb-16 px-6 rounded-b-[40px] shadow-lg flex flex-col items-center justify-center relative z-10">
         <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-3 backdrop-blur-sm shadow-inner">
           <QrCode size={32} className="text-white" />
         </div>
@@ -52,7 +52,7 @@ const QrFirstpage = () => {
       </header>
 
       <main className="flex-1 flex flex-col items-center p-6 -mt-8 relative z-20">
-        <div className="bg-white w-full max-w-sm rounded-[40px] p-6 shadow-xl border border-gray-100 flex flex-col items-center">
+        <div className="bg-white dark:bg-gray-800 w-full max-w-sm rounded-[40px] p-6 shadow-xl border border-gray-100 dark:border-gray-700 flex flex-col items-center">
           <div className="flex bg-gray-50 p-1.5 rounded-2xl mb-6 w-full border border-gray-100">
             <TabButton
               active={activeTab === "camera"}

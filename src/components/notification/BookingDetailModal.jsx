@@ -61,26 +61,26 @@ const BookingDetailModal = ({
 
   return (
     <div 
-      className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center bg-[#302782]/30 backdrop-blur-md p-0 sm:p-4"
+      className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center bg-[#302782]/30 dark:bg-black/40 backdrop-blur-md p-0 sm:p-4"
       onClick={onClose}
     >
       <div 
-        className="bg-[#FFFFFF] w-full max-w-lg rounded-t-[40px] sm:rounded-[32px] p-6 sm:p-8 flex flex-col shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300 max-h-[95vh] overflow-hidden"
+        className="bg-[#FFFFFF] dark:bg-gray-800 w-full max-w-lg rounded-t-[40px] sm:rounded-[32px] p-6 sm:p-8 flex flex-col shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300 max-h-[95vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Handle bar สำหรับ Mobile */}
-        <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 sm:hidden" />
+        <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-6 sm:hidden" />
 
         {/* Header */}
         <div className="flex justify-between items-center mb-6 flex-shrink-0">
           <div>
-            <h3 className="text-2xl font-black text-[#302782]">
+            <h3 className="text-2xl font-black text-[#302782] dark:text-white">
               {isEditing ? "แก้ไขข้อมูลจอง" : `ห้อง ${booking.room_id}`}
             </h3>
           </div>
           <button 
             onClick={onClose} 
-            className="p-3 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-400 transition-all active:scale-90"
+            className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 transition-all active:scale-90"
           >
             <X size={20}/>
           </button>
@@ -98,12 +98,12 @@ const BookingDetailModal = ({
               </div>
             </div>
           ) : (
-            <div className="bg-gray-50/50 rounded-[24px] p-5 sm:p-6 space-y-4 border border-gray-100">
+            <div className="bg-gray-50/50 dark:bg-gray-700/50 rounded-[24px] p-5 sm:p-6 space-y-4 border border-gray-100 dark:border-gray-600">
               <DetailItem icon={User} label="ผู้ขอใช้งาน" value={getFullName(booking)} />
-              <div className="h-px bg-gray-100 w-full" />
+              <div className="h-px bg-gray-100 dark:bg-gray-700 w-full" />
               <DetailItem icon={Calendar} label="วันที่จอง" value={formatDateForDisplay(booking.date)} />
               <DetailItem icon={Timer} label="ช่วงเวลา" value={`${booking.start_time?.slice(0,5)} - ${booking.end_time?.slice(0,5)} น.`} />
-              <div className="h-px bg-gray-100 w-full" />
+              <div className="h-px bg-gray-100 dark:bg-gray-700 w-full" />
               <DetailItem icon={MessageSquare} label="วัตถุประสงค์" value={booking.purpose} />
             </div>
           )}
@@ -111,7 +111,7 @@ const BookingDetailModal = ({
 
         {/* Action Section */}
         {!booking.isHistory && (
-          <div className="pt-6 sm:pt-8 border-t border-gray-100 flex-shrink-0 mt-4">
+          <div className="pt-6 sm:pt-8 border-t border-gray-100 dark:border-gray-700 flex-shrink-0 mt-4">
             {isEditing ? (
               <div className="flex gap-3">
                 <Button 

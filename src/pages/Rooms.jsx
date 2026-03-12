@@ -117,7 +117,7 @@ const Rooms = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-sans">
       <Navbar />
 
       <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-7xl mx-auto w-full">
@@ -132,7 +132,7 @@ const Rooms = () => {
             >
               <ChevronLeft size={32} />
             </Button>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#302782]">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#302782] dark:text-white">
               ห้องเรียน
             </h1>
           </div>
@@ -163,7 +163,7 @@ const Rooms = () => {
                 <div
                   key={room.room_id}
                   // จุดที่ 1: เติม pb-16 (เว้นระยะด้านล่าง) เข้าไปที่ท้ายสุดของ className ครับ
-                  className="relative group bg-white rounded-[35px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 pb-16 hover:border-[#B2BB1E] hover:ring-2 hover:ring-[#B2BB1E]"
+                  className="relative group bg-white dark:bg-gray-800 rounded-[35px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 pb-16 hover:border-[#B2BB1E] hover:ring-2 hover:ring-[#B2BB1E]"
                 >
                   <RoomCard room={room} />
 
@@ -173,7 +173,7 @@ const Rooms = () => {
                     <div className="absolute bottom-3 left-5 flex gap-2 z-10">
                       <button
                         onClick={() => openModal(room)}
-                        className="p-3 rounded-2xl text-gray-400 hover:text-[#302782] hover:bg-gray-100 transition-all duration-200"
+                        className="p-3 rounded-2xl text-gray-400 hover:text-[#302782] hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
                         title="แก้ไข"
                       >
                         <Edit3 size={24} />
@@ -181,7 +181,7 @@ const Rooms = () => {
 
                       <button
                         onClick={() => handleDelete(room.room_id)}
-                        className="p-3 rounded-2xl text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
+                        className="p-3 rounded-2xl text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-200"
                         title="ลบ"
                       >
                         <Trash2 size={24} />
@@ -191,7 +191,7 @@ const Rooms = () => {
                 </div>
               ))
             ) : (
-              <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white rounded-[40px] border-2 border-dashed border-gray-200">
+              <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-[40px] border-2 border-dashed border-gray-200 dark:border-gray-700">
                 <AlertCircle size={48} className="text-gray-300 mb-4" />
                 <p className="text-gray-400 font-bold">
                   ไม่พบข้อมูลห้องตามที่ท่านต้องการ

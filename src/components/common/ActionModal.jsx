@@ -28,18 +28,18 @@ const ActionModal = ({
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[3000] flex items-center justify-center bg-[#302782]/20 backdrop-blur-md p-4 animate-in fade-in duration-200" 
+      className="fixed inset-0 z-[3000] flex items-center justify-center bg-[#302782]/20 dark:bg-black/40 backdrop-blur-md p-4 animate-in fade-in duration-200" 
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-[40px] p-8 w-full max-w-sm shadow-xl text-center border border-white" 
+        className="bg-white dark:bg-gray-800 rounded-[40px] p-8 w-full max-w-sm shadow-xl text-center border border-white dark:border-gray-700" 
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={`mx-auto mb-6 flex items-center justify-center w-24 h-24 rounded-full ${showBg ? (variant === "danger" ? "bg-red-50 text-red-500" : "bg-gray-50 text-[#302782]") : "text-[#302782]"}`}>
+        <div className={`mx-auto mb-6 flex items-center justify-center w-24 h-24 rounded-full ${showBg ? (variant === "danger" ? "bg-red-50 dark:bg-red-500/10 text-red-500" : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E]") : "text-[#302782] dark:text-[#B2BB1E]"}`}>
           {icon}
         </div>
         
-        <h3 className="text-2xl font-black text-[#302782] mb-8 leading-tight">
+        <h3 className="text-2xl font-black text-[#302782] dark:text-white mb-8 leading-tight">
           {title}
         </h3>
 
@@ -49,7 +49,7 @@ const ActionModal = ({
             {showCloseButton && (
               <button 
                 onClick={onClose} 
-                className="h-[72px] w-full max-w-[200px] flex items-center justify-center bg-gray-50 text-gray-400 rounded-[24px] hover:bg-gray-100 active:scale-95 transition-all"
+                className="h-[72px] w-full max-w-[200px] flex items-center justify-center bg-gray-50 dark:bg-gray-700 text-gray-400 dark:text-gray-300 rounded-[24px] hover:bg-gray-100 dark:hover:bg-gray-600 active:scale-95 transition-all"
               >
                 <X size={32} />
               </button>

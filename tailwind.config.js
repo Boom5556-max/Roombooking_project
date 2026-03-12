@@ -1,11 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}", // ต้องระบุแบบนี้เพื่อให้ครอบคลุมโฟลเดอร์ pages ที่คุณสร้างไว้
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {},
   },
   plugins: [],
-}
+}
