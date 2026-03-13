@@ -6,15 +6,13 @@ import {
   Trash2,
   UserCog,
   Mail,
-  Check,
-  AlertCircle,
+  SearchX,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUsers } from "../hooks/useUsers";
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
 import UserFormModal from "../components/user/UserFormModal.jsx";
-import ActionModal from "../components/common/ActionModal";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -22,15 +20,12 @@ const Users = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
 
-  const [alertConfig, setAlertConfig] = useState({
+  // 1. เปลี่ยน State ของ Alert ให้เรียบง่ายขึ้น เก็บแค่ข้อความพอ
+  const [simpleAlert, setSimpleAlert] = useState({
     isOpen: false,
-    title: "",
-    icon: null,
+    message: "",
+    isConfirm: false,
     onConfirm: null,
-    showConfirm: true,
-    singleButton: false,
-    variant: "primary",
-    showBg: true,
   });
 
   const openModal = (user = null) => {
@@ -38,71 +33,34 @@ const Users = () => {
     setIsModalOpen(true);
   };
 
-  const showAlert = (
-    title,
-    icon,
-    onConfirmAction = null,
-    showConfirm = true,
-    singleButton = false,
-    variant = "primary",
-    showBg = true,
-  ) => {
-    setAlertConfig({
+  // 2. ปรับ Function showAlert ใหม่ ให้รับค่าแค่ข้อความและฟังก์ชันยืนยัน
+  // (พารามิเตอร์อื่นๆ ที่ส่งมาจากหน้า UserFormModal จะถูกละเว้นอัตโนมัติ)
+  const showAlert = (title, icon, onConfirmAction = null) => {
+    setSimpleAlert({
       isOpen: true,
-      title,
-      icon,
-      showConfirm,
-      singleButton,
-      variant,
-      showBg,
-      onConfirm: () => {
-        // 1. สั่งปิดทันทีเพื่อให้ UI หายไป
-        setAlertConfig((prev) => ({ ...prev, isOpen: false }));
-
-        // 2. ถ้ามีการกดตกลง ให้รันคำสั่งที่ส่งมา
-        if (onConfirmAction) {
-          onConfirmAction();
-        }
-      },
+      message: title,
+      isConfirm: !!onConfirmAction, // ถ้ามี onConfirmAction แปลว่าเป็น Popup ยืนยัน (เช่น ลบ)
+      onConfirm: onConfirmAction,
     });
+
+    // ถ้าเป็นแค่แจ้งเตือนเฉยๆ (ไม่มีปุ่มยืนยัน) ให้ปิดเองอัตโนมัติใน 2 วินาที
+    if (!onConfirmAction) {
+      setTimeout(() => {
+        setSimpleAlert((prev) => ({ ...prev, isOpen: false }));
+      }, 2000);
+    }
   };
 
+  // 3. ปรับฟังก์ชันการลบให้ใช้ showAlert แบบใหม่
   const handleDelete = async (userId) => {
-    showAlert(
-      `คุณแน่ใจหรือไม่ที่จะลบผู้ใช้รายนี้?`,
-      <Trash2 size={50} className="text-red-500" />,
-      async () => {
-        const result = await deleteUser(userId);
-        setAlertConfig((prev) => ({ ...prev, isOpen: false }));
-        setTimeout(() => {
-          if (!result.success) {
-            showAlert(
-              "ลบไม่สำเร็จ: " + (result.message || "เกิดข้อผิดพลาด"),
-              null,
-              null,
-              false,
-              true,
-              "danger",
-              false,
-            );
-          } else {
-            showAlert(
-              "ลบผู้ใช้งานสำเร็จ", // title
-              <Check size={40} />, // icon
-              null, // onConfirm
-              null, // showConfirm
-              false, // singleButton (ถ้ามี 2 ปุ่ม ให้เป็น false)
-              "primary", // variant
-              true, // showBg (ต้อง true ถึงจะมีวงกลมรองหลัง)
-            );
-          }
-        }, 150);
-      },
-      true,
-      false,
-      "danger",
-      true,
-    );
+    showAlert("คุณแน่ใจหรือไม่ที่จะลบผู้ใช้รายนี้?", null, async () => {
+      const result = await deleteUser(userId);
+      if (!result.success) {
+        showAlert("ลบไม่สำเร็จ: " + (result.message || "เกิดข้อผิดพลาด"));
+      } else {
+        showAlert("ลบผู้ใช้งานสำเร็จ");
+      }
+    });
   };
 
   return (
@@ -152,7 +110,6 @@ const Users = () => {
                     className="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-[30px] sm:rounded-[35px] shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group"
                   >
                     <div className="flex items-center gap-4 sm:gap-5 w-full">
-                      {/* User Icon - ซ่อนในมือถือขนาดเล็กมากถ้าต้องการประหยัดพื้นที่ */}
                       <div className="shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-gray-50 dark:bg-gray-700 rounded-2xl sm:rounded-[24px] flex items-center justify-center text-[#302782] dark:text-[#B2BB1E] border border-gray-100 dark:border-gray-600">
                         <UserCog size={28} className="sm:w-8 sm:h-8" />
                       </div>
@@ -180,7 +137,6 @@ const Users = () => {
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50 dark:border-gray-700 mt-1 sm:mt-0">
                       <button
                         onClick={() => openModal(u)}
@@ -212,29 +168,50 @@ const Users = () => {
         </div>
       </div>
 
-      {/* Modals remain the same but ensure they are responsive inside their own components */}
       {isModalOpen && (
         <UserFormModal
           user={editingUser}
           onClose={() => setIsModalOpen(false)}
           onSave={editingUser ? updateUser : addUser}
-          showAlert={showAlert}
+          showAlert={showAlert} // ส่งฟังก์ชัน showAlert ใหม่เข้าไป
         />
       )}
 
-      {alertConfig.isOpen && (
-        <ActionModal
-          icon={alertConfig.icon}
-          title={alertConfig.title}
-          // Logic: ถ้าเป็นการแจ้งเตือนเฉยๆ ให้ซ่อนปุ่ม
-          // แต่ถ้าเป็นการยืนยัน ให้คงค่าเดิมไว้
-          showButtons={alertConfig.showConfirm !== null}
-          autoClose={alertConfig.showConfirm === null} // ปิดเองถ้าไม่มีปุ่มยืนยัน
-          variant={alertConfig.variant}
-          showBg={alertConfig.showBg}
-          onClose={() => setAlertConfig((prev) => ({ ...prev, isOpen: false }))}
-          onConfirm={alertConfig.onConfirm}
-        />
+      {/* 4. กล่อง Alert แจ้งเตือนแบบเน้นข้อความ คลีนๆ ไม่รก */}
+      {/* 4. กล่อง Alert แจ้งเตือนแบบเน้นข้อความ คลีนๆ ไม่รก (ปรับขนาดให้ใหญ่ขึ้น) */}
+      {simpleAlert.isOpen && (
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/20 dark:bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200 font-sans">
+          {/* ปรับขนาดกล่อง: เปลี่ยน max-w-sm เป็น max-w-md และเพิ่ม Padding */}
+          <div className="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[40px] shadow-2xl border border-gray-100 dark:border-gray-700 w-full max-w-md text-center transform scale-100">
+            {/* ปรับขนาดข้อความ: เปลี่ยนจาก text-lg เป็น text-xl หรือ 2xl ให้ใหญ่สะใจ */}
+            <p className="text-xl sm:text-2xl font-black text-[#302782] dark:text-white leading-relaxed">
+              {simpleAlert.message}
+            </p>
+
+            {/* ถ้าเป็นป๊อปอัปยืนยัน (เช่นการลบ) ถึงจะแสดงปุ่ม */}
+            {simpleAlert.isConfirm && (
+              <div className="flex gap-4 justify-center mt-8 sm:mt-10">
+                <button
+                  onClick={() =>
+                    setSimpleAlert((prev) => ({ ...prev, isOpen: false }))
+                  }
+                  className="flex-1 py-4 text-base sm:text-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-bold rounded-2xl hover:bg-gray-200 transition-colors active:scale-95"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  onClick={() => {
+                    if (simpleAlert.onConfirm) simpleAlert.onConfirm();
+                    setSimpleAlert((prev) => ({ ...prev, isOpen: false }));
+                  }}
+                  className="flex-1 py-4 text-base sm:text-lg bg-[#302782] hover:bg-[#B2BB1E] text-white font-bold rounded-2xl transition-all shadow-md active:scale-95"
+                >
+                  ยืนยันลบ
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

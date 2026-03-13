@@ -25,7 +25,7 @@ const Loginpic = () => {
             </div>
             {/* 🟢 แก้ตรงนี้: เปลี่ยน text-xs เป็น text-base (เพื่อให้ตัวหนังสือใหญ่ขึ้น) */}
             <h2 className="font-black text-[#302782] dark:text-white text-base uppercase tracking-wider">
-              ข่าวประชาสัมพันธ์ทั่วไป
+              คู่มือการใช้งาน
             </h2>
           </div>
 

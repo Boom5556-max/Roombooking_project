@@ -8,13 +8,12 @@ import {
   Check,
   AlertCircle,
   Mail,
-  User,
 } from "lucide-react";
 import Button from "../common/Button.jsx";
 
 const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
   const [formData, setFormData] = useState({
-    user_id: user?.user_id || "",
+    user_id: user?.user_id || "", // เก็บไว้เพื่อใช้ตอนส่ง API อัปเดตข้อมูล
     title: user?.title || "",
     name: user?.name || "",
     surname: user?.surname || "",
@@ -81,29 +80,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
 
         {/* Form Fields Space */}
         <div className="space-y-5 overflow-y-auto pr-2 custom-scrollbar flex-grow mb-8 px-1">
-          {/* User ID - High Priority Field */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
-              รหัสประจำตัว (User ID)
-            </label>
-            <div className="relative group">
-              <User
-                size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#B2BB1E] transition-colors"
-              />
-              <input
-                disabled={!!user}
-                className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all disabled:opacity-60 text-base"
-                value={formData.user_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, user_id: e.target.value })
-                }
-                placeholder="T000XXXXXXX"
-                required
-              />
-            </div>
-          </div>
-
+          
           {/* Title & Name Grid */}
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-4 flex flex-col gap-2">
