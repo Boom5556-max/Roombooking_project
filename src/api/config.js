@@ -1,1 +1,1 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://dave-unincited-ariyah.ngrok-free.dev" || "https://fece-1-46-86-114.ngrok-free.app";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL

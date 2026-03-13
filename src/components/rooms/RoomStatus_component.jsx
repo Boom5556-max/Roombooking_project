@@ -120,8 +120,8 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
           <p className="text-[10px] font-black text-[#FFFFFF]/50 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
              วัตถุประสงค์การใช้งาน
           </p>
-          <p className="text-base sm:text-xl font-bold leading-relaxed relative z-10 italic">
-            "{item.purpose || "ไม่ระบุวัตถุประสงค์"}"
+          <p className="text-base sm:text-xl font-bold leading-relaxed relative z-10">
+            {item.purpose || "ไม่ระบุวัตถุประสงค์"}
           </p>
         </div>
       </div>
@@ -180,4 +180,4 @@ export const ScheduleItem = ({ item, capacity }) => (
       </div>
     </div>
   </div>
-);
+);
