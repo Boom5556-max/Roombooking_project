@@ -27,10 +27,10 @@ export const useCalendarData = (roomIdFromUrl) => {
     try {
       let bookingUrl, scheduleUrl;
       if (selectedRoom && selectedRoom !== "") {
-        bookingUrl = `/bookings/allBookingSpecific/${selectedRoom}?status=approved`;
+        bookingUrl = `/bookings/allBookingSpecific/${selectedRoom}`; // ✅ เอา ?status=approved ออก
         scheduleUrl = `/schedules/${selectedRoom}`;
       } else {
-        bookingUrl = `/bookings/allBooking?status=approved`;
+        bookingUrl = `/bookings/allBooking`; // ✅ เอา ?status=approved ออก
         scheduleUrl = `/schedules/`;
       }
       

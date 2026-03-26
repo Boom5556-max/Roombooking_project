@@ -35,32 +35,39 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
     } catch (e) { return dateStr; }
   };
 
-  const processItem = (item, type) => {
-    // 🚩 1. ล้างข้อมูล ID ให้สะอาด (Trim ช่องว่าง) เพื่อให้ matching เจอ
+  // ค้นหาฟังก์ชัน processItem แล้วเขียนทับเฉพาะส่วนนี้ครับ
+const processItem = (item, type) => {
+    // 1. ดักจับการจองปกติ: ถ้าเป็น "รออนุมัติ" หรือ "ไม่นุมัติ" ให้ซ่อน (แต่ให้โชว์ cancel แล้ว)
+    if (type === "booking" && (item.status === "pending" || item.status === "rejected")) {
+        return null;
+    }
+
     const itemRoomId = item.room_id ? String(item.room_id).trim() : null;
     const defRoomId = defaultRoomId ? String(defaultRoomId).trim() : null;
-    
-    // 🚩 2. Logic สำคัญ: ถ้าเลือกดูรายห้อง (isRoomView) แต่ item ไม่มี room_id ให้ยัดค่าใส่ให้เลย
     const finalRoomId = itemRoomId || defRoomId || "ไม่ระบุเลขห้อง";
     const finalRoomName = item.room_name || defaultRoomName || finalRoomId;
 
     const dateSource = item.date || item.booking_date || item.schedule_date;
     const d = new Date(dateSource);
-
-    // ปรับปรุงการอ่านวันที่ให้ยืดหยุ่นขึ้น
     const rawDate = !isNaN(d.getTime())
-      ? d.toLocaleDateString("en-CA", { timeZone: "Asia/Bangkok" })
-      : (dateSource ? String(dateSource).split('T')[0] : "Invalid Date");
+        ? d.toLocaleDateString("en-CA", { timeZone: "Asia/Bangkok" })
+        : (dateSource ? String(dateSource).split('T')[0] : "Invalid Date");
 
     const isScheduleType = type === "schedule";
-    const isClosed = isScheduleType && (item.temporarily_closed === true || item.temporarily_closed === 1 || item.temporarily_closed === "1");
+    
+    // ✨ 2. ปรับ Logic "งดใช้ห้อง" ให้เช็คสถานะ 'cancel' จาก Booking ด้วย
+    const isScheduleClosed = isScheduleType && (item.temporarily_closed === true || item.temporarily_closed === 1 || item.temporarily_closed === "1");
+    const isBookingClosed = type === "booking" && (item.status === "cancel" || item.status === "cancelled"); 
+    
+    const isClosed = isScheduleClosed || isBookingClosed;
+    
     const isUpload = isScheduleType;
-
-    // 🚩 3. เช็คว่าเป็นหน้าแยกห้องหรือไม่ (ถ้า defRoomId มีค่า แปลว่าอยู่หน้าแยกห้อง)
     const isRoomView = defRoomId !== null && defRoomId !== "" && defRoomId !== "undefined";
 
     const roomPrefix = (finalRoomName && finalRoomName !== "ไม่ระบุเลขห้อง" && !isRoomView) ? `[${finalRoomName}] ` : "";
     const originalTitle = type === "booking" ? (item.purpose || "จองใช้ห้อง") : (item.subject_name || "ตารางเรียนหลัก");
+    
+    // ใส่คำว่า (งดใช้ห้อง) นำหน้า
     const displayTitle = isClosed ? `(งดใช้ห้อง) ${roomPrefix}${originalTitle}` : `${roomPrefix}${originalTitle}`;
 
     const roomTheme = getRoomColor(finalRoomId);
@@ -68,48 +75,45 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
     let finalBorderColor = roomTheme.border;
     let finalTextColor = "#ffffff";
 
+    // ✨ 3. ทาสีเทาขอบแดงสำหรับรายการที่ปิด/ยกเลิก
     if (isClosed) {
-      finalBgColor = "#fee2e2"; finalBorderColor = "#ef4444"; finalTextColor = "#ef4444";
+        finalBgColor = "#f1f5f9";   // พื้นหลังเทาอ่อน
+        finalTextColor = "#111827";  // ตัวหนังสือเข้ม
+        finalBorderColor = "#ef4444"; // ขอบแดงเน้นย้ำ
     } else if (isRoomView) {
-      finalBgColor = "transparent";
-      finalBorderColor = roomTheme.bg;
-      finalTextColor = "#111827";
+        finalBgColor = "transparent";
+        finalBorderColor = roomTheme.bg;
+        finalTextColor = "#111827";
     }
 
     return {
-      id: type === "booking" ? item.booking_id : item.schedule_id,
-      title: displayTitle,
-      start: `${rawDate}T${item.start_time || "00:00:00"}`,
-      end: `${rawDate}T${item.end_time || "00:00:00"}`,
-      extendedProps: {
-        type: type,
-        isSchedule: isScheduleType,
-        fullDate: formatThaiDate(rawDate),
-        temporarily_closed: isClosed,
-        isUpload: isUpload, 
-        teacher: `${item.teacher_name || ""} ${item.teacher_surname || ""}`.trim() || "ไม่ระบุผู้สอน",
-        startTime: String(item.start_time || "00:00").substring(0, 5),
-        endTime: String(item.end_time || "00:00").substring(0, 5),
-        subjectName: item.subject_name,
-        purpose: item.purpose,
-        room_id: finalRoomId, 
-        room_name: finalRoomName,
-        isRoomView: isRoomView,
-      },
-      backgroundColor: finalBgColor,
-      borderColor: finalBorderColor,
-      textColor: finalTextColor,
-      borderWidth: isClosed || isRoomView ? "1.5px" : "1px",
+        id: type === "booking" ? item.booking_id : item.schedule_id,
+        title: displayTitle,
+        start: `${rawDate}T${item.start_time || "00:00:00"}`,
+        end: `${rawDate}T${item.end_time || "00:00:00"}`,
+        extendedProps: {
+            ...item,
+            type: type,
+            isSchedule: isScheduleType,
+            temporarily_closed: isClosed,
+            room_id: finalRoomId, 
+            room_name: finalRoomName,
+        },
+        backgroundColor: finalBgColor,
+        borderColor: finalBorderColor,
+        textColor: finalTextColor,
+        borderWidth: isClosed ? "2px" : "1px", // เน้นขอบแดงให้ชัดขึ้นถ้าปิด
     };
-  };
+};
 
+  // ✨ 3. เพิ่มการกรอง event !== null ป้องกัน error จากรายการที่เราซ่อนทิ้ง
   const bookingEvents = (Array.isArray(bookingsData) ? bookingsData : [])
     .map((b) => processItem(b, "booking"))
-    .filter((event) => event.start && !event.start.includes("Invalid Date"));
+    .filter((event) => event !== null && event.start && !event.start.includes("Invalid Date"));
 
   const scheduleEvents = (Array.isArray(schedulesData) ? schedulesData : [])
     .map((s) => processItem(s, "schedule"))
-    .filter((event) => event.start && !event.start.includes("Invalid Date"));
+    .filter((event) => event !== null && event.start && !event.start.includes("Invalid Date"));
 
   return [...bookingEvents, ...scheduleEvents];
 };

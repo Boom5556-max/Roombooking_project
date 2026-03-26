@@ -127,7 +127,7 @@ const Notification = () => {
         ? "ไม่อนุมัติคำขอสำเร็จ"
         : "ยกเลิกการจองสำเร็จ";
 
-    // 2. เรียก Modal เพื่อยืนยันก่อน (มีปุ่มปกติ)
+    // 2. เรียก Modal เพื่อยืนยันก่อน
     showAlert(
       confirmMessage,
       <Trash2 size={50} className="text-red-500" />,
@@ -136,16 +136,24 @@ const Notification = () => {
         setAlertConfig((prev) => ({ ...prev, isOpen: false }));
         setSelectedBooking(null);
         
-        const result = await handleCancelBooking(bookingId);
+        // ✨ แก้ไขตรงนี้: แยก Logic การเรียก API 
+        let result;
+        if (userRole === "staff") {
+          // ถ้ายูสเซอร์เป็น Staff ให้ใช้ฟังก์ชันเปลี่ยนสถานะเป็น "rejected"
+          result = await handleUpdateStatus(bookingId, "rejected"); 
+        } else {
+          // ถ้าเป็น Teacher ให้ใช้ฟังก์ชันยกเลิกปกติ
+          result = await handleCancelBooking(bookingId); 
+        }
         
-        // 4. แสดงผลลัพธ์แบบ "มีแต่ข้อความ" (ไม่มีปุ่ม)
+        // 4. แสดงผลลัพธ์แบบ "มีแต่ข้อความ"
         setTimeout(() => {
           setAlertConfig({
             isOpen: true,
             title: result?.success ? successMessage : "เกิดข้อผิดพลาด",
             icon: result?.success ? <CheckCircle size={50} className="text-green-500"/> : <XCircle size={50} className="text-red-500"/>,
-            showButtons: false,     // <--- ซ่อนปุ่ม
-            autoClose: true,        // <--- ปิดอัตโนมัติ
+            showButtons: false,
+            autoClose: true,
             variant: result?.success ? "primary" : "danger"
           });
         }, 150);
@@ -154,7 +162,6 @@ const Notification = () => {
       "danger"
     );
   };
-
   const handleBanClick = (bookingId) => {
   showAlert(
     "คุณแน่ใจหรือไม่ที่จะงดการใช้ห้องนี้?",
