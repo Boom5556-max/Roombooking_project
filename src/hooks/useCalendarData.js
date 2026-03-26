@@ -9,16 +9,12 @@ export const useCalendarData = (roomIdFromUrl) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCancelMode, setIsCancelMode] = useState(false);
 
-  // ในไฟล์ useCalendarData.js
-
-  // hooks/useCalendarData.js
   const fetchRooms = async () => {
     try {
       const res = await api.get("/rooms/");
       if (res.data?.length > 0) {
-        // 🚩 เปลี่ยนเงื่อนไข: เอาเฉพาะห้องที่ repair เป็น false หรือไม่ใช่ true
+        // เอาเฉพาะห้องที่ repair เป็น false หรือไม่ใช่ true
         const activeRooms = res.data.filter((room) => room.repair !== true);
-
         setRooms(activeRooms);
       }
     } catch (err) {
@@ -44,7 +40,19 @@ export const useCalendarData = (roomIdFromUrl) => {
       ]);
 
       const rawSchedules = schedRes.data?.schedules || schedRes.data || [];
-      const formatted = formatCalendarEvents(bookRes.data || [], rawSchedules);
+
+      // 🚩 1. ค้นหาชื่อห้องจาก state 'rooms' ที่ดึงมาตอนแรก
+      const matchedRoom = rooms.find((r) => String(r.room_id) === String(selectedRoom));
+      const defaultRoomName = matchedRoom ? matchedRoom.room_name : "";
+
+      // 🚩 2. ส่ง selectedRoom (เลขห้อง) และ defaultRoomName (ชื่อห้อง) พ่วงเข้าไปด้วย
+      const formatted = formatCalendarEvents(
+        bookRes.data || [], 
+        rawSchedules,
+        selectedRoom,        // ส่งเลขห้องสำรองเข้าไป
+        defaultRoomName      // ส่งชื่อห้องสำรองเข้าไป
+      );
+      
       setEvents(formatted);
     } catch (err) {
       console.error("Fetch Data Error:", err);
@@ -52,11 +60,9 @@ export const useCalendarData = (roomIdFromUrl) => {
     } finally {
       setTimeout(() => setIsLoading(false), 300);
     }
-  }, [selectedRoom]);
+  }, [selectedRoom, rooms]); // 🚩 3. อย่าลืมเพิ่ม rooms เข้ามาใน Dependency ของ useCallback
 
-  // 🚩 แก้ไขฟังก์ชันอัปเดตสถานะให้เข้มงวดขึ้น
   const updateStatus = async (id, isClosed) => {
-    // เช็คก่อนว่ามี ID ส่งมาไหม
     if (!id) {
       console.error("Update Error: Missing schedule ID");
       return { success: false };
@@ -70,11 +76,9 @@ export const useCalendarData = (roomIdFromUrl) => {
 
       console.log("✅ API Response:", response.data);
 
-      // สำคัญ: ต้องรอให้ fetchData เสร็จก่อนถึงจะ return
       await fetchData();
       return { success: true };
     } catch (err) {
-      // 🚩 Log ดู Error ที่แท้จริงจาก Backend
       console.error("❌ API Error Details:", err.response?.data || err.message);
 
       const isForbidden = err.response?.status === 403;
@@ -87,6 +91,7 @@ export const useCalendarData = (roomIdFromUrl) => {
   useEffect(() => {
     fetchRooms();
   }, []);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -99,7 +104,6 @@ export const useCalendarData = (roomIdFromUrl) => {
     isLoading,
     isCancelMode,
     setIsCancelMode,
-    // ใช้สถาปัตยกรรมที่ชัดเจนในการส่งออกฟังก์ชัน
     handleCancelSchedule: async (id) => await updateStatus(id, true),
     handleRestoreSchedule: async (id) => await updateStatus(id, false),
     refreshData: fetchData,
