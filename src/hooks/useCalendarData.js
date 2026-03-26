@@ -33,7 +33,7 @@ export const useCalendarData = (roomIdFromUrl) => {
         bookingUrl = `/bookings/allBooking?status=approved`;
         scheduleUrl = `/schedules/`;
       }
-
+      
       const [bookRes, schedRes] = await Promise.all([
         api.get(bookingUrl).catch(() => ({ data: [] })),
         api.get(scheduleUrl).catch(() => ({ data: { schedules: [] } })),
@@ -41,11 +41,14 @@ export const useCalendarData = (roomIdFromUrl) => {
 
       const rawSchedules = schedRes.data?.schedules || schedRes.data || [];
 
-      // 🚩 1. ค้นหาชื่อห้องจาก state 'rooms' ที่ดึงมาตอนแรก
+      
+     
+
+      // 1. ค้นหาชื่อห้องจาก state 'rooms' ที่ดึงมาตอนแรก
       const matchedRoom = rooms.find((r) => String(r.room_id) === String(selectedRoom));
       const defaultRoomName = matchedRoom ? matchedRoom.room_name : "";
 
-      // 🚩 2. ส่ง selectedRoom (เลขห้อง) และ defaultRoomName (ชื่อห้อง) พ่วงเข้าไปด้วย
+      // 2. ส่ง selectedRoom (เลขห้อง) และ defaultRoomName (ชื่อห้อง) พ่วงเข้าไปด้วย
       const formatted = formatCalendarEvents(
         bookRes.data || [], 
         rawSchedules,
@@ -60,7 +63,7 @@ export const useCalendarData = (roomIdFromUrl) => {
     } finally {
       setTimeout(() => setIsLoading(false), 300);
     }
-  }, [selectedRoom, rooms]); // 🚩 3. อย่าลืมเพิ่ม rooms เข้ามาใน Dependency ของ useCallback
+  }, [selectedRoom, rooms]); // 3. อย่าลืมเพิ่ม rooms เข้ามาใน Dependency ของ useCallback
 
   const updateStatus = async (id, isClosed) => {
     if (!id) {
