@@ -17,6 +17,9 @@ import BookingRoom from './pages/Booking';
 import RoomResults from './pages/RoomResults'; 
 import Users from './pages/Users'; 
 
+// 🚩 1. นำเข้าคอมโพเนนต์จัดการตารางเรียน (ปรับ path ให้ตรงกับที่คุณเซฟไฟล์ไว้นะครับ)
+import ScheduleManagement from './pages/ScheduleManagement'; 
+
 function App() {
   return (
     <BrowserRouter>
@@ -36,6 +39,9 @@ function App() {
 
         {/* 🚩 Route สำหรับจัดการผู้ใช้ (เฉพาะ Staff) */}
         <Route path="/users" element={<Users />} />
+
+        {/* 🚩 2. Route สำหรับจัดการประวัติตารางเรียน (เฉพาะ Staff) */}
+        <Route path="/schedules" element={<ScheduleManagement />} />
 
         <Route path="/bookingRoom/:id" element={<BookingRoom />} />
         <Route path="/calendar/" element={<Calendar />} />

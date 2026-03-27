@@ -37,7 +37,6 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
 
   // ค้นหาฟังก์ชัน processItem แล้วเขียนทับเฉพาะส่วนนี้ครับ
 const processItem = (item, type) => {
-    // 1. ดักจับการจองปกติ: ถ้าเป็น "รออนุมัติ" หรือ "ไม่นุมัติ" ให้ซ่อน (แต่ให้โชว์ cancel แล้ว)
     if (type === "booking" && (item.status === "pending" || item.status === "rejected")) {
         return null;
     }
@@ -54,20 +53,15 @@ const processItem = (item, type) => {
         : (dateSource ? String(dateSource).split('T')[0] : "Invalid Date");
 
     const isScheduleType = type === "schedule";
-    
-    // ✨ 2. ปรับ Logic "งดใช้ห้อง" ให้เช็คสถานะ 'cancel' จาก Booking ด้วย
     const isScheduleClosed = isScheduleType && (item.temporarily_closed === true || item.temporarily_closed === 1 || item.temporarily_closed === "1");
     const isBookingClosed = type === "booking" && (item.status === "cancel" || item.status === "cancelled"); 
-    
     const isClosed = isScheduleClosed || isBookingClosed;
     
-    const isUpload = isScheduleType;
+    // 🚩 เช็คว่าเป็นหน้าแยกห้องหรือไม่
     const isRoomView = defRoomId !== null && defRoomId !== "" && defRoomId !== "undefined";
 
     const roomPrefix = (finalRoomName && finalRoomName !== "ไม่ระบุเลขห้อง" && !isRoomView) ? `[${finalRoomName}] ` : "";
     const originalTitle = type === "booking" ? (item.purpose || "จองใช้ห้อง") : (item.subject_name || "ตารางเรียนหลัก");
-    
-    // ใส่คำว่า (งดใช้ห้อง) นำหน้า
     const displayTitle = isClosed ? `(งดใช้ห้อง) ${roomPrefix}${originalTitle}` : `${roomPrefix}${originalTitle}`;
 
     const roomTheme = getRoomColor(finalRoomId);
@@ -75,13 +69,13 @@ const processItem = (item, type) => {
     let finalBorderColor = roomTheme.border;
     let finalTextColor = "#ffffff";
 
-    // ✨ 3. ทาสีเทาขอบแดงสำหรับรายการที่ปิด/ยกเลิก
     if (isClosed) {
-        finalBgColor = "#f1f5f9";   // พื้นหลังเทาอ่อน
-        finalTextColor = "#111827";  // ตัวหนังสือเข้ม
-        finalBorderColor = "#ef4444"; // ขอบแดงเน้นย้ำ
+        finalBgColor = "#f1f5f9";
+        finalTextColor = "#111827";
+        finalBorderColor = "#ef4444";
     } else if (isRoomView) {
-        finalBgColor = "transparent";
+        // 🚩 หน้าแยกห้อง: ใช้สีจางๆ แทน transparent สนิทเพื่อให้มองเห็นแถบ
+        finalBgColor = "rgba(0, 0, 0, 0.05)"; 
         finalBorderColor = roomTheme.bg;
         finalTextColor = "#111827";
     }
@@ -98,14 +92,13 @@ const processItem = (item, type) => {
             temporarily_closed: isClosed,
             room_id: finalRoomId, 
             room_name: finalRoomName,
+            isRoomView: isRoomView, // 🚩 สำคัญมาก: ต้องส่งค่านี้ไปให้ CalendarView.jsx ใช้เช็คสีตัวหนังสือ
         },
         backgroundColor: finalBgColor,
         borderColor: finalBorderColor,
         textColor: finalTextColor,
-        borderWidth: isClosed ? "2px" : "1px", // เน้นขอบแดงให้ชัดขึ้นถ้าปิด
     };
 };
-
   // ✨ 3. เพิ่มการกรอง event !== null ป้องกัน error จากรายการที่เราซ่อนทิ้ง
   const bookingEvents = (Array.isArray(bookingsData) ? bookingsData : [])
     .map((b) => processItem(b, "booking"))

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Calendar as CalendarIcon, Bell, QrCode, LogOut, Users } from 'lucide-react';
+// 1. 🚩 เพิ่ม FileText เข้ามาสำหรับใช้เป็นไอคอนจัดการตารางเรียน
+import { Home, Calendar as CalendarIcon, Bell, QrCode, LogOut, Users, FileText } from 'lucide-react';
 import { jwtDecode } from "jwt-decode";
 import ActionModal from "../common/ActionModal";
 import ProfileDropdown from "./ProfileDropdown";
@@ -90,7 +91,6 @@ const Navbar = () => {
           <NavItemsGroup navigate={navigate} getNavStyle={getNavStyle} userRole={userRole} />
           
           <div className="ml-2 flex items-center gap-2">
-            {/* แก้ไข: ลบเงื่อนไข userRole === "staff" ออก เพื่อให้ทุกคนเห็น Dropdown Profile */}
             <ProfileDropdown isMobile={false} />
             <div className="pl-4 border-l border-[#FFFFFF]/10 flex items-center">
               <button
@@ -106,7 +106,6 @@ const Navbar = () => {
 
         {/* Logout สำหรับมือถือ (แสดงเฉพาะปุ่ม Logout ด้านบนขวา) */}
         <div className="md:hidden flex items-center gap-2">
-            {/* แก้ไข: ลบเงื่อนไข userRole === "staff" ออก เพื่อให้ทุกคนเห็น Dropdown Profile */}
             <ProfileDropdown isMobile={true} />
             <button
               onClick={handleLogoutClick}
@@ -152,14 +151,26 @@ const NavItemsGroup = ({ navigate, getNavStyle, userRole, isMobile = false }) =>
       icon={<CalendarIcon size={isMobile ? 24 : 22} />} 
       title="ตาราง" 
     />
+    
+    {/* 2. 🚩 ส่วนนี้จะถูกเรนเดอร์เฉพาะเมื่อ userRole เป็น staff */}
     {userRole === "staff" && (
-      <NavItem 
-        onClick={() => navigate("/users")} 
-        style={getNavStyle("/users")} 
-        icon={<Users size={isMobile ? 24 : 22} />} 
-        title="สมาชิก" 
-      />
+      <>
+        <NavItem 
+          onClick={() => navigate("/users")} 
+          style={getNavStyle("/users")} 
+          icon={<Users size={isMobile ? 24 : 22} />} 
+          title="สมาชิก" 
+        />
+        {/* เมนูจัดการตารางเรียน (เพิ่มใหม่) */}
+        <NavItem 
+          onClick={() => navigate("/schedules")} 
+          style={getNavStyle("/schedules")} 
+          icon={<FileText size={isMobile ? 24 : 22} />} 
+          title="จัดการตาราง" 
+        />
+      </>
     )}
+
     <NavItem 
       onClick={() => navigate("/notification")} 
       style={getNavStyle("/notification")} 
