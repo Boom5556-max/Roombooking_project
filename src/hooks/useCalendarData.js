@@ -26,11 +26,17 @@ export const useCalendarData = (roomIdFromUrl) => {
     setIsLoading(true);
     try {
       let bookingUrl, scheduleUrl;
+      
+      // ✅ 1. เพิ่ม Query String เพื่อบอก Backend ให้ส่งมาให้ครบทุกสถานะ
+      const statusParams = "?status=approved,cancel,cancelled";
+
       if (selectedRoom && selectedRoom !== "") {
-        bookingUrl = `/bookings/allBookingSpecific/${selectedRoom}`; // ✅ เอา ?status=approved ออก
+        // ✅ 2. แนบ statusParams ต่อท้าย URL
+        bookingUrl = `/bookings/allBookingSpecific/${selectedRoom}${statusParams}`; 
         scheduleUrl = `/schedules/${selectedRoom}`;
       } else {
-        bookingUrl = `/bookings/allBooking`; // ✅ เอา ?status=approved ออก
+        // ✅ 3. แนบ statusParams ต่อท้าย URL
+        bookingUrl = `/bookings/allBooking${statusParams}`; 
         scheduleUrl = `/schedules/`;
       }
       
@@ -41,19 +47,16 @@ export const useCalendarData = (roomIdFromUrl) => {
 
       const rawSchedules = schedRes.data?.schedules || schedRes.data || [];
 
-      
-     
-
-      // 1. ค้นหาชื่อห้องจาก state 'rooms' ที่ดึงมาตอนแรก
+      // ค้นหาชื่อห้องจาก state 'rooms' ที่ดึงมาตอนแรก
       const matchedRoom = rooms.find((r) => String(r.room_id) === String(selectedRoom));
       const defaultRoomName = matchedRoom ? matchedRoom.room_name : "";
 
-      // 2. ส่ง selectedRoom (เลขห้อง) และ defaultRoomName (ชื่อห้อง) พ่วงเข้าไปด้วย
+      // ส่งข้อมูลไปจัดรูปแบบที่ calendarHelper
       const formatted = formatCalendarEvents(
         bookRes.data || [], 
         rawSchedules,
-        selectedRoom,        // ส่งเลขห้องสำรองเข้าไป
-        defaultRoomName      // ส่งชื่อห้องสำรองเข้าไป
+        selectedRoom,        
+        defaultRoomName      
       );
       
       setEvents(formatted);
@@ -63,7 +66,7 @@ export const useCalendarData = (roomIdFromUrl) => {
     } finally {
       setTimeout(() => setIsLoading(false), 300);
     }
-  }, [selectedRoom, rooms]); // 3. อย่าลืมเพิ่ม rooms เข้ามาใน Dependency ของ useCallback
+  }, [selectedRoom, rooms]); // อัปเดตเมื่อ selectedRoom หรือ rooms เปลี่ยน
 
   const updateStatus = async (id, isClosed) => {
     if (!id) {
