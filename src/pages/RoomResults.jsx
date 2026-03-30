@@ -79,10 +79,9 @@ const RoomResults = () => {
               className="group flex items-center gap-2 text-gray-400 hover:text-[#302782] dark:hover:text-[#B2BB1E] font-bold text-xs sm:text-sm transition-colors"
             >
               <ChevronLeft size={24} className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-1.5 group-hover:bg-gray-50 dark:group-hover:bg-gray-600" />
-              แก้ไขการค้นหา
             </button>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#302782] dark:text-white leading-tight">
-              ห้องที่ว่าง <span className="text-[#B2BB1E]">สำหรับคุณ</span>
+              ห้องที่ว่าง <span className="text-[#B2BB1E]">ในเวลานี้</span>
             </h1>
           </div>
           
@@ -212,11 +211,19 @@ const Badge = ({ icon, text }) => (
 );
 
 const InfoBox = ({ label, value, icon }) => (
-  <div className="bg-gray-50 dark:bg-white/5 p-3 sm:p-4 rounded-2xl sm:rounded-[28px] border border-gray-100 dark:border-white/10">
-    <p className="text-[9px] sm:text-[10px] text-gray-400 dark:text-gray-500 font-black mb-1 uppercase tracking-tighter">{label}</p>
-    <p className="text-[#302782] dark:text-white font-black text-sm sm:text-lg flex items-center gap-2 truncate">
-      {icon} {value}
+  <div 
+    className="bg-gray-50 dark:bg-white/5 p-3 sm:p-4 rounded-2xl sm:rounded-[28px] border border-gray-100 dark:border-white/10 flex flex-col justify-center overflow-hidden"
+    title={value} // เพิ่ม Tooltip ให้แสดงข้อความเต็มเวลาเอาเมาส์ชี้
+  >
+    <p className="text-[9px] sm:text-[10px] text-gray-400 dark:text-gray-500 font-black mb-1 uppercase tracking-tighter truncate">
+      {label}
     </p>
+    <div className="text-[#302782] dark:text-white font-black text-xs sm:text-sm lg:text-base flex items-center gap-1.5 w-full overflow-hidden">
+      {icon && <div className="shrink-0">{icon}</div>}
+      <span className="truncate w-full leading-tight block">
+        {value}
+      </span>
+    </div>
   </div>
 );
 

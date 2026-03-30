@@ -100,7 +100,7 @@ const EventModal = ({ event, onClose }) => {
                     <AlertCircle size={18} />
                 </div>
                 <p className="text-red-600 text-xs sm:text-sm font-bold">
-                  {props.status === 'cancelled' ? 'รายการนี้ถูกยกเลิกแล้ว' : 'รายการนี้ถูกแจ้งงดใช้ห้อง'}
+                  {props.status === 'cancelled' ? 'รายการนี้ถูกแจ้งงดใช้ห้อง' : 'รายการนี้ถูกแจ้งงดใช้ห้อง'}
                 </p>
               </div>
             )}

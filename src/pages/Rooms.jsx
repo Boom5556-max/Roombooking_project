@@ -4,8 +4,9 @@ import {
   Plus,
   Edit3,
   Trash2,
-  Check,
+  CheckCircle, // 🚩 นำเข้า CheckCircle
   AlertCircle,
+  X // 🚩 นำเข้า X สำหรับปุ่ม Error
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRooms } from "../hooks/useRooms";
@@ -24,16 +25,20 @@ const Rooms = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
 
+  // 🚩 1. ปรับ State Alert ให้รองรับแพทเทิร์นใหม่
   const [alertConfig, setAlertConfig] = useState({
     isOpen: false,
     title: "",
     icon: null,
-    onConfirm: null,
-    showConfirm: true,
-    singleButton: false,
     variant: "primary",
+    showConfirm: true,
+    showButtons: null,
+    autoClose: false,
     showBg: true,
+    onConfirm: null,
   });
+
+  const closeAlert = () => setAlertConfig((prev) => ({ ...prev, isOpen: false }));
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -52,68 +57,56 @@ const Rooms = () => {
     setIsModalOpen(true);
   };
 
-  // ปรับแก้บรรทัดนี้ใน Rooms.jsx
-  const showAlert = (
-    title,
-    icon,
-    onConfirm = null,
-    showConfirm = true,
-    singleButton = false,
-    variant = "primary",
-    showBg = true,
-    autoClose = false, // เพิ่มตรงนี้
-    showButtons = null, // เพิ่มตรงนี้
-  ) => {
+  // 🚩 2. ฟังก์ชันช่วยแสดงผลลัพธ์ สำเร็จ/ล้มเหลว (ปิดเองอัตโนมัติ)
+  const showResultAlert = (success, successMsg, errorMsg) => {
     setAlertConfig({
       isOpen: true,
-      title,
-      icon,
-      onConfirm:
-        onConfirm ||
-        (() => setAlertConfig((prev) => ({ ...prev, isOpen: false }))),
-      showConfirm,
-      singleButton,
-      variant,
-      showBg,
-      autoClose, // เพิ่มตรงนี้
-      showButtons, // เพิ่มตรงนี้
+      title: success ? successMsg : errorMsg,
+      icon: success ? <CheckCircle size={50} /> : <X size={50} />,
+      variant: success ? "primary" : "danger",
+      showConfirm: false,
+      showButtons: false, 
+      autoClose: true, 
+      showBg: true,
+      onConfirm: null,
     });
   };
 
-  const handleDelete = async (roomId) => {
-    showAlert(
-      `คุณแน่ใจหรือไม่ที่จะลบห้อง ${roomId}?`,
-      <Trash2 size={50} className="text-red-500" />,
-      async () => {
-        const result = await deleteRoom(roomId);
-        setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+  // ฟังก์ชันเดิม เก็บไว้เผื่อ RoomFormModal ยังต้องใช้แบบเก่า
+  const showAlert = (
+    title, icon, onConfirm = null, showConfirm = true,
+    singleButton = false, variant = "primary", showBg = true,
+    autoClose = false, showButtons = null
+  ) => {
+    setAlertConfig({
+      isOpen: true, title, icon, showConfirm, singleButton, variant, showBg, autoClose, showButtons,
+      onConfirm: onConfirm || closeAlert,
+    });
+  };
 
-        setTimeout(() => {
-          // เมื่อลบเสร็จ ส่งค่า autoClose=true และ showButtons=false
-          showAlert(
-            result.success
-              ? "ลบห้องเรียนสำเร็จ"
-              : "ลบไม่สำเร็จ: " + result.message,
-            result.success ? (
-              <Check size={50} className="text-green-500" />
-            ) : (
-              <AlertCircle size={50} className="text-red-500" />
-            ),
-            null,
-            false,
-            false,
-            result.success ? "primary" : "danger",
-            false,
-            true, // autoClose = true
-            false, // showButtons = false (ซ่อนปุ่ม)
-          );
-        }, 150);
-      },
-      true,
-      false,
-      "danger",
-      true,
-    );
+  // 🚩 3. ฟังก์ชันครอบสำหรับการลบ ที่คลีนและอ่านง่ายขึ้น
+  const confirmDelete = (roomId) => {
+    setAlertConfig({
+      isOpen: true,
+      title: `ยืนยันการลบห้อง ${roomId}?`,
+      icon: <Trash2 size={50} />,
+      variant: "danger",
+      showConfirm: true,
+      showButtons: true,
+      autoClose: false,
+      showBg: true,
+      onConfirm: async () => {
+        closeAlert(); // ปิด Modal ยืนยันก่อน
+        try {
+          const result = await deleteRoom(roomId);
+          // ประเมินผลลัพธ์จากการลบ
+          const isSuccess = result?.success !== false;
+          showResultAlert(isSuccess, "ลบห้องเรียนสำเร็จ", result?.message || "เกิดข้อผิดพลาดในการลบข้อมูล");
+        } catch (error) {
+          showResultAlert(false, "", "เกิดข้อผิดพลาด ไม่สามารถลบข้อมูลได้");
+        }
+      }
+    });
   };
 
   return (
@@ -121,7 +114,7 @@ const Rooms = () => {
       <Navbar />
 
       <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-7xl mx-auto w-full">
-        {/* Header Section: ปรับให้ Stack ในมือถือจอเล็กมาก */}
+        {/* Header Section */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-2">
             <Button
@@ -156,20 +149,17 @@ const Rooms = () => {
             </p>
           </div>
         ) : (
-          /* Room Grid: ปรับจำนวน Column ตามขนาดหน้าจอ */
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 sm:gap-8">
             {rooms.length > 0 ? (
               rooms.map((room) => (
                 <div
                   key={room.room_id}
-                  // จุดที่ 1: เติม pb-16 (เว้นระยะด้านล่าง) เข้าไปที่ท้ายสุดของ className ครับ
                   className="relative group bg-white dark:bg-gray-800 rounded-[35px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 pb-16 hover:border-[#B2BB1E] hover:ring-2 hover:ring-[#B2BB1E]"
                 >
                   <RoomCard room={room} />
 
                   {/* Staff Actions Overlay */}
                   {userRole === "staff" && (
-                    // จุดที่ 2: ปรับจาก bottom-5 เป็น bottom-3 เพื่อให้ปุ่มลงมาอยู่ตรงกลางของพื้นที่ว่างพอดี
                     <div className="absolute bottom-3 left-5 flex gap-2 z-10">
                       <button
                         onClick={() => openModal(room)}
@@ -180,7 +170,8 @@ const Rooms = () => {
                       </button>
 
                       <button
-                        onClick={() => handleDelete(room.room_id)}
+                        // 🚩 เปลี่ยนไปใช้ confirmDelete แทน handleDelete เดิม
+                        onClick={() => confirmDelete(room.room_id)}
                         className="p-3 rounded-2xl text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-200"
                         title="ลบ"
                       >
@@ -208,10 +199,13 @@ const Rooms = () => {
           room={editingRoom}
           onClose={() => setIsModalOpen(false)}
           onSave={editingRoom ? updateRoom : addRoom}
-          showAlert={showAlert}
+          // ส่งไปทั้งคู่ เผื่อไฟล์ RoomFormModal อยากอัปเกรดมาใช้โชว์ Alert แบบใหม่
+          showAlert={showAlert} 
+          showResultAlert={showResultAlert} 
         />
       )}
 
+      {/* 🚩 โครงสร้าง ActionModal ที่สอดคล้องกับ AlertConfig */}
       {alertConfig.isOpen && (
         <ActionModal
           icon={alertConfig.icon}
@@ -220,11 +214,11 @@ const Rooms = () => {
           singleButton={alertConfig.singleButton}
           variant={alertConfig.variant}
           buttonText="ตกลง"
-          onClose={() => setAlertConfig((prev) => ({ ...prev, isOpen: false }))}
+          onClose={closeAlert}
           onConfirm={alertConfig.onConfirm}
           showBg={alertConfig.showBg}
-          autoClose={alertConfig.autoClose} // ส่งค่านี้
-          showButtons={alertConfig.showButtons} // ส่งค่านี้
+          autoClose={alertConfig.autoClose}
+          showButtons={alertConfig.showButtons}
         />
       )}
     </div>

@@ -1,21 +1,127 @@
-import React from 'react';
-import Navbar from '../components/layout/Navbar'; // 🚩 ปรับ Path ให้ตรงกับโฟลเดอร์ของคุณ
-import { useSchedule } from '../hooks/useSchedule'; // 🚩 นำเข้า Hook ตัวใหม่ที่เราแก้ชื่อแล้ว
-import { Edit2, Trash2, UploadCloud, AlertCircle, CheckCircle } from 'lucide-react'; 
+import React, { useState } from 'react';
+import Navbar from '../components/layout/Navbar'; 
+import { useSchedule } from '../hooks/useSchedule'; 
+import { Edit2, Trash2, UploadCloud, AlertCircle, CheckCircle, X } from 'lucide-react'; 
+import ActionModal from '../components/common/ActionModal'; 
 
 const ScheduleManagement = () => {
-  // 🚩 ดึง State และฟังก์ชันทั้งหมดมาจาก Hook (ใช้ชื่อใหม่)
   const {
-    schedules, isLoading, // เปลี่ยน logs เป็น schedules
+    schedules, isLoading, 
     isEditModalOpen, setIsEditModalOpen, 
-    editingSchedule, setEditingSchedule, // เปลี่ยน editingLog เป็น editingSchedule
+    editingSchedule, setEditingSchedule, 
     isPreviewModalOpen, setIsPreviewModalOpen, isUploading,
     previewData, previewErrors, fileInputRef,
     handleDelete, openEditModal, handleSaveEdit,
     triggerFileInput, handleFileChange, handleConfirmReupload
-  } = useSchedule(); // เปลี่ยน useScheduleLog() เป็น useSchedule()
+  } = useSchedule(); 
 
-  // ฟังก์ชันช่วยจัดรูปแบบวันที่
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    title: "",
+    icon: null,
+    variant: "primary",
+    showConfirm: true,
+    showButtons: null,
+    autoClose: false,
+    onConfirm: null,
+  });
+
+  const closeAlert = () => setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+
+  // โชว์ผลลัพธ์ (สำเร็จ/ล้มเหลว) แบบ Auto Close
+  const showResultAlert = (success, successMsg, errorMsg) => {
+    setAlertConfig({
+      isOpen: true,
+      title: success ? successMsg : errorMsg,
+      icon: success ? <CheckCircle size={50} /> : <X size={50} />,
+      variant: success ? "primary" : "danger",
+      showConfirm: false,
+      showButtons: false, 
+      autoClose: true,
+      onConfirm: null,
+    });
+  };
+
+  // จัดการเวลากดลบ
+  const confirmDelete = (id) => {
+    setAlertConfig({
+      isOpen: true,
+      title: "ยืนยันการลบตารางเรียน?",
+      icon: <Trash2 size={50} />,
+      variant: "danger",
+      showConfirm: true,
+      showButtons: true,
+      autoClose: false,
+      onConfirm: async () => {
+        closeAlert();
+        try {
+          const res = await handleDelete(id);
+          const isSuccess = res?.success !== false; 
+          showResultAlert(isSuccess, "ลบข้อมูลสำเร็จ", "เกิดข้อผิดพลาดในการลบข้อมูล");
+        } catch (error) {
+          showResultAlert(false, "", "เกิดข้อผิดพลาด ไม่สามารถลบข้อมูลได้");
+        }
+      }
+    });
+  };
+
+  // จัดการเวลาบันทึกการแก้ไข
+  const onSaveEdit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await handleSaveEdit(e);
+      setIsEditModalOpen(false);
+      const isSuccess = res?.success !== false;
+      showResultAlert(isSuccess, "บันทึกการแก้ไขสำเร็จ", "เกิดข้อผิดพลาดในการบันทึก");
+    } catch (error) {
+      showResultAlert(false, "", "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+    }
+  };
+
+  // 🚩 ครอบการเลือกไฟล์ เพื่อดัก Error ตอน Preview
+  const onFileChangeWrapper = async (e) => {
+    try {
+      await handleFileChange(e);
+    } catch (error) {
+      showResultAlert(false, "", error.response?.data?.message || "เกิดข้อผิดพลาดในการตรวจสอบไฟล์");
+    }
+  };
+
+  // 🚩 จัดการเวลายืนยันอัปโหลดทับ
+  const onConfirmReuploadClick = async () => {
+    // ถ้าไฟล์มี Error บางส่วน เด้งถามก่อน
+    if (previewErrors.length > 0) {
+      setAlertConfig({
+        isOpen: true,
+        title: "ไฟล์นี้มีข้อผิดพลาด ต้องการอัปโหลดไฟล์ทับใช่หรือไม่",
+        icon: <AlertCircle size={50} className="text-yellow-500" />,
+        variant: "warning",
+        showConfirm: true,
+        showButtons: true,
+        autoClose: false,
+        onConfirm: async () => {
+          closeAlert(); // ปิด Modal ยืนยัน
+          await executeReupload(); // สั่งอัปโหลด
+        }
+      });
+    } else {
+      // ไม่มี Error ข้ามไปอัปโหลดเลย
+      await executeReupload();
+    }
+  };
+
+  // ฟังก์ชันตัวจริงที่เรียก API ตอนอัปโหลด
+  const executeReupload = async () => {
+    try {
+      const res = await handleConfirmReupload();
+      setIsPreviewModalOpen(false);
+      const isSuccess = res?.success !== false;
+      showResultAlert(isSuccess, `อัปเดตข้อมูลทับไฟล์เดิมสำเร็จ! (${res?.totalSaved || 0} รายการ)`, "เกิดข้อผิดพลาดในการอัปเดต");
+    } catch (error) {
+      showResultAlert(false, "", "เกิดข้อผิดพลาดในการอัปเดตข้อมูล");
+    }
+  };
+
   const formatDate = (dateStr) => {
     if (!dateStr) return '-';
     return new Date(dateStr).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
@@ -32,11 +138,10 @@ const ScheduleManagement = () => {
           </h1>
         </div>
 
-        <input type="file" accept=".xlsx, .xls" ref={fileInputRef} className="hidden" onChange={handleFileChange} />
+        {/* 🚩 เปลี่ยนให้ใช้ onFileChangeWrapper แทนตัวเดิม */}
+        <input type="file" accept=".xlsx, .xls" ref={fileInputRef} className="hidden" onChange={onFileChangeWrapper} />
 
-        {/* ========================================== */}
         {/* ตารางหลัก */}
-        {/* ========================================== */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full text-left text-sm text-gray-700 dark:text-gray-300">
@@ -80,7 +185,7 @@ const ScheduleManagement = () => {
                           <Edit2 size={16} />
                         </button>
                         <button 
-                          onClick={() => handleDelete(schedule.unique_schedules)} 
+                          onClick={() => confirmDelete(schedule.unique_schedules)} 
                           className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all shadow-sm"
                           title="ลบข้อมูลชุดนี้"
                         >
@@ -95,15 +200,13 @@ const ScheduleManagement = () => {
           </div>
         </div>
 
-        {/* ========================================== */}
         {/* Modal: แก้ไข Header */}
-        {/* ========================================== */}
         {isEditModalOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4">
             <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
               <h2 className="text-xl font-bold mb-6 text-[#302782] dark:text-[#B2BB1E]">แก้ไขรายละเอียด</h2>
               <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">ชุดตารางเรียน: <span className="font-mono text-blue-500">{editingSchedule.id}</span></div>
-              <form onSubmit={handleSaveEdit}>
+              <form onSubmit={onSaveEdit}>
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">ภาควิชา</label>
                   <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.department} onChange={(e) => setEditingSchedule({ ...editingSchedule, department: e.target.value })} />
@@ -125,9 +228,7 @@ const ScheduleManagement = () => {
           </div>
         )}
 
-        {/* ========================================== */}
         {/* Modal: Preview ระบบอัปโหลดทับ */}
-        {/* ========================================== */}
         {isPreviewModalOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4">
             <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform transition-all">
@@ -150,7 +251,6 @@ const ScheduleManagement = () => {
                 </div>
               </div>
 
-              {/* แสดงตาราง Error ถ้ามี */}
               {previewErrors.length > 0 && (
                 <div className="flex-1 overflow-auto border border-red-200 dark:border-red-800/50 rounded-xl mb-6">
                   <table className="min-w-full text-sm text-left">
@@ -184,8 +284,9 @@ const ScheduleManagement = () => {
                   <button onClick={() => setIsPreviewModalOpen(false)} disabled={isUploading} className="flex-1 sm:flex-none px-6 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
                     ยกเลิก
                   </button>
+                  {/* 🚩 เปลี่ยนให้ไปเรียก onConfirmReuploadClick */}
                   <button 
-                    onClick={handleConfirmReupload} 
+                    onClick={onConfirmReuploadClick} 
                     disabled={isUploading || previewData.length === 0} 
                     className="flex-1 sm:flex-none px-6 py-2.5 bg-[#B2BB1E] hover:bg-[#9fa719] text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md flex justify-center items-center gap-2"
                   >
@@ -199,6 +300,15 @@ const ScheduleManagement = () => {
           </div>
         )}
       </div>
+
+      {/* แสดง ActionModal ที่ล่างสุด */}
+      {alertConfig.isOpen && (
+        <ActionModal 
+          {...alertConfig} 
+          onClose={closeAlert} 
+        />
+      )}
+
     </div>
   );
 };

@@ -165,7 +165,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
                 }
               >
                 <option value="false">ใช้งานได้ปกติ</option>
-                <option value="true">งดใช้งาน (อยู่ระหว่างซ่อม)</option>
+                <option value="true">งดใช้งานชั่วคราว</option>
               </select>
             </div>
           </div>

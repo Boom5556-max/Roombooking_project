@@ -174,7 +174,7 @@ const Notification = () => {
       setTimeout(() => {
         setAlertConfig({
           isOpen: true,
-          title: result?.success ? "ดำเนินการสำเร็จ" : "ไม่สำเร็จ",
+          title: result?.success ? "งดใช้ห้องสำเร็จ" : "งดใช้ห้องไม่สำเร็จ",
           icon: result?.success ? <CheckCircle size={50} className="text-green-500"/> : <XCircle size={50} className="text-red-500"/>,
           showButtons: false,
           autoClose: true,
@@ -248,7 +248,7 @@ const Notification = () => {
                 title="ไม่อนุมัติ"
                 icon={XCircle}
                 data={historyRequests}
-                color="text-gray-400"
+                color="text-red-400"
                 getFullName={getFullName}
                 onSelect={(b) => setSelectedBooking({ ...b, isHistory: true })}
                 variant="rejected"

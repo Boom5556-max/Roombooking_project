@@ -206,7 +206,7 @@ const Users = () => {
                   }}
                   className="flex-1 py-4 text-base sm:text-lg bg-[#302782] hover:bg-[#B2BB1E] text-white font-bold rounded-2xl transition-all shadow-md active:scale-95"
                 >
-                  ยืนยันลบ
+                  ยืนยัน
                 </button>
               </div>
             )}

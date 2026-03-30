@@ -24,51 +24,41 @@ export const useSchedule = () => {
     try {
       const res = await api.get('/schedules/allScheduleLog');
       
-      // 🚩 เพิ่ม Log ดูว่า Backend ส่งอะไรมา (เปิด F12 ดูใน Console)
-      console.log('ข้อมูลจาก API:', res.data);
-      
-      // 🚩 ดักจับและคัดกรองข้อมูลให้ชัวร์ว่าเป็น Array เสมอ
       let scheduleData = [];
-      
       if (Array.isArray(res.data)) {
-        // กรณี Backend ส่งมาเป็น Array ตรงๆ เลย: [ {...}, {...} ]
         scheduleData = res.data;
       } else if (res.data && Array.isArray(res.data.data)) {
-        // กรณี Backend ส่งมาเป็น Object: { success: true, data: [ {...}, {...} ] }
         scheduleData = res.data.data;
       } else if (res.data && Array.isArray(res.data.schedules)) {
-        // เผื่อ Backend ส่งมาเป็นชื่อตัวแปรอื่น: { schedules: [ {...}, {...} ] }
         scheduleData = res.data.schedules;
       }
 
       setSchedules(scheduleData);
-
     } catch (error) {
       console.error('Fetch Schedules Error:', error);
-      setSchedules([]); // 🚩 ถ้าพังให้เซ็ตเป็น Array ว่าง ป้องกัน error .map()
-      alert('ไม่สามารถดึงข้อมูลตารางเรียนได้');
+      setSchedules([]); 
+      throw error; 
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchSchedules();
+    fetchSchedules().catch(() => {});
   }, [fetchSchedules]);
 
   // 2. DELETE: ลบข้อมูลตารางเรียน
   const handleDelete = async (id) => {
-    if (!window.confirm('⚠️ ยืนยันการลบ?\nข้อมูลรายวิชาทั้งหมดในตารางชุดนี้จะหายไปแบบกู้คืนไม่ได้!')) return;
-
     try {
       const res = await api.delete(`/schedules/${id}`);
       if (res.data.success) {
-        alert('ลบข้อมูลสำเร็จ');
-        fetchSchedules();
+        await fetchSchedules();
+        return { success: true }; 
       }
+      return { success: false };
     } catch (error) {
       console.error('Delete Error:', error);
-      alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+      throw error; 
     }
   };
 
@@ -84,7 +74,6 @@ export const useSchedule = () => {
   };
 
   const handleSaveEdit = async (e) => {
-    e.preventDefault();
     try {
       const payload = {
         department: editingSchedule.department,
@@ -94,13 +83,13 @@ export const useSchedule = () => {
       const res = await api.put(`/schedules/${editingSchedule.id}`, payload);
       
       if (res.data.success) {
-        alert('แก้ไขข้อมูลสำเร็จ!');
-        setIsEditModalOpen(false);
-        fetchSchedules();
+        await fetchSchedules();
+        return { success: true }; 
       }
+      return { success: false };
     } catch (error) {
       console.error('Edit Error:', error);
-      alert(error.response?.data?.message || 'เกิดข้อผิดพลาดในการแก้ไขข้อมูล');
+      throw error; 
     }
   };
 
@@ -131,20 +120,16 @@ export const useSchedule = () => {
 
     } catch (error) {
       console.error('Reupload Preview Error:', error);
-      alert(error.response?.data?.message || 'เกิดข้อผิดพลาดในการตรวจสอบไฟล์');
+      // 🚩 โยน Error ออกไปให้ Component แสดง Pop-up แทน alert()
+      throw error; 
     } finally {
       setIsUploading(false);
-      e.target.value = null; // รีเซ็ต input file
+      e.target.value = null; 
     }
   };
 
   // 5. PUT: ยืนยันการอัปโหลดทับข้อมูลเดิม
   const handleConfirmReupload = async () => {
-    if (previewErrors.length > 0) {
-      const confirmWarning = window.confirm('⚠️ ไฟล์นี้มี Error บางส่วน คุณต้องการบันทึกข้ามส่วนที่ Error ไปหรือไม่?');
-      if (!confirmWarning) return;
-    }
-
     try {
       setIsUploading(true);
       const res = await api.put(`/schedules/reconfirm/${currentReuploadId}`, {
@@ -152,36 +137,21 @@ export const useSchedule = () => {
       });
 
       if (res.data.success) {
-        alert(`บันทึกข้อมูลสำเร็จ! อัปเดตตารางเรียน ${res.data.totalSaved} รายการ`);
-        setIsPreviewModalOpen(false);
-        fetchSchedules(); 
+        await fetchSchedules(); 
+        return { success: true, totalSaved: res.data.totalSaved };
       }
+      return { success: false };
     } catch (error) {
       console.error('Confirm Reupload Error:', error);
-      alert(error.response?.data?.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+      throw error;
     } finally {
       setIsUploading(false);
     }
   };
 
   return {
-    schedules,
-    isLoading,
-    isEditModalOpen,
-    setIsEditModalOpen,
-    editingSchedule,
-    setEditingSchedule,
-    isPreviewModalOpen,
-    setIsPreviewModalOpen,
-    isUploading,
-    previewData,
-    previewErrors,
-    fileInputRef,
-    handleDelete,
-    openEditModal,
-    handleSaveEdit,
-    triggerFileInput,
-    handleFileChange,
-    handleConfirmReupload
+    schedules, isLoading, isEditModalOpen, setIsEditModalOpen, editingSchedule, setEditingSchedule,
+    isPreviewModalOpen, setIsPreviewModalOpen, isUploading, previewData, previewErrors, fileInputRef,
+    handleDelete, openEditModal, handleSaveEdit, triggerFileInput, handleFileChange, handleConfirmReupload
   };
 };

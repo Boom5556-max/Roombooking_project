@@ -106,6 +106,7 @@ const Calendar = () => {
               rooms={rooms}
               selectedRoom={selectedRoom}
               onSelect={setSelectedRoom}
+              disabled={isCancelMode} // 🚩 เพิ่มบรรทัดนี้เพื่อส่งสถานะล็อคไปให้ Component ย่อย
             />
           </div>
 
