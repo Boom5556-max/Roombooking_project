@@ -75,13 +75,8 @@ export const useCalendarData = (roomIdFromUrl) => {
     }
 
     try {
-      console.log(`📡 Sending Update: ID=${id}, Status=${isClosed}`);
-
       const payload = { temporarily_closed: isClosed };
       const response = await api.patch(`/schedules/${id}/status`, payload);
-
-      console.log("✅ API Response:", response.data);
-
       await fetchData();
       return { success: true };
     } catch (err) {

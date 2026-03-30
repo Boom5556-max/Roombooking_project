@@ -88,9 +88,6 @@ const RoomStatus = () => {
             {/* Header Section: ข้อมูลชื่อห้องและวันที่ */}
             <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
               <div className="space-y-1">
-                <p className="text-[#B2BB1E] font-black text-xs sm:text-sm uppercase tracking-tighter">
-                  {roomDetail?.room_type || "ประเภทห้องเรียน"}
-                </p>
                 <h2 className="text-[#302782] dark:text-white text-5xl sm:text-7xl font-black leading-tight drop-shadow-sm">
                   {id}
                 </h2>
@@ -159,7 +156,7 @@ const EmptyScheduleState = ({ isAvailable }) => (
     <p className="text-gray-400 font-bold text-sm sm:text-base px-6">
       {isAvailable ? "วันนี้ไม่มีรายการจองเพิ่มเติม" : "ไม่มีรายการจองถัดไปต่อจากนี้"}
     </p>
-    <p className="text-gray-300 text-[10px] mt-2 font-medium uppercase tracking-widest">Everything is Clear</p>
+    
   </div>
 );
 

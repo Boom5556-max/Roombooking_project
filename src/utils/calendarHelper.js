@@ -35,8 +35,7 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
     } catch (e) { return dateStr; }
   };
 
-  // ค้นหาฟังก์ชัน processItem แล้วเขียนทับเฉพาะส่วนนี้ครับ
-const processItem = (item, type) => {
+  const processItem = (item, type) => {
     if (type === "booking" && (item.status === "pending" || item.status === "rejected")) {
         return null;
     }
@@ -60,6 +59,11 @@ const processItem = (item, type) => {
     // 🚩 เช็คว่าเป็นหน้าแยกห้องหรือไม่
     const isRoomView = defRoomId !== null && defRoomId !== "" && defRoomId !== "undefined";
 
+    // 🚩 ตรวจสอบว่าข้อมูลนี้มาจากการอัปโหลดไฟล์หรือไม่
+    // หมายเหตุ: ตรง item.is_upload ให้เปลี่ยนชื่อคีย์ให้ตรงกับ Database ของคุณ
+    // เช่น ถ้าใน DB ใช้ชื่อคอลัมน์ว่า source แล้วเก็บค่าเป็น 'excel' ให้แก้เป็น item.source === 'excel'
+    const isUploadItem = item.is_upload === 1 || item.is_upload === true || item.source === 'excel';
+
     const roomPrefix = (finalRoomName && finalRoomName !== "ไม่ระบุเลขห้อง" && !isRoomView) ? `[${finalRoomName}] ` : "";
     const originalTitle = type === "booking" ? (item.purpose || "จองใช้ห้อง") : (item.subject_name || "ตารางเรียนหลัก");
     const displayTitle = isClosed ? `(งดใช้ห้อง) ${roomPrefix}${originalTitle}` : `${roomPrefix}${originalTitle}`;
@@ -74,7 +78,6 @@ const processItem = (item, type) => {
         finalTextColor = "#111827";
         finalBorderColor = "#ef4444";
     } else if (isRoomView) {
-        // 🚩 หน้าแยกห้อง: ใช้สีจางๆ แทน transparent สนิทเพื่อให้มองเห็นแถบ
         finalBgColor = "rgba(0, 0, 0, 0.05)"; 
         finalBorderColor = roomTheme.bg;
         finalTextColor = "#111827";
@@ -92,14 +95,15 @@ const processItem = (item, type) => {
             temporarily_closed: isClosed,
             room_id: finalRoomId, 
             room_name: finalRoomName,
-            isRoomView: isRoomView, // 🚩 สำคัญมาก: ต้องส่งค่านี้ไปให้ CalendarView.jsx ใช้เช็คสีตัวหนังสือ
+            isRoomView: isRoomView,
+            isUpload: isUploadItem, // 🚩 เพิ่มคีย์ isUpload เพื่อส่งไปให้ CalendarView.jsx วาดจุดสีส้ม
         },
         backgroundColor: finalBgColor,
         borderColor: finalBorderColor,
         textColor: finalTextColor,
     };
-};
-  // ✨ 3. เพิ่มการกรอง event !== null ป้องกัน error จากรายการที่เราซ่อนทิ้ง
+  };
+
   const bookingEvents = (Array.isArray(bookingsData) ? bookingsData : [])
     .map((b) => processItem(b, "booking"))
     .filter((event) => event !== null && event.start && !event.start.includes("Invalid Date"));

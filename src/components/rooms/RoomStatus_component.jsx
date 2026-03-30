@@ -130,12 +130,6 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
         <div className="w-20 h-20 bg-[#B2BB1E]/10 dark:bg-[#B2BB1E]/5 rounded-full flex items-center justify-center mx-auto mb-6">
             <CalendarDays size={40} className="text-[#B2BB1E]" />
         </div>
-        <p className="text-[#B2BB1E] text-3xl sm:text-4xl font-black mb-3 tracking-tighter italic">
-          READY FOR BOOKING
-        </p>
-        <p className="text-sm font-black text-gray-400 uppercase tracking-widest">
-          Max Capacity: {capacity || "-"} Seats
-        </p>
       </div>
     )}
   </div>
