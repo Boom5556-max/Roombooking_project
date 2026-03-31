@@ -32,7 +32,7 @@ export const FormField = ({
 
       {/* Error Message: แสดงผลแบบ Smooth */}
       {error && (
-        <p className="text-[11px] sm:text-xs font-bold text-red-500 ml-1 mt-0.5 animate-in fade-in slide-in-from-top-1 duration-200">
+        <p className="text-xs sm:text-xs font-bold text-red-500 ml-1 mt-0.5 animate-in fade-in slide-in-from-top-1 duration-200">
           ⚠️ {error}
         </p>
       )}

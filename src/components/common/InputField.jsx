@@ -5,7 +5,7 @@ const InputField = ({ label, icon: Icon, error, ...props }) => {
     <div className="flex flex-col gap-2 font-sans w-full group">
       {/* Label: ปรับให้ดูสะอาดตาขึ้น */}
       {label && (
-        <label className="text-[11px] sm:text-xs font-black text-gray-400 uppercase tracking-wider ml-1 flex items-center gap-2">
+        <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1 flex items-center gap-2">
           {label}
         </label>
       )}
@@ -42,7 +42,7 @@ const InputField = ({ label, icon: Icon, error, ...props }) => {
 
       {/* Error Message */}
       {error && (
-        <p className="text-[11px] sm:text-xs font-bold text-red-500 ml-2 animate-in fade-in slide-in-from-left-2">
+        <p className="text-xs sm:text-xs font-bold text-red-500 ml-2 animate-in fade-in slide-in-from-left-2">
           * {error}
         </p>
       )}

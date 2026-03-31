@@ -88,7 +88,7 @@ const RoomStatus = () => {
             {/* Header Section: ข้อมูลชื่อห้องและวันที่ */}
             <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
               <div className="space-y-1">
-                <h2 className="text-[#302782] dark:text-white text-5xl sm:text-7xl font-black leading-tight drop-shadow-sm">
+                <h2 className="text-[#302782] dark:text-white text-5xl sm:text-7xl font-black leading-tight">
                   {id}
                 </h2>
               </div>

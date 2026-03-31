@@ -84,7 +84,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
           {/* Title & Name Grid */}
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-4 flex flex-col gap-2">
-              <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
                 คำนำหน้า
               </label>
               <div className="relative">
@@ -110,7 +110,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
               </div>
             </div>
             <div className="col-span-8 flex flex-col gap-2">
-              <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
                 ชื่อจริง
               </label>
               <input
@@ -127,7 +127,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
 
           {/* Surname */}
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
               นามสกุล
             </label>
             <input
@@ -143,7 +143,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
 
           {/* Email with Icon */}
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
               อีเมลติดต่อ (KU Mail)
             </label>
             <div className="relative group">
@@ -167,7 +167,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
           {/* Role selection - ซ่อนเมื่ออยู่ในโหมดแก้ไข (!!user เป็น true) */}
           {!user && (
             <div className="flex flex-col gap-2 pb-2">
-              <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
                 สิทธิ์การเข้าถึงระบบ
               </label>
               <div className="grid grid-cols-2 gap-3">

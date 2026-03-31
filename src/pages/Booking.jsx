@@ -28,7 +28,7 @@ const BookingRoom = () => {
         {/* Header Section */}
         <div className="px-6 py-8 sm:px-10 sm:pt-10 sm:pb-6 flex justify-between items-center border-b border-gray-50 dark:border-gray-700 bg-white dark:bg-gray-800 sticky top-0 z-10">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#302782] dark:text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#302782] dark:text-white tracking-tight">
               จองห้องเรียน
             </h1>
             <p className="text-xs sm:text-sm font-medium text-gray-400 mt-1">

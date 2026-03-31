@@ -64,7 +64,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
         </p>
       </div>
       <div
-        className={`px-5 py-2.5 rounded-2xl text-[#FFFFFF] text-[11px] sm:text-xs font-black uppercase tracking-widest transition-all ${
+        className={`px-5 py-2.5 rounded-2xl text-[#FFFFFF] text-xs sm:text-xs font-black uppercase tracking-widest transition-all ${
           !isAvailable
             ? "bg-red-500 shadow-lg shadow-red-200"
             : "bg-[#B2BB1E] shadow-lg shadow-[#B2BB1E]/20"
@@ -82,7 +82,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
             <Clock size={32} strokeWidth={2.5} className="sm:w-10 sm:h-10" />
           </div>
           <div>
-            <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1">ช่วงเวลาที่จอง</p>
+            <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">ช่วงเวลาที่จอง</p>
             <p className="text-2xl sm:text-4xl font-black text-[#302782] tracking-tight">
               {item.start_time} - {item.end_time} <span className="text-lg text-gray-300 ml-1 font-bold">น.</span>
             </p>

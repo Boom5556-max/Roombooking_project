@@ -50,7 +50,7 @@ const RoomCard = ({ room }) => {
         </div>
         
         {/* สถานที่ */}
-        <p className="text-gray-400 text-[12px] sm:text-sm font-bold ml-0.5 opacity-80 uppercase tracking-wide">
+        <p className="text-gray-400 text-xs sm:text-sm font-bold ml-0.5 opacity-80 uppercase tracking-wide">
           {room.location}
         </p>
 

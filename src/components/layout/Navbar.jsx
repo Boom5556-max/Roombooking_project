@@ -82,7 +82,7 @@ const Navbar = () => {
             <h1 className="text-[#FFFFFF] text-2xl sm:text-4xl font-bold leading-tight tracking-tight">
               SCI <span className="text-[#B2BB1E]">KU</span>
             </h1>
-            <p className="text-[#FFFFFF]/40 text-[7px] sm:text-[9px] font-bold tracking-[0.3em] sm:tracking-[0.50em] leading-none uppercase italic">Sriracha Campus</p>
+            <p className="text-[#FFFFFF]/40 text-[7px] sm:text-[9px] font-bold tracking-widest leading-none uppercase italic">Sriracha Campus</p>
           </div>
         </div>
 

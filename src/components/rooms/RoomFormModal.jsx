@@ -117,7 +117,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
 
           {/* Location Select */}
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
               สถานที่ตั้ง / อาคาร
             </label>
             <select
@@ -147,7 +147,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
             />
 
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
                 สถานะการเปิดใช้งาน
               </label>
               <select
@@ -172,7 +172,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
 
           {/* Characteristics Area */}
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
               ลักษณะห้องเรียน / รายละเอียดเพิ่มเติม
             </label>
             <textarea

@@ -155,7 +155,7 @@ const ExportLog = () => {
           {/* Date Inputs */}
           <div className="space-y-4 mb-6">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                 <CalendarRange size={13} />
                 วันที่เริ่มต้น
               </label>
@@ -169,7 +169,7 @@ const ExportLog = () => {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                 <CalendarRange size={13} />
                 วันที่สิ้นสุด
               </label>
@@ -223,7 +223,7 @@ const ExportLog = () => {
 
         {/* Info Card */}
         <div className="mt-4 bg-[#302782]/5 dark:bg-[#302782]/20 rounded-[24px] border border-[#302782]/10 dark:border-[#302782]/30 p-5">
-          <p className="text-xs font-black text-[#302782] dark:text-[#B2BB1E] uppercase tracking-widest mb-2">
+          <p className="text-xs font-semibold text-[#302782] dark:text-[#B2BB1E] mb-2">
             ไฟล์ที่สร้างจะประกอบด้วย
           </p>
           <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1 font-semibold">

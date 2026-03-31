@@ -54,7 +54,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
       </div>
       <form onSubmit={onSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="space-y-2">
-          <label className="text-[11px] text-gray-300 font-bold uppercase ml-2">วันที่เข้าใช้งาน</label>
+          <label className="text-xs font-medium text-gray-300 ml-2">วันที่เข้าใช้งาน</label>
           <div className="relative">
             <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" size={20} />
             <input 
@@ -66,14 +66,14 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
           </div>
         </div>
         <div className="space-y-2 col-span-1">
-          <label className="text-[11px] text-gray-300 font-bold uppercase ml-2">ช่วงเวลา</label>
+          <label className="text-xs font-medium text-gray-300 ml-2">ช่วงเวลา</label>
           <div className="flex gap-2">
             {renderTimeDropdown("start_time")}
             {renderTimeDropdown("end_time")}
           </div>
         </div>
         <div className="space-y-2">
-          <label className="text-[11px] text-gray-300 font-bold uppercase ml-2">จำนวนนิสิต</label>
+          <label className="text-xs font-medium text-gray-300 ml-2">จำนวนนิสิต</label>
           <div className="relative">
             <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
             <input 

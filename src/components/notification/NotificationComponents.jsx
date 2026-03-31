@@ -106,7 +106,7 @@ export const DetailItem = ({ icon: Icon, label, value }) => (
 // 4. EditField: ฟิลด์กรอกข้อมูล (ใช้ร่วมกับ Input หลัก)
 export const EditField = ({ label, value, onChange, type = "text", icon: Icon }) => (
   <div className="flex flex-col gap-2 w-full font-sans group">
-    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+    <label className="text-xs font-medium text-gray-400 ml-1">
       {label}
     </label>
     <div className="relative flex items-center">

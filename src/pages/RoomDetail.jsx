@@ -88,7 +88,7 @@ const RoomDetail = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-400 italic">ไม่มีข้อมูลสิ่งอำนวยความสะดวก</p>
+                  <p className="text-gray-400 text-sm">ไม่มีข้อมูลสิ่งอำนวยความสะดวก</p>
                 )}
               </div>
             </div>

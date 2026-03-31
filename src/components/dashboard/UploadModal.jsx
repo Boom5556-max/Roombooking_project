@@ -240,11 +240,11 @@ const UploadModal = ({ isOpen, onClose }) => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-y-auto pr-1 custom-scrollbar mb-4">
                   {/* Valid Data Table */}
                   <div className="flex flex-col gap-2">
-                    <h3 className="font-bold text-[#B2BB1E] text-[11px] sm:text-xs flex items-center gap-1.5 px-1 sticky top-0 bg-white dark:bg-gray-800 py-1 z-10">
+                    <h3 className="font-bold text-[#B2BB1E] text-xs sm:text-xs flex items-center gap-1.5 px-1 sticky top-0 bg-white dark:bg-gray-800 py-1 z-10">
                       <CheckCircle2 size={16} /> รายการที่ถูกต้อง ({validData.length})
                     </h3>
                     <div className="border border-gray-100 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
-                      <table className="w-full text-[11px] sm:text-xs text-left border-collapse">
+                      <table className="w-full text-xs sm:text-xs text-left border-collapse">
                         <thead className="bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-bold border-b dark:border-gray-600">
                           <tr>
                             <th className="p-2 sm:p-3">วิชา/เวลา</th>
@@ -272,7 +272,7 @@ const UploadModal = ({ isOpen, onClose }) => {
 
                   {/* Invalid Data Table */}
                   <div className="flex flex-col gap-2">
-                    <h3 className="font-bold text-red-500 text-[11px] sm:text-xs flex items-center gap-1.5 px-1 sticky top-0 bg-white dark:bg-gray-800 py-1 z-10">
+                    <h3 className="font-bold text-red-500 text-xs sm:text-xs flex items-center gap-1.5 px-1 sticky top-0 bg-white dark:bg-gray-800 py-1 z-10">
                       <AlertCircle size={16} /> รายการที่มีปัญหา ({invalidData.length})
                     </h3>
                     <div className="border border-red-50 dark:border-gray-700 rounded-2xl bg-red-50/10 dark:bg-gray-800 shadow-sm overflow-hidden text-xs">
