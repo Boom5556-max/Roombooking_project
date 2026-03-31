@@ -72,7 +72,7 @@ const LoginForm = ({
             value={otp}
             onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))} // กันพิมพ์ตัวอักษรอื่น
             placeholder="000000"
-            className={`text-center text-2xl sm:text-3xl tracking-[0.2em] sm:tracking-[0.3em] font-black transition-colors ${errorMsg ? 'text-red-500 border-red-500' : 'text-[#2D2D86]'}`}
+            className={`text-center text-2xl sm:text-3xl tracking-[0.2em] sm:tracking-[0.3em] font-black transition-colors ${errorMsg ? 'text-red-500 border-red-500' : 'text-[#302782]'}`}
           />
           
           {errorMsg && (

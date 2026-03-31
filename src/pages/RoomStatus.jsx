@@ -97,7 +97,7 @@ const RoomStatus = () => {
                 <p className="text-[10px] sm:text-xs font-black text-gray-400 uppercase tracking-widest">
                   Update
                 </p>
-                <span className="text-xs sm:text-sm font-bold text-gray-700">
+                <span className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">
                   {formatDate(roomData.date)}
                 </span>
               </div>

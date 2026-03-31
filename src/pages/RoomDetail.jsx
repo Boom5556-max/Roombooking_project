@@ -24,13 +24,13 @@ const RoomDetail = () => {
     <div className="min-h-screen bg-[#FFFFFF] dark:bg-gray-900 flex flex-col items-center justify-center p-6 text-center font-sans">
       <div className="bg-red-50 p-8 rounded-[40px] max-w-md mx-auto">
         <AlertTriangle className="text-red-500 mx-auto mb-4" size={64} />
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-700 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-700 dark:text-gray-200 mb-6">
           {error || "ไม่พบข้อมูลห้องเรียนนี้"}
         </h2>
         <Button 
           variant="ghost" 
           onClick={() => navigate(-1)} 
-          className="text-[#302782] underline font-extrabold hover:text-[#B2BB1E] transition-colors"
+          className="text-[#302782] dark:text-[#B2BB1E] underline font-extrabold hover:text-[#B2BB1E] dark:hover:text-white transition-colors"
         >
           กลับไปหน้าหลัก
         </Button>
@@ -64,7 +64,7 @@ const RoomDetail = () => {
           <div className="bg-gray-50 dark:bg-gray-700 rounded-[30px] sm:rounded-[40px] p-6 sm:p-10 lg:p-12 mt-2 flex flex-col items-center min-h-[450px] sm:min-h-[500px] border border-gray-100 dark:border-gray-600 shadow-sm">
             
             <h2 className="text-gray-600 dark:text-gray-300 text-xl sm:text-3xl font-black mb-8 sm:mb-12 text-center leading-tight">
-              {room.name || "ไม่ระบุชื่อห้อง"} <span className="text-gray-300 dark:text-gray-600 hidden sm:inline mx-2">|</span> <br className="sm:hidden" /> <span className="text-[#302782] dark:text-[#B2BB1E]">{room.id || id}</span>
+              {room.name || "ไม่ระบุชื่อห้อง"} <span className="text-gray-200 dark:text-gray-500 hidden sm:inline mx-2">|</span> <br className="sm:hidden" /> <span className="text-[#302782] dark:text-[#B2BB1E]">{room.id || id}</span>
             </h2>
 
             {/* ส่วนข้อมูลห้อง */}

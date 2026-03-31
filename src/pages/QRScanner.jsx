@@ -115,7 +115,7 @@ const TabButton = ({ active, onClick, icon, label }) => (
 const GalleryUpload = ({ onFileChange, disabled }) => (
   <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors group">
     <div className="bg-[#B2BB1E]/10 group-hover:bg-[#B2BB1E]/20 p-6 sm:p-8 rounded-full mb-4 transition-all transform group-active:scale-95">
-      <ImageIcon size={48} className="text-[#302782] sm:w-[56px] sm:h-[56px]" />
+      <ImageIcon size={48} className="text-[#302782] dark:text-white sm:w-[56px] sm:h-[56px]" />
     </div>
     <div className="text-center px-4">
       <p className="text-[#302782] dark:text-white font-bold text-sm sm:text-base">อัปโหลดรูปภาพ</p>

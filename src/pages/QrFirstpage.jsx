@@ -191,9 +191,9 @@ const TabButton = ({ active, onClick, icon, label }) => (
 const GalleryUpload = ({ onFileChange, disabled }) => (
   <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
     <div className="bg-[#B2BB1E]/20 p-6 rounded-full mb-4 group-hover:scale-110 transition-transform">
-      <ImageIcon size={48} className="text-[#302782]" />
+      <ImageIcon size={48} className="text-[#302782] dark:text-white" />
     </div>
-    <p className="text-[#302782] font-bold text-sm mb-1">แตะเพื่อเลือกรูปภาพ</p>
+    <p className="text-[#302782] dark:text-white font-bold text-sm mb-1">แตะเพื่อเลือกรูปภาพ</p>
     <p className="text-xs text-gray-400">รองรับ JPG, PNG</p>
     <input
       type="file"
