@@ -6,6 +6,8 @@ import { jwtDecode } from "jwt-decode";
 import ActionModal from "../common/ActionModal";
 import ProfileDropdown from "./ProfileDropdown";
 
+import logo from "../../assets/image/sci ku src.png";
+
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -73,16 +75,25 @@ const Navbar = () => {
       {/* --- Desktop & Tablet Header --- */}
       <nav className="bg-[#302782] dark:bg-gray-950 w-full px-4 sm:px-8 py-3 flex justify-between items-center shadow-[0_4px_20px_rgba(0,0,0,0.15)] sticky top-0 z-[1000] border-b border-[#FFFFFF]/5 backdrop-blur-md font-sans flex-none">
         
-        {/* Logo Section - ปรับขนาดตัวอักษรตามหน้าจอ */}
+        {/* Logo Section - ปรับมาใช้รูปภาพและชื่อคณะภาษาไทย (ขนาดใหญ่ขึ้น) */}
         <div
-          className="flex items-center gap-2 cursor-pointer group"
+          className="flex items-center gap-4 cursor-pointer group"
           onClick={() => navigate("/dashboard")}
         >
-          <div className="flex flex-col">
-            <h1 className="text-[#FFFFFF] text-2xl sm:text-4xl font-bold leading-tight tracking-tight">
-              SCI <span className="text-[#B2BB1E]">KU</span>
+          <div className="bg-white p-1.5 rounded-xl shadow-sm">
+            <img 
+              src={logo} 
+              alt="SCI KU SRC" 
+              className="h-10 sm:h-12 w-auto object-contain"
+            />
+          </div>
+          <div className="flex flex-col justify-center border-l border-white/20 pl-4">
+            <h1 className="text-[#FFFFFF] text-sm sm:text-base font-black leading-tight">
+              คณะวิทยาศาสตร์
             </h1>
-            <p className="text-[#FFFFFF]/40 text-[7px] sm:text-[9px] font-bold tracking-widest leading-none uppercase italic">Sriracha Campus</p>
+            <p className="text-[#FFFFFF]/90 text-xs sm:text-sm font-bold leading-tight">
+              ศรีราชา
+            </p>
           </div>
         </div>
 
