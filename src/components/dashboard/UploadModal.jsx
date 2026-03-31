@@ -149,7 +149,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                 />
                 <label
                   htmlFor="file-upload"
-                  className="cursor-pointer bg-[#302782] text-white px-8 py-3.5 rounded-[16px] font-bold text-sm sm:text-base flex items-center gap-2 shadow-lg hover:scale-105 active:scale-95 transition-all"
+                  className="cursor-pointer bg-[#302782] text-white px-8 py-3.5 rounded-[16px] font-bold text-sm sm:text-base flex items-center gap-2 shadow-lg hover:-translate-y-px active:scale-[0.98] transition-all"
                 >
                   <FilePlus size={20} /> เลือกไฟล์ Excel
                 </label>

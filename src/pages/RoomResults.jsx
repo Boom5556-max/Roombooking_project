@@ -57,7 +57,7 @@ const RoomResults = () => {
         </p>
         <button
           onClick={() => navigate("/dashboard")}
-          className="w-full bg-[#302782] text-white px-8 py-4 rounded-2xl font-bold hover:bg-[#B2BB1E] transition-all shadow-lg active:scale-95"
+          className="w-full bg-[#302782] text-white px-8 py-4 rounded-2xl font-bold hover:bg-[#B2BB1E] transition-all shadow-lg active:scale-[0.98]"
         >
           กลับหน้าหลัก
         </button>
@@ -123,7 +123,7 @@ const RoomResults = () => {
 
                 <button
                   onClick={() => setSelectedRoom(room)}
-                  className="w-full bg-[#302782] text-white py-4 sm:py-5 rounded-2xl sm:rounded-[28px] font-bold flex items-center justify-center gap-3 hover:bg-[#B2BB1E] transition-all shadow-md active:scale-95"
+                  className="w-full bg-[#302782] text-white py-4 sm:py-5 rounded-2xl sm:rounded-[28px] font-bold flex items-center justify-center gap-3 hover:bg-[#B2BB1E] transition-all shadow-md active:scale-[0.98]"
                 >
                   เลือกจองห้องนี้ <ArrowRight size={18} />
                 </button>
@@ -178,7 +178,7 @@ const RoomResults = () => {
               <button
                 disabled={isSubmitting}
                 onClick={onBookingClick}
-                className={`w-full py-4 sm:py-5 rounded-2xl sm:rounded-[30px] font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all shadow-lg active:scale-95 ${
+                className={`w-full py-4 sm:py-5 rounded-2xl sm:rounded-[30px] font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all shadow-lg active:scale-[0.98] ${
                   isSubmitting ? "bg-gray-100 dark:bg-gray-700 text-gray-400" : "bg-[#B2BB1E] text-white hover:bg-[#302782]"
                 }`}
               >
@@ -262,7 +262,7 @@ const StatusModal = ({ isOpen, status, errorMessage, onClose }) => {
         </p>
         <button
           onClick={onClose}
-          className={`w-full py-4 rounded-2xl font-black text-lg shadow-lg active:scale-95 transition-all ${isSuccess ? 'bg-[#302782] text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}
+          className={`w-full py-4 rounded-2xl font-black text-lg shadow-lg active:scale-[0.98] transition-all ${isSuccess ? 'bg-[#302782] text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}
         >
           {isSuccess ? "ตกลง" : "ลองใหม่อีกครั้ง"}
         </button>

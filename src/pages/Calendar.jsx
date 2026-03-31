@@ -113,7 +113,7 @@ const Calendar = () => {
           {selectedRoom && (
             <button
               onClick={() => setIsCancelMode(!isCancelMode)}
-              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 h-12 rounded-2xl font-bold text-sm transition-all shadow-sm active:scale-95 ${
+              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 h-12 rounded-2xl font-bold text-sm transition-all shadow-sm active:scale-[0.98] ${
                 isCancelMode
                   ? "bg-[#B2BB1E] text-white ring-4 ring-[#B2BB1E]/20"
                   : "bg-white dark:bg-gray-800 text-[#302782] dark:text-white border border-gray-200 dark:border-gray-700 hover:border-[#302782]"
@@ -194,7 +194,7 @@ const Calendar = () => {
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed font-medium">{alertConfig.msg}</p>
             <button
               onClick={() => setAlertConfig({ ...alertConfig, show: false })}
-              className="w-full py-4 bg-[#302782] text-white rounded-xl font-bold text-base active:scale-95 transition-all"
+              className="w-full py-4 bg-[#302782] text-white rounded-xl font-bold text-base active:scale-[0.98] transition-all"
             >
               รับทราบ
             </button>

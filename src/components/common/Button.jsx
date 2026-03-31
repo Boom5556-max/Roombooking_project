@@ -15,7 +15,7 @@ const Button = ({
 
   // 1. Base Styles: เพิ่มการป้องกันการเลือกข้อความ (select-none) 
   // และเพิ่ม active:scale เพื่อให้ผู้ใช้ Mobile รู้สึกว่าปุ่มถูกกดจริง
-  const baseStyles = "relative flex items-center justify-center gap-2 transition-all duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden font-sans font-bold select-none active:scale-[0.98]";
+  const baseStyles = "relative flex items-center justify-center gap-2 transition-all duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden font-sans font-bold select-none hover:-translate-y-px active:translate-y-0 active:scale-[0.98]";
 
   // 2. Variants: คุมโทนสีตาม Brand Identity
   const variants = {

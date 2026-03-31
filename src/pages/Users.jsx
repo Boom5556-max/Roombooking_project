@@ -140,14 +140,14 @@ const Users = () => {
                     <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50 dark:border-gray-700 mt-1 sm:mt-0">
                       <button
                         onClick={() => openModal(u)}
-                        className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-gray-400 hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:border-[#302782]/20 transition-all active:scale-90 flex justify-center items-center"
+                        className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-gray-400 hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:border-[#302782]/20 transition-all active:scale-[0.98] flex justify-center items-center"
                         title="แก้ไข"
                       >
                         <Edit3 size={20} />
                       </button>
                       <button
                         onClick={() => handleDelete(u.user_id)}
-                        className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-gray-400 hover:text-red-500 hover:border-red-100 transition-all active:scale-90 flex justify-center items-center"
+                        className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-gray-400 hover:text-red-500 hover:border-red-100 transition-all active:scale-[0.98] flex justify-center items-center"
                         title="ลบ"
                       >
                         <Trash2 size={20} />

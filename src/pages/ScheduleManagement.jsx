@@ -172,7 +172,7 @@ const ScheduleManagement = () => {
                         <button 
                           onClick={() => triggerFileInput(schedule.unique_schedules)} 
                           disabled={isUploading} 
-                          className="flex items-center gap-1 bg-[#302782] hover:bg-[#4338ca] text-white px-3 py-2 rounded-lg text-xs font-medium transition-all disabled:opacity-50 shadow-sm"
+                          className="flex items-center gap-1 bg-[#302782] hover:bg-[#4338ca] text-white px-3 py-2 rounded-lg text-xs font-medium transition-all disabled:opacity-50 shadow-sm hover:-translate-y-px active:scale-[0.98]"
                           title="อัปโหลดไฟล์ Excel ทับข้อมูลเดิม"
                         >
                           <UploadCloud size={16} /> <span className="hidden sm:inline">อัปโหลดทับ</span>

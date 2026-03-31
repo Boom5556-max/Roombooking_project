@@ -84,7 +84,7 @@ const QrFirstpage = () => {
                     <Camera size={48} className="text-gray-500 mb-4" />
                     <button 
                       onClick={startCamera} 
-                      className="bg-[#302782] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#251f66] transition-colors active:scale-95 flex items-center gap-2"
+                      className="bg-[#302782] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#251f66] transition-colors active:scale-[0.98] flex items-center gap-2"
                     >
                       <Camera size={20} /> แตะเพื่อเปิดกล้อง
                     </button>

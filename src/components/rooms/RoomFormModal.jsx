@@ -84,7 +84,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
           <button
             type="button"
             onClick={onClose}
-            className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 transition-all active:scale-90"
+            className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 transition-all active:scale-[0.98]"
           >
             <X size={20} />
           </button>

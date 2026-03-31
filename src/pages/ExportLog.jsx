@@ -146,7 +146,7 @@ const ExportLog = () => {
           <button
             onClick={fillCurrentTerm}
             disabled={isLoading}
-            className="w-full mb-4 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border-2 border-dashed border-[#B2BB1E]/60 hover:border-[#B2BB1E] bg-[#B2BB1E]/5 hover:bg-[#B2BB1E]/10 text-[#302782] dark:text-[#B2BB1E] font-black text-sm transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full mb-4 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border-2 border-dashed border-[#B2BB1E]/60 hover:border-[#B2BB1E] bg-[#B2BB1E]/5 hover:bg-[#B2BB1E]/10 text-[#302782] dark:text-[#B2BB1E] font-black text-sm transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Zap size={15} className="shrink-0" />
             กรอกวันที่ของเทอมปัจจุบันอัตโนมัติ
@@ -205,7 +205,7 @@ const ExportLog = () => {
           <button
             onClick={handleDownload}
             disabled={isLoading}
-            className="w-full bg-[#302782] hover:bg-[#B2BB1E] disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2.5 text-base transition-all duration-300 active:scale-95 shadow-lg hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed"
+            className="w-full bg-[#302782] hover:bg-[#B2BB1E] disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2.5 text-base transition-all duration-300 active:scale-[0.98] shadow-lg hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
