@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useRoomResults } from "../hooks/useRoomResults";
 import Navbar from "../components/layout/Navbar";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 const RoomResults = () => {
   const location = useLocation();
@@ -94,10 +95,7 @@ const RoomResults = () => {
 
         {/* Room List Grid */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-32 text-[#302782] dark:text-white">
-            <div className="w-12 h-12 border-4 border-[#B2BB1E] border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="font-bold text-lg animate-pulse">กำลังตรวจสอบตารางห้องว่าง...</p>
-          </div>
+          <LoadingSpinner text="กำลังตรวจสอบห้องว่าง..." />
         ) : rooms.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {rooms.map((room) => (

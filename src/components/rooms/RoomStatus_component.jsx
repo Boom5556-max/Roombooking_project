@@ -10,17 +10,11 @@ import {
   CalendarDays
 } from "lucide-react";
 import Button from "../common/Button.jsx";
+import LoadingSpinner from "../common/LoadingSpinner";
 
-// 1. LoadingState: หน้าดาวน์โหลดข้อมูล (ใช้ Blur Background และ Micro-animation)
 export const LoadingState = () => (
-  <div className="h-screen flex flex-col items-center justify-center bg-[#F8F9FA] font-sans">
-    <div className="relative flex items-center justify-center mb-8">
-      <div className="w-20 h-20 border-[6px] border-[#302782]/10 rounded-full"></div>
-      <div className="absolute w-20 h-20 border-[6px] border-t-[#302782] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-      <CalendarDays className="absolute text-[#302782]/40" size={24} />
-    </div>
-    <h2 className="text-xl font-black text-[#302782] tracking-tight">กำลังซิงค์ข้อมูล...</h2>
-    <p className="text-gray-400 text-sm font-bold mt-2">โปรดรอสักครู่ ระบบกำลังดึงตารางเวลาล่าสุด</p>
+  <div className="h-screen flex flex-col items-center justify-center bg-[#F8F9FA] dark:bg-gray-900 font-sans">
+    <LoadingSpinner text="กำลังซิงค์ข้อมูล..." />
   </div>
 );
 

@@ -5,6 +5,7 @@ import { useRoomDetail } from "../hooks/useRoomDetail";
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
 import RoomInfo from "../components/rooms/RoomInfo";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 const RoomDetail = () => {
   const { id } = useParams();
@@ -12,12 +13,7 @@ const RoomDetail = () => {
   const { room, isLoading, error } = useRoomDetail();
 
   // 1. หน้า Loading
-  if (isLoading) return (
-    <div className="min-h-screen bg-[#302782] dark:bg-gray-950 flex flex-col items-center justify-center text-[#FFFFFF] p-4">
-      <Loader2 className="animate-spin mb-4 text-[#B2BB1E]" size={48} />
-      <p className="text-lg sm:text-xl font-medium text-center">กำลังโหลดข้อมูลห้อง {id}...</p>
-    </div>
-  );
+  if (isLoading) return <LoadingSpinner fullPage text="กำลังโหลดข้อมูลห้อง..." />;
 
   // 2. หน้า Error
   if (error || !room) return (

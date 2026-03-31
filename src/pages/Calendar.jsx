@@ -14,6 +14,7 @@ import RoomSelector from "../components/calendar/RoomSelector";
 import CalendarView from "../components/calendar/CalendarView";
 import EventModal from "../components/calendar/EventModal";
 import ActionModal from "../components/common/ActionModal.jsx";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 const Calendar = () => {
   const { id } = useParams();
@@ -56,17 +57,7 @@ const Calendar = () => {
     msg: "",
   });
 
-  if (isLoading) {
-    return (
-      <div className="h-screen flex flex-col items-center justify-center font-sans bg-[#FFFFFF] dark:bg-gray-900">
-        <div className="relative">
-            <div className="w-16 h-16 border-4 border-gray-100 rounded-full"></div>
-            <div className="w-16 h-16 border-4 border-t-[#302782] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin absolute top-0"></div>
-        </div>
-        <p className="text-lg font-bold text-[#302782] dark:text-white mt-6 tracking-tight">กำลังจัดเตรียมตารางเรียน...</p>
-      </div>
-    );
-  }
+  if (isLoading) return <LoadingSpinner fullPage text="กำลังจัดเตรียมตารางเรียน..." />;
 
   const checkPermission = (event) => {
     const props = event.extendedProps;

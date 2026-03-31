@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRooms } from "../hooks/useRooms";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import { jwtDecode } from "jwt-decode";
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
@@ -142,12 +143,7 @@ const Rooms = () => {
 
         {/* Loading State */}
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-32 gap-4">
-            <div className="w-12 h-12 border-4 border-[#302782] border-t-[#B2BB1E] rounded-full animate-spin"></div>
-            <p className="text-gray-400 font-bold animate-pulse">
-              กำลังดึงข้อมูลห้อง...
-            </p>
-          </div>
+          <LoadingSpinner text="กำลังโหลดข้อมูลห้อง..." />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 sm:gap-8">
             {rooms.length > 0 ? (

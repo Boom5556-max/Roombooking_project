@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUsers } from "../hooks/useUsers";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
 import UserFormModal from "../components/user/UserFormModal.jsx";
@@ -95,12 +96,7 @@ const Users = () => {
         {/* Content Section */}
         <div className="w-full">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-32 gap-4">
-              <div className="w-12 h-12 border-4 border-[#302782] border-t-[#B2BB1E] rounded-full animate-spin"></div>
-              <p className="text-gray-400 font-bold animate-pulse">
-                กำลังดึงข้อมูลผู้ใช้งาน...
-              </p>
-            </div>
+            <LoadingSpinner text="กำลังโหลดข้อมูลผู้ใช้..." />
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:gap-6">
               {users.length > 0 ? (
