@@ -32,34 +32,35 @@ const ActionModal = ({
       onClick={onClose}
     >
       <div 
-        className="bg-white dark:bg-gray-800 rounded-[40px] p-8 w-full max-w-sm shadow-xl text-center border border-white dark:border-gray-700" 
+        className="bg-white dark:bg-gray-800 rounded-3xl p-6 w-full max-w-sm shadow-xl text-center border border-gray-100 dark:border-gray-700" 
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={`mx-auto mb-6 flex items-center justify-center w-24 h-24 rounded-full ${showBg ? (variant === "danger" ? "bg-red-50 dark:bg-red-500/10 text-red-500" : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E]") : "text-[#302782] dark:text-[#B2BB1E]"}`}>
+        <div className={`mx-auto mb-5 flex items-center justify-center w-16 h-16 rounded-2xl ${showBg ? (variant === "danger" ? "bg-red-50 dark:bg-red-500/10 text-red-500" : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E]") : "text-[#302782] dark:text-[#B2BB1E]"}`}>
           {icon}
         </div>
         
-        <h3 className="text-2xl font-black text-[#302782] dark:text-white mb-8 leading-tight">
+        <h3 className="text-lg font-semibold text-[#302782] dark:text-white mb-6 leading-snug">
           {title}
         </h3>
 
-        {/* ถ้าสั่ง autoClose ปุ่มจะหายไปทันที ไม่ต้องมีตรรกะซับซ้อนที่ Notification */}
         {isButtonsVisible && (
-          <div className="flex gap-4 justify-center">
+          <div className="flex gap-3">
             {showCloseButton && (
               <button 
                 onClick={onClose} 
-                className="h-[72px] w-full max-w-[200px] flex items-center justify-center bg-gray-50 dark:bg-gray-700 text-gray-400 dark:text-gray-300 rounded-[24px] hover:bg-gray-100 dark:hover:bg-gray-600 active:scale-95 transition-all"
+                className="flex-1 py-3 flex items-center justify-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95 transition-all font-medium text-sm"
               >
-                <X size={32} />
+                <X size={16} />
+                ยกเลิก
               </button>
             )}
             {showConfirm !== null && (
               <button 
                 onClick={onConfirm} 
-                className={`h-[72px] w-full max-w-[200px] flex items-center justify-center text-white rounded-[24px] active:scale-95 transition-all font-bold ${variant === "danger" ? "bg-red-500 hover:bg-red-600" : "bg-[#B2BB1E] hover:bg-opacity-90"}`}
+                className={`flex-1 py-3 flex items-center justify-center gap-2 text-white rounded-2xl active:scale-95 transition-all font-medium text-sm ${variant === "danger" ? "bg-red-500 hover:bg-red-600" : "bg-[#302782] hover:bg-[#B2BB1E]"}`}
               >
-                <Check size={32} />
+                <Check size={16} />
+                ยืนยัน
               </button>
             )}
           </div>

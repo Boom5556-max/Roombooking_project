@@ -181,21 +181,18 @@ const Users = () => {
       {/* 4. กล่อง Alert แจ้งเตือนแบบเน้นข้อความ คลีนๆ ไม่รก (ปรับขนาดให้ใหญ่ขึ้น) */}
       {simpleAlert.isOpen && (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/20 dark:bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200 font-sans">
-          {/* ปรับขนาดกล่อง: เปลี่ยน max-w-sm เป็น max-w-md และเพิ่ม Padding */}
-          <div className="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[40px] shadow-2xl border border-gray-100 dark:border-gray-700 w-full max-w-md text-center transform scale-100">
-            {/* ปรับขนาดข้อความ: เปลี่ยนจาก text-lg เป็น text-xl หรือ 2xl ให้ใหญ่สะใจ */}
-            <p className="text-xl sm:text-2xl font-black text-[#302782] dark:text-white leading-relaxed">
+          <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 w-full max-w-sm text-center">
+            <p className="text-base sm:text-lg font-semibold text-[#302782] dark:text-white leading-snug">
               {simpleAlert.message}
             </p>
 
-            {/* ถ้าเป็นป๊อปอัปยืนยัน (เช่นการลบ) ถึงจะแสดงปุ่ม */}
             {simpleAlert.isConfirm && (
-              <div className="flex gap-4 justify-center mt-8 sm:mt-10">
+              <div className="flex gap-3 justify-center mt-6">
                 <button
                   onClick={() =>
                     setSimpleAlert((prev) => ({ ...prev, isOpen: false }))
                   }
-                  className="flex-1 py-4 text-base sm:text-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-bold rounded-2xl hover:bg-gray-200 transition-colors active:scale-95"
+                  className="flex-1 py-3 text-sm bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-medium rounded-2xl hover:bg-gray-200 transition-colors active:scale-95"
                 >
                   ยกเลิก
                 </button>
@@ -204,7 +201,7 @@ const Users = () => {
                     if (simpleAlert.onConfirm) simpleAlert.onConfirm();
                     setSimpleAlert((prev) => ({ ...prev, isOpen: false }));
                   }}
-                  className="flex-1 py-4 text-base sm:text-lg bg-[#302782] hover:bg-[#B2BB1E] text-white font-bold rounded-2xl transition-all shadow-md active:scale-95"
+                  className="flex-1 py-3 text-sm bg-[#302782] hover:bg-[#B2BB1E] text-white font-medium rounded-2xl transition-all shadow-sm active:scale-95"
                 >
                   ยืนยัน
                 </button>
