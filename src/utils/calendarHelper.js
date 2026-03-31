@@ -60,8 +60,6 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
     const isRoomView = defRoomId !== null && defRoomId !== "" && defRoomId !== "undefined";
 
     // 🚩 ตรวจสอบว่าข้อมูลนี้มาจากการอัปโหลดไฟล์หรือไม่
-    // หมายเหตุ: ตรง item.is_upload ให้เปลี่ยนชื่อคีย์ให้ตรงกับ Database ของคุณ
-    // เช่น ถ้าใน DB ใช้ชื่อคอลัมน์ว่า source แล้วเก็บค่าเป็น 'excel' ให้แก้เป็น item.source === 'excel'
     const isUploadItem = item.is_upload === 1 || item.is_upload === true || item.source === 'excel';
 
     const roomPrefix = (finalRoomName && finalRoomName !== "ไม่ระบุเลขห้อง" && !isRoomView) ? `[${finalRoomName}] ` : "";
@@ -72,18 +70,23 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
     let finalBgColor = roomTheme.bg;
     let finalBorderColor = roomTheme.border;
     let finalTextColor = "#ffffff";
+    let eventClasses = []; // 🚩 เพิ่ม Array เก็บ class แยก
 
     if (isClosed) {
-        finalBgColor = "#f1f5f9";
-        finalTextColor = "#111827";
+        // เปลี่ยนพื้นหลังให้โปร่งใสแบบสีแดง เพื่อไม่ให้สว่างจ้าใน Dark Mode
+        finalBgColor = "rgba(239, 68, 68, 0.15)"; 
         finalBorderColor = "#ef4444";
+        finalTextColor = ""; // 🚩 ปล่อยว่างเพื่อไม่ให้ FullCalendar ฝัง inline style
+        eventClasses.push("!text-red-700 dark:!text-red-300 font-medium");
     } else if (isRoomView) {
-        finalBgColor = "rgba(0, 0, 0, 0.05)"; 
+        // เปลี่ยนเป็นโปร่งใสบางๆ 
+        finalBgColor = "rgba(128, 128, 128, 0.15)"; 
         finalBorderColor = roomTheme.bg;
-        finalTextColor = "#111827";
+        finalTextColor = ""; // 🚩 ปล่อยว่างเพื่อไม่ให้ FullCalendar ฝัง inline style
+        eventClasses.push("!text-gray-800 dark:!text-gray-100 font-medium");
     }
 
-    return {
+    const eventData = {
         id: type === "booking" ? item.booking_id : item.schedule_id,
         title: displayTitle,
         start: `${rawDate}T${item.start_time || "00:00:00"}`,
@@ -96,12 +99,19 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
             room_id: finalRoomId, 
             room_name: finalRoomName,
             isRoomView: isRoomView,
-            isUpload: isUploadItem, // 🚩 เพิ่มคีย์ isUpload เพื่อส่งไปให้ CalendarView.jsx วาดจุดสีส้ม
+            isUpload: isUploadItem,
         },
         backgroundColor: finalBgColor,
         borderColor: finalBorderColor,
-        textColor: finalTextColor,
+        className: eventClasses.join(" "), // 🚩 โยนคลาส Tailwind เข้าไปคุมสีข้อความแทน
     };
+
+    // ฝัง textColor เข้าไปแค่กรณีที่เป็นตารางปกติ (สีเข้ม ตัวหนังสือขาว)
+    if (finalTextColor) {
+        eventData.textColor = finalTextColor;
+    }
+
+    return eventData;
   };
 
   const bookingEvents = (Array.isArray(bookingsData) ? bookingsData : [])

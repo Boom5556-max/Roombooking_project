@@ -17,11 +17,10 @@ const DashboardFooter = () => (
         <div className="space-y-4">
           <GuideItem num="01" text={<>ให้บริการ <span className="text-[#B2BB1E] font-bold">จันทร์ – ศุกร์ (08.30 - 16.30 น.)</span></>} />
           <GuideItem num="02" text={<>ทำรายการล่วงหน้าอย่างน้อย <span className="text-[#B2BB1E] font-bold underline">3 วันทำการ</span></>} />
-          <GuideItem num="03" text={<>สถานะต้องได้รับ <span className="text-[#B2BB1E] font-bold">"อนุมัติ"</span> เท่านั้น</>} />
         </div>
         <div className="space-y-4 border-t md:border-t-0 md:border-l border-gray-100 pt-6 md:pt-0 md:pl-12">
-          <GuideItem num="04" text="ยกเลิกการจองล่วงหน้าอย่างน้อย 1 วัน" />
-          <GuideItem num="05" text="สำหรับอาจารย์และเจ้าหน้าที่ คณะวิทยาศาสตร์ ศรีราชา" />
+          <GuideItem num="03" text="ยกเลิกการจองล่วงหน้าอย่างน้อย 1 วัน" />
+          <GuideItem num="04" text="สำหรับอาจารย์และเจ้าหน้าที่ คณะวิทยาศาสตร์ ศรีราชา" />
         </div>
       </div>
     </div>

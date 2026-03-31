@@ -47,6 +47,7 @@ const BookingRoom = () => {
         <form onSubmit={handleSubmit} className="p-6 sm:p-10 space-y-6 sm:space-y-8">
           
           {/* 1. เลือกห้อง */}
+          {/* 1. เลือกห้อง */}
           <FormField label="ห้องที่ต้องการจอง" icon={<Edit3 size={16} />}>
             <div className="relative group">
               <select
@@ -58,9 +59,16 @@ const BookingRoom = () => {
                 }}
                 className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 appearance-none text-[#302782] dark:text-white font-bold transition-all cursor-pointer text-base"
               >
-                <option value="" disabled>เลือกห้องเรียน</option>
+                <option value="" disabled className="dark:bg-gray-800 dark:text-gray-400">
+                  เลือกห้องเรียน
+                </option>
                 {rooms.map((r) => (
-                  <option key={r.room_id} value={r.room_id}>
+                  <option 
+                    key={r.room_id} 
+                    value={r.room_id} 
+                    // 🚩 เพิ่ม className ให้กับ option ตรงนี้ครับ
+                    className="dark:bg-gray-800 dark:text-white text-gray-900" 
+                  >
                     {r.room_type} — {r.room_id}
                   </option>
                 ))}

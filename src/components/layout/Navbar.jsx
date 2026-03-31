@@ -51,8 +51,8 @@ const Navbar = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         
-        // 4. กลับไปหน้า Login
-        window.location.replace("/");
+        // 4. กลับไปหน้า Login แบบเคลียร์ History 🚩 (แก้ตรงนี้)
+        navigate("/", { replace: true }); 
       }
     );
   };

@@ -14,8 +14,7 @@ const CalendarView = ({
   const renderEventContent = (eventInfo) => {
     const props = eventInfo.event.extendedProps;
     
-    // 🚩 เปลี่ยนมาเช็คจาก type ของข้อมูล (Booking หรือ Schedule)
-    const isSchedule = props.isSchedule; // หรือ props.type === "schedule"
+    const isSchedule = props.isSchedule; 
     const isBooking = props.type === "booking";
     const isClosed = props.temporarily_closed;
     const isRoomView = props.isRoomView; 
@@ -27,22 +26,15 @@ const CalendarView = ({
     const shouldElevate = isCancelMode && isSchedule && hasPermission && !isClosed;
     const shouldRestore = isCancelMode && isSchedule && hasPermission && isClosed;
 
-    // 🚩 จัดการสีและขอบของจุด (Dot)
     const getDotConfig = () => {
-      // 1. ถ้างดใช้ห้อง (สีเทา)
       if (isClosed) return { bg: "#9CA3AF", border: "border-transparent" }; 
-      
-      const isLightBg = isRoomView || isClosed;
-      
-      // 2. ถ้ามาจากการจองทั่วไป Booking (สีส้ม + มีขอบตัดพื้นหลัง)
+      const isLightBg = isRoomView || isClosed || shouldElevate || shouldRestore;
       if (isBooking) {
         return { 
           bg: "#F59E0B", 
           border: isLightBg ? "border-transparent" : "border-white dark:border-gray-800"
         };
       }
-      
-      // 3. ถ้าเป็นตารางเรียนหลัก Schedule (สีเขียว + มีขอบตัดพื้นหลัง)
       return { 
         bg: "#10B981", 
         border: isLightBg ? "border-transparent" : "border-white dark:border-gray-800" 
@@ -50,6 +42,30 @@ const CalendarView = ({
     };
 
     const dotConfig = getDotConfig();
+
+    // 🟢 ตรรกะใหม่สำหรับสี "ป้ายเวลา"
+    let timeClasses = "";
+    if (shouldElevate) {
+        timeClasses = "bg-[#302782] text-white"; 
+    } else if (shouldRestore) {
+        timeClasses = "bg-[#9CA3AF] text-white";
+    } else if (isRoomView || isClosed) {
+        timeClasses = "bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-100 shadow-inner";
+    } else {
+        timeClasses = "text-white";
+    }
+
+    // 🟢 ตรรกะใหม่สำหรับสี "ชื่อวิชา"
+    let titleClasses = "";
+    if (shouldElevate) {
+        titleClasses = "text-[#302782] font-bold"; 
+    } else if (shouldRestore) {
+        titleClasses = "text-gray-500 font-bold"; 
+    } else if (isRoomView || isClosed) {
+        titleClasses = "text-gray-900 dark:text-gray-100";
+    } else {
+        titleClasses = "text-white";
+    }
 
     return (
       <div
@@ -60,19 +76,16 @@ const CalendarView = ({
           ${isCancelMode && isClosed && hasPermission ? "already-closed-active" : ""}`}
         title={isClosed ? "งดใช้ห้อง" : (isBooking ? "การจองทั่วไป" : "ตารางเรียนหลัก")}
       >
-        {/* 🚩 ใช้สีตาม Config และมีเส้นขอบกั้น */}
         <span 
           className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0 shadow-sm border-[1.5px] ${dotConfig.border}`}
           style={{ backgroundColor: dotConfig.bg }}
         ></span>
         
-        <span className={`fc-event-time-bold text-[9px] sm:text-[0.8rem] rounded px-1
-          ${isRoomView || isClosed ? "bg-gray-100 text-gray-700 shadow-inner" : "text-white"}`}>
+        <span className={`fc-event-time-bold text-[9px] sm:text-[0.8rem] rounded px-1 ${timeClasses}`}>
           {eventInfo.timeText}
         </span>
         
-        <span className={`fc-event-title-light text-[10px] sm:text-[0.85rem] font-semibold overflow-hidden text-overflow-ellipsis white-space-nowrap
-          ${isRoomView || isClosed ? "text-gray-900" : "text-white"}`}>
+        <span className={`fc-event-title-light text-[10px] sm:text-[0.85rem] font-semibold overflow-hidden text-overflow-ellipsis white-space-nowrap ${titleClasses}`}>
           {isClosed ? ` ${eventInfo.event.title}` : eventInfo.event.title}
         </span>
       </div>
@@ -88,7 +101,7 @@ const CalendarView = ({
       display: 'block', 
       backgroundColor: isClosed ? "#f1f5f9" : (isRoomView ? "rgba(0,0,0,0.02)" : event.backgroundColor),
       borderColor: isClosed ? "#ef4444" : (isRoomView ? event.borderColor : "transparent"),
-      textColor: isRoomView || isClosed ? "#111827" : "#ffffff"
+      textColor: "" 
     };
   });
 
@@ -155,15 +168,13 @@ const CalendarView = ({
 
         .is-closed { background-color: #F9FAFB !important; border-color: #F3F4F6 !important; }
         .dark .is-closed { background-color: #374151 !important; border-color: #4B5563 !important; }
-        .is-closed span { color: #9CA3AF !important; }
-
+        
         .elevated-clean {
           background-color: #FFFFFF !important;
           z-index: 50 !important;
           box-shadow: 0 4px 12px rgba(48, 39, 130, 0.1) !important;
           border-color: #302782 !important;
         }
-        .elevated-clean span { color: #302782 !important; }
 
         .elevated-restore {
           background-color: #FFFFFF !important;
@@ -171,7 +182,6 @@ const CalendarView = ({
           box-shadow: 0 4px 12px rgba(178, 187, 30, 0.15) !important;
           border-color: #B2BB1E !important;
         }
-        .elevated-restore span { color: #9CA3AF !important; }
 
         ${isCancelMode ? `
           .fc-event:not(:has(.elevated-clean)):not(:has(.elevated-restore)) {
@@ -195,7 +205,6 @@ const CalendarView = ({
         .dark .fc-daygrid-day-number { color: #D1D5DB !important; }
         .fc-daygrid-event-dot { display: none !important; }
 
-        /* 1. ควบคุมตัวแปรสีหลักของ FullCalendar ให้เป็นโหมดมืด */
         .dark {
           --fc-page-bg-color: transparent; 
           --fc-neutral-bg-color: #1F2937;
@@ -203,25 +212,21 @@ const CalendarView = ({
           --fc-border-color: #374151;
         }
 
-        /* 2. แก้สีพื้นหลังตัวอักษรหัวตาราง */
         .dark .fc-col-header-cell { 
           background-color: #1F2937 !important; 
           color: #F9FAFB !important; 
         }
 
-        /* 3. บังคับสีช่อง "วันนี้" */
         .dark .fc-day-today,
         .dark .fc-timegrid-col.fc-day-today,
         .dark .fc-col-header-cell.fc-day-today { 
           background-color: rgba(255, 255, 255, 0.05) !important; 
         }
 
-        /* 4. แก้มุมซ้ายบนของหน้ารายสัปดาห์ */
         .dark .fc-timegrid-axis {
           background-color: #1F2937 !important;
         }
 
-        /* 5. แก้เส้นขอบและตัวอักษรเวลาในมุมมองรายสัปดาห์ */
         .dark .fc-theme-standard .fc-timegrid-slot, 
         .dark .fc-theme-standard .fc-timegrid-col,
         .dark .fc-theme-standard td, 
@@ -233,7 +238,6 @@ const CalendarView = ({
           color: #D1D5DB !important;
         }
 
-        /* 6. เปลี่ยนสี Scrollbar */
         .dark .fc-scroller::-webkit-scrollbar {
           width: 8px;
           height: 8px;

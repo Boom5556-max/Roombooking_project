@@ -45,7 +45,6 @@ const Dashboard = () => {
         {/* Header Section */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold border-b-2 border-[#B2BB1E] text-[#302782] dark:text-white">ภาพรวมระบบ</h2>
-          <span className="text-[10px] font-bold bg-gray-50 dark:bg-gray-800 px-4 py-2 rounded-full border dark:border-gray-700">สิทธิ์: {role}</span>
         </div>
 
         <StatusCards role={role} roomCount={roomCount} pendingCount={pendingCount} approvedCount={approvedCount} />

@@ -1,13 +1,12 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react'; // 🚩 เพิ่ม useEffect
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import LoginPage from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Rooms from './pages/Rooms';
 
-// 🚩 นำเข้าหน้าสแกนทั้ง 2 แบบ
-import QrFirstpage from './pages/QrFirstpage'; // แบบ 1: หน้าแรกก่อน Login
-import QRScanner from './pages/QRScanner';     // แบบ 2: หน้าสแกนหลัง Login แล้ว (มี Navbar)
+import QrFirstpage from './pages/QrFirstpage'; 
+import QRScanner from './pages/QRScanner';     
 
 import Notification from './pages/Notification';
 import RoomStatus from './pages/RoomStatus';
@@ -17,45 +16,74 @@ import BookingRoom from './pages/Booking';
 import RoomResults from './pages/RoomResults'; 
 import Users from './pages/Users'; 
 
-// 🚩 1. นำเข้าคอมโพเนนต์จัดการตารางเรียน (ปรับ path ให้ตรงกับที่คุณเซฟไฟล์ไว้นะครับ)
 import ScheduleManagement from './pages/ScheduleManagement'; 
 import ExportLog from './pages/ExportLog';
+
+// 🔴 1. ด่านตรวจสำหรับ "คนที่ต้อง Login แล้วเท่านั้น"
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+
+  // 🚩 ตัวดักจับ Bfcache: ป้องกัน Browser เอาหน้าเก่าจากหน่วยความจำมาแสดงตอนกดย้อนกลับ
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!localStorage.getItem("token")) {
+        window.location.replace("/"); // ถ้าไม่มี Token ให้รีเฟรชเตะออกทันที
+      }
+    };
+    window.addEventListener("focus", handleVisibilityChange);
+    window.addEventListener("pageshow", handleVisibilityChange); 
+    
+    return () => {
+      window.removeEventListener("focus", handleVisibilityChange);
+      window.removeEventListener("pageshow", handleVisibilityChange);
+    };
+  }, []);
+
+  if (!token) {
+    return <Navigate to="/" replace />; 
+  }
+  return children;
+};
+
+// 🟢 2. ด่านตรวจสำหรับ "คนที่ยังไม่ได้ Login เท่านั้น" (เพิ่มเข้ามาใหม่ 🚩)
+const GuestRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    // ถ้ามี Token อยู่แล้ว แปลว่าล็อกอินแล้ว ให้เตะกลับไปหน้า dashboard ทันที ไม่ให้เห็นหน้า Login
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
+};
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 🚩 ตั้งให้หน้าสแกน QR เป็นหน้าแรกสุด (Landing Page) */}
-        <Route path="/" element={<QrFirstpage />} />
+        {/* 🟢 หน้า Public ใช้ <GuestRoute> ครอบ เพื่อไม่ให้คนล็อกอินแล้วย้อนกลับมาได้ */}
+        <Route path="/" element={
+          <GuestRoute><QrFirstpage /></GuestRoute>
+        } />
+        <Route path="/login" element={
+          <GuestRoute><LoginPage /></GuestRoute>
+        } />
         
-        {/* 🚩 หน้า Login */}
-        <Route path="/login" element={<LoginPage />} />
-
-        {/* 🚩 หน้าสแกน QR สำหรับคนที่ Login แล้ว (ช่วยแก้ Error "No routes matched") */}
-        <Route path="/scanner" element={<QRScanner />} />
-        
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/rooms" element={<Rooms />} />
-        <Route path="/room-results" element={<RoomResults />} />
-
-        {/* 🚩 Route สำหรับจัดการผู้ใช้ (เฉพาะ Staff) */}
-        <Route path="/users" element={<Users />} />
-
-        {/* 🚩 2. Route สำหรับจัดการประวัติตารางเรียน (เฉพาะ Staff) */}
-        <Route path="/schedules" element={<ScheduleManagement />} />
-
-        {/* 🚩 Route สำหรับดาวน์โหลด Log Excel (เฉพาะ Staff) */}
-        <Route path="/export-log" element={<ExportLog />} />
-
-        <Route path="/bookingRoom/:id" element={<BookingRoom />} />
-        <Route path="/calendar/" element={<Calendar />} />
-        <Route path="/calendar/:id" element={<Calendar />} />
-        <Route path="/notification" element={<Notification />} />
-        
-        {/* 🚩 หลังจากสแกน QR สำเร็จ ระบบจะเด้งมาหน้านี้ตาม Logic ที่น้องเขียนไว้ */}
+        {/* หน้า Status หลังสแกน QR (เข้าได้ทุกคน) */}
         <Route path="/room-status/:id" element={<RoomStatus />} />
-        
-        <Route path="/room-detail/:id" element={<RoomDetail />} />
+
+        {/* 🔴 หน้า Private (ต้อง Login และมี Token เท่านั้นถึงจะเข้าได้) */}
+        <Route path="/scanner" element={<ProtectedRoute><QRScanner /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/rooms" element={<ProtectedRoute><Rooms /></ProtectedRoute>} />
+        <Route path="/room-results" element={<ProtectedRoute><RoomResults /></ProtectedRoute>} />
+        <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
+        <Route path="/schedules" element={<ProtectedRoute><ScheduleManagement /></ProtectedRoute>} />
+        <Route path="/export-log" element={<ProtectedRoute><ExportLog /></ProtectedRoute>} />
+        <Route path="/bookingRoom/:id" element={<ProtectedRoute><BookingRoom /></ProtectedRoute>} />
+        <Route path="/calendar/" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
+        <Route path="/calendar/:id" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
+        <Route path="/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
+        <Route path="/room-detail/:id" element={<ProtectedRoute><RoomDetail /></ProtectedRoute>} />
+
       </Routes>
     </BrowserRouter>
   );

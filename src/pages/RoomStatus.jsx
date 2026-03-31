@@ -1,14 +1,14 @@
 import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { ChevronLeft, Calendar as CalendarIcon } from "lucide-react"; 
+import { ChevronLeft, Calendar as CalendarIcon, XCircle } from "lucide-react"; // 🚩 เพิ่ม XCircle
 
 import { useRoomStatusLogic } from "../hooks/useRoomStatus.js";
 import {
   LoadingState,
-  ErrorState,
   ScheduleItem,
   CurrentBookingCard,
 } from "../components/rooms/RoomStatus_component.jsx";
+import ActionModal from "../components/common/ActionModal"; // 🚩 นำเข้า ActionModal
 
 const RoomStatus = () => {
   const { id } = useParams();
@@ -25,9 +25,9 @@ const RoomStatus = () => {
   const handleBack = () => {
     const isLoggedIn = localStorage.getItem("token"); 
     if (isLoggedIn) {
-      navigate("/scanner");
+      navigate("/scanner", { replace: true }); // 🚩 ใส่ replace: true เพื่อไม่ให้กด Back กลับมาหน้า error ได้อีก
     } else {
-      navigate("/");
+      navigate("/", { replace: true });
     }
   };
 
@@ -58,7 +58,25 @@ const RoomStatus = () => {
   }, [roomData, isAvailable]);
 
   if (isLoading) return <LoadingState />;
-  if (error) return <ErrorState message={error} onBack={handleBack} />;
+
+  // 🚩 ส่วนที่แก้ไข: ถ้ามี Error ให้แสดงพื้นหลังสีทึบพร้อมกับ ActionModal
+  if (error) {
+    return (
+      <div className="fixed inset-0 bg-[#302782]/20 dark:bg-gray-950/80 flex flex-col font-sans overflow-hidden backdrop-blur-sm z-50">
+        <ActionModal
+          icon={<XCircle size={50} className="text-red-500" />}
+          title="เกิดข้อผิดพลาด"
+          subTitle={typeof error === "string" ? error : "สแกนไม่สำเร็จ หรือไม่มี QR Code นี้ในระบบ กรุณาลองใหม่อีกครั้ง"}
+          variant="danger"
+          showCancel={false}
+          confirmText="กลับไปหน้าสแกน"
+          onConfirm={handleBack}
+          onClose={handleBack}
+        />
+      </div>
+    );
+  }
+
   if (!roomData) return null;
 
   return (
