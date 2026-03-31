@@ -19,6 +19,7 @@ import Users from './pages/Users';
 
 // 🚩 1. นำเข้าคอมโพเนนต์จัดการตารางเรียน (ปรับ path ให้ตรงกับที่คุณเซฟไฟล์ไว้นะครับ)
 import ScheduleManagement from './pages/ScheduleManagement'; 
+import ExportLog from './pages/ExportLog';
 
 function App() {
   return (
@@ -42,6 +43,9 @@ function App() {
 
         {/* 🚩 2. Route สำหรับจัดการประวัติตารางเรียน (เฉพาะ Staff) */}
         <Route path="/schedules" element={<ScheduleManagement />} />
+
+        {/* 🚩 Route สำหรับดาวน์โหลด Log Excel (เฉพาะ Staff) */}
+        <Route path="/export-log" element={<ExportLog />} />
 
         <Route path="/bookingRoom/:id" element={<BookingRoom />} />
         <Route path="/calendar/" element={<Calendar />} />

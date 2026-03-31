@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 // 1. 🚩 เพิ่ม FileText เข้ามาสำหรับใช้เป็นไอคอนจัดการตารางเรียน
-import { Home, Calendar as CalendarIcon, Bell, QrCode, LogOut, Users, FileText } from 'lucide-react';
+import { Home, Calendar as CalendarIcon, Bell, QrCode, LogOut, Users, FileText, Download } from 'lucide-react';
 import { jwtDecode } from "jwt-decode";
 import ActionModal from "../common/ActionModal";
 import ProfileDropdown from "./ProfileDropdown";
@@ -167,6 +167,13 @@ const NavItemsGroup = ({ navigate, getNavStyle, userRole, isMobile = false }) =>
           style={getNavStyle("/schedules")} 
           icon={<FileText size={isMobile ? 24 : 22} />} 
           title="จัดการตาราง" 
+        />
+        {/* เมนูดาวน์โหลด Log Excel */}
+        <NavItem 
+          onClick={() => navigate("/export-log")} 
+          style={getNavStyle("/export-log")} 
+          icon={<Download size={isMobile ? 24 : 22} />} 
+          title="ดาวน์โหลด Log" 
         />
       </>
     )}
