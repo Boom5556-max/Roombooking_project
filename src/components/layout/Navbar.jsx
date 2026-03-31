@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 // 1. 🚩 เพิ่ม FileText เข้ามาสำหรับใช้เป็นไอคอนจัดการตารางเรียน
-import { Home, Calendar as CalendarIcon, Bell, QrCode, LogOut, Users, FileText, Download } from 'lucide-react';
+import { Home, Calendar as CalendarIcon, Bell, QrCode, LogOut, Users, FileText, Download, MoreHorizontal } from 'lucide-react';
 import { jwtDecode } from "jwt-decode";
 import ActionModal from "../common/ActionModal";
 import ProfileDropdown from "./ProfileDropdown";
@@ -12,6 +12,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [userRole, setUserRole] = useState("");
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
   const [alertConfig, setAlertConfig] = useState({
     isOpen: false, title: "", icon: null, onConfirm: null, showConfirm: true,
@@ -128,11 +129,79 @@ const Navbar = () => {
       </nav>
 
       {/* --- Mobile Bottom Navigation (แสดงเฉพาะหน้าจอเล็ก < 768px) --- */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#302782]/95 dark:bg-gray-950/95 backdrop-blur-lg border-t border-white/10 z-[1000] px-2 pb-safe">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#302782]/95 dark:bg-gray-950/95 backdrop-blur-lg border-t border-white/10 z-[1001] px-2 pb-safe">
         <div className="flex justify-around items-center h-16">
-          <NavItemsGroup navigate={navigate} getNavStyle={getNavStyle} userRole={userRole} isMobile={true} />
+          <NavItem 
+            onClick={() => { navigate("/dashboard"); setIsMoreMenuOpen(false); }} 
+            style={getNavStyle("/dashboard")} 
+            icon={<Home size={24} />} 
+            title="หน้าหลัก" 
+          />
+          <NavItem 
+            onClick={() => { navigate("/notification"); setIsMoreMenuOpen(false); }} 
+            style={getNavStyle("/notification")} 
+            icon={<Bell size={24} />} 
+            title="แจ้งเตือน" 
+          />
+          <NavItem 
+            onClick={() => { navigate("/scanner"); setIsMoreMenuOpen(false); }} 
+            style={getNavStyle("/scanner")} 
+            icon={<QrCode size={24} />} 
+            title="สแกน" 
+          />
+          <button 
+            onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+            className={`relative flex flex-col items-center justify-center w-12 h-12 transition-all duration-300 ${
+              isMoreMenuOpen ? "text-[#B2BB1E]" : "text-[#FFFFFF]/60"
+            }`}
+          >
+            <MoreHorizontal size={24} />
+            {isMoreMenuOpen && <div className="absolute -bottom-1 w-5 h-1 bg-[#B2BB1E] rounded-full" />}
+          </button>
         </div>
       </div>
+
+      {/* --- Mobile 'More' Menu Popup --- */}
+      {isMoreMenuOpen && (
+        <>
+          <div 
+            className="md:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-[1000]" 
+            onClick={() => setIsMoreMenuOpen(false)}
+          />
+          <div className="md:hidden fixed bottom-20 right-4 bg-[#302782]/90 dark:bg-gray-900/90 backdrop-blur-xl border border-white/10 rounded-2xl p-2 min-w-[180px] shadow-2xl z-[1001] animate-in fade-in slide-in-from-bottom-5 duration-300">
+            <div className="flex flex-col gap-1">
+              <MobileMoreMenuItem 
+                onClick={() => { navigate("/calendar"); setIsMoreMenuOpen(false); }}
+                icon={<CalendarIcon size={20} />}
+                title="ตารางรายเดือน"
+                isActive={location.pathname === "/calendar"}
+              />
+              {userRole === "staff" && (
+                <>
+                  <MobileMoreMenuItem 
+                    onClick={() => { navigate("/users"); setIsMoreMenuOpen(false); }}
+                    icon={<Users size={20} />}
+                    title="จัดการสมาชิก"
+                    isActive={location.pathname === "/users"}
+                  />
+                  <MobileMoreMenuItem 
+                    onClick={() => { navigate("/schedules"); setIsMoreMenuOpen(false); }}
+                    icon={<FileText size={20} />}
+                    title="จัดการตาราง"
+                    isActive={location.pathname === "/schedules"}
+                  />
+                  <MobileMoreMenuItem 
+                    onClick={() => { navigate("/export-log"); setIsMoreMenuOpen(false); }}
+                    icon={<Download size={20} />}
+                    title="ดาวน์โหลด Log"
+                    isActive={location.pathname === "/export-log"}
+                  />
+                </>
+              )}
+            </div>
+          </div>
+        </>
+      )}
 
       {alertConfig.isOpen && (
         <ActionModal
@@ -208,6 +277,22 @@ const NavItem = ({ onClick, style, icon, title }) => (
   <button onClick={onClick} className={style.container} title={title}>
     {icon}
     <div className={style.indicator} />
+  </button>
+);
+
+const MobileMoreMenuItem = ({ onClick, icon, title, isActive }) => (
+  <button 
+    onClick={onClick}
+    className={`flex items-center gap-3 w-full p-3 rounded-xl transition-all duration-200 ${
+      isActive 
+        ? "bg-[#B2BB1E]/20 text-[#B2BB1E]" 
+        : "text-white/70 hover:bg-white/5 hover:text-white"
+    }`}
+  >
+    <div className={`${isActive ? "text-[#B2BB1E]" : "text-white/60"}`}>
+      {icon}
+    </div>
+    <span className="text-sm font-medium">{title}</span>
   </button>
 );
 
