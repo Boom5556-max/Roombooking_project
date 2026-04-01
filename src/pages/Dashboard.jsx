@@ -81,13 +81,6 @@ const Dashboard = () => {
             <FilePlus size={32} className="text-[#302782] opacity-20 group-hover:opacity-40" />
           </div>
         )}
-
-        {role === "teacher" && (
-          <div className="p-8 text-center bg-gray-50 dark:bg-gray-800 rounded-[40px] border dark:border-gray-700 mt-6 font-bold text-[#302782] dark:text-white">
-            <div className="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 text-[#B2BB1E] shadow-sm"><CheckCircle2 size={28} /></div>
-            ระบบจองห้องเรียนออนไลน์
-          </div>
-        )}
       </div>
 
       <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

@@ -119,12 +119,13 @@ const EventModal = ({ event, onClose }) => {
 
 const InfoRow = ({ icon, label, value, color = "text-[#302782]" }) => (
     <div className="flex items-start gap-4 group">
-      <div className={`bg-gray-50 dark:bg-gray-700 p-3.5 rounded-2xl ${color} border border-gray-100 shrink-0`}>
+      <div className={`bg-gray-50 dark:bg-gray-700 p-3.5 rounded-2xl ${color} border border-gray-100 dark:border-gray-600 shrink-0`}>
         {icon}
       </div>
       <div className="pt-0.5">
         <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-1">{label}</p>
-        <p className={`text-sm sm:text-base font-bold ${color === 'text-[#B2BB1E]' ? 'text-[#302782] dark:text-white' : color}`}>
+        {/* 🚩 แก้ไขจุดนี้: เพิ่ม dark:text-blue-300 เข้าไปในเงื่อนไข */}
+        <p className={`text-sm sm:text-base font-bold ${color === 'text-[#B2BB1E]' ? 'text-[#302782] dark:text-white' : 'text-[#302782] dark:text-blue-300'}`}>
           {value}
         </p>
       </div>
