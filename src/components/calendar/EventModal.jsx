@@ -57,9 +57,9 @@ const EventModal = ({ event, onClose }) => {
             <h4 className="text-[#302782] dark:text-white font-extrabold text-xl sm:text-2xl leading-tight">
               {title}
             </h4>
-            {props.purpose && (
+            {/* {props.purpose && (
               <p className="mt-2 text-sm text-gray-500 font-medium">วัตถุประสงค์: {props.purpose}</p>
-            )}
+            )} */}
           </div>
 
           <div className="space-y-6">
@@ -117,19 +117,29 @@ const EventModal = ({ event, onClose }) => {
   );
 };
 
-const InfoRow = ({ icon, label, value, color = "text-[#302782]" }) => (
+const InfoRow = ({ icon, label, value, color = "text-[#302782]" }) => {
+  // 🚩 ปรับตรรกะสีใหม่: สร้างตัวแปรสำหรับสีไอคอนและตัวหนังสือตามเงื่อนไข
+  // กรณีปกติ (เช่น ผู้สอน / ผู้จอง): สีน้ำเงินเข้ม `#302782` / Dark Mode: สีฟ้าสว่าง `dark:text-blue-300`
+  const defaultSyncedColor = "text-[#302782] dark:text-blue-300";
+  
+  // กรณีสีพิเศษ (เช่น สถานที่ / ห้องเรียน): สีเขียว `#B2BB1E` (เราจะปล่อยให้ไอคอนเป็นสีนี้ ส่วนตัวหนังสือเป็นสีหลัก)
+  const isSpecialColor = color === 'text-[#B2BB1E]';
+
+  return (
     <div className="flex items-start gap-4 group">
-      <div className={`bg-gray-50 dark:bg-gray-700 p-3.5 rounded-2xl ${color} border border-gray-100 dark:border-gray-600 shrink-0`}>
+      {/* 🚩 แก้ไขสีไอคอน: ถ้าเป็นสีปกติ ให้ใช้ตัวแปร defaultSyncedColor แทน ${color} */}
+      <div className={`bg-gray-50 dark:bg-gray-700 p-3.5 rounded-2xl ${isSpecialColor ? color : defaultSyncedColor} border border-gray-100 dark:border-gray-600 shrink-0`}>
         {icon}
       </div>
       <div className="pt-0.5">
         <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-1">{label}</p>
-        {/* 🚩 แก้ไขจุดนี้: เพิ่ม dark:text-blue-300 เข้าไปในเงื่อนไข */}
-        <p className={`text-sm sm:text-base font-bold ${color === 'text-[#B2BB1E]' ? 'text-[#302782] dark:text-white' : 'text-[#302782] dark:text-blue-300'}`}>
+        {/* 🚩 แก้ไขสีตัวหนังสือ: ถ้าเป็นสีปกติ ให้ใช้ตัวแปร defaultSyncedColor ตัวเดียวกัน */}
+        <p className={`text-sm sm:text-base font-bold ${isSpecialColor ? 'text-[#302782] dark:text-white' : defaultSyncedColor}`}>
           {value}
         </p>
       </div>
     </div>
 );
+};
 
 export default EventModal;

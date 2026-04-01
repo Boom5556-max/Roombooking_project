@@ -32,32 +32,35 @@ const RoomCard = ({ room }) => {
       onClick={handleCardClick}
       className={`group relative bg-[#FFFFFF] dark:bg-gray-800 rounded-[28px] sm:rounded-[32px] p-5 sm:p-6 flex justify-between items-center border transition-all duration-300 mb-4 font-sans
         ${isDisabledForUser 
-          ? "opacity-60 grayscale cursor-not-allowed border-gray-100 bg-gray-50/50 shadow-none" 
+          // เพิ่ม dark:bg-gray-800 และ dark:border-gray-700 เพื่อไม่ให้พื้นหลังโปร่งแสงจนกลืนไปกับสีจอด้านหลัง
+          ? "opacity-60 grayscale cursor-not-allowed border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 shadow-none" 
           : "hover:border-[#B2BB1E] hover:shadow-[0_15px_40px_-12px_rgba(48,39,130,0.12)] cursor-pointer border-gray-100 dark:border-gray-700 shadow-[0_4px_15px_-4px_rgba(0,0,0,0.03)] active:scale-[0.98]"
         }
-        ${isCurrentlyInRepair && userRole === "staff" ? "border-amber-200 bg-amber-50/20" : ""} `}
+        ${isCurrentlyInRepair && userRole === "staff" ? "border-amber-200 bg-amber-50/20 dark:border-amber-500/30 dark:bg-amber-500/10" : ""} `}
     >
       <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
         {/* ชื่อห้องและประเภท */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <h3 className={`text-xl sm:text-2xl font-black leading-none tracking-tight ${isDisabledForUser ? "text-gray-400" : "text-[#302782] dark:text-white"}`}>
+          {/* เพิ่ม dark:text-gray-300 ให้ตัวหนังสือสว่างขึ้นเวลาโดน grayscale */}
+          <h3 className={`text-xl sm:text-2xl font-black leading-none tracking-tight ${isDisabledForUser ? "text-gray-500 dark:text-gray-300" : "text-[#302782] dark:text-white"}`}>
             {room.room_id}
           </h3>
-          <span className="text-gray-200 text-lg sm:text-xl font-light">|</span>
-          <p className={`text-sm sm:text-base font-black truncate ${isDisabledForUser ? "text-gray-400" : "text-gray-500"}`}>
+          <span className="text-gray-200 dark:text-gray-600 text-lg sm:text-xl font-light">|</span>
+          <p className={`text-sm sm:text-base font-black truncate ${isDisabledForUser ? "text-gray-400 dark:text-gray-400" : "text-gray-500 dark:text-gray-300"}`}>
             {room.room_type}
           </p>
         </div>
         
         {/* สถานที่ */}
-        <p className="text-gray-400 text-xs sm:text-sm font-bold ml-0.5 opacity-80 uppercase tracking-wide">
+        <p className="text-gray-400 dark:text-gray-400 text-xs sm:text-sm font-bold ml-0.5 opacity-80 uppercase tracking-wide">
           {room.location}
         </p>
 
         {/* Badges Area */}
         <div className="flex flex-wrap items-center gap-2 mt-2">
+          {/* เพิ่ม dark:bg-gray-700 และ dark:text-gray-300 เพื่อให้ป้ายที่นั่งในโหมดคนธรรมดาอ่านง่ายขึ้น */}
           <span className={`text-[10px] sm:text-xs px-3 sm:px-4 py-1.5 rounded-xl font-black flex items-center gap-1.5 ${
-            isDisabledForUser ? "bg-gray-200 text-gray-400" : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-white border border-gray-100 dark:border-gray-600"
+            isDisabledForUser ? "bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300" : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-white border border-gray-100 dark:border-gray-600"
           }`}>
             <Users size={12} strokeWidth={3} /> {room.capacity} ที่นั่ง
           </span>
@@ -73,15 +76,16 @@ const RoomCard = ({ room }) => {
       {/* Right Action Area */}
       <div className="flex items-center gap-3 sm:gap-4 ml-4">
         {!isDisabledForUser && isCurrentlyInRepair && (
-          <span className="hidden lg:block text-[10px] font-black tracking-widest text-amber-600 bg-amber-100 px-3 py-1.5 rounded-lg uppercase">
+          <span className="hidden lg:block text-[10px] font-black tracking-widest text-amber-600 bg-amber-100 dark:bg-amber-900/40 dark:text-amber-400 px-3 py-1.5 rounded-lg uppercase">
             Admin Mode
           </span>
         )}
 
+         {/* เพิ่ม dark:bg-gray-700 และ dark:text-gray-400 ให้กล่องไอคอนแม่กุญแจ */}
          <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 shrink-0 ${
           isDisabledForUser 
-            ? "bg-gray-100 text-gray-300" 
-            : "bg-gray-50 dark:bg-gray-700 text-gray-300 group-hover:bg-[#302782] group-hover:text-[#FFFFFF] group-hover:shadow-lg group-hover:shadow-[#302782]/20"
+            ? "bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-300" 
+            : "bg-gray-50 dark:bg-gray-700 text-gray-400 dark:text-gray-300 group-hover:bg-[#302782] group-hover:text-[#FFFFFF] group-hover:shadow-lg group-hover:shadow-[#302782]/20"
         }`}>
           {isDisabledForUser ? (
             <Lock size={24} sm:size={28} strokeWidth={2.5} />
