@@ -32,10 +32,19 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // 🚨 1. เพิ่มบล็อกนี้เข้าไปดักก่อน
+    // ถ้าเส้นที่พังคือเส้น refresh-token ให้ยอมแพ้ ห้ามวนลูป!
+    if (originalRequest.url.includes('/refresh-token')) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = '/login';
+      return Promise.reject(error);
+    }
+
     // ถ้าพบ Error 401 (Unauthorized / Token มีปัญหา)
     if (error.response && error.response.status === 401) {
       
-      // 🚨 กรณีที่ 1: โดนเตะออกเพราะล็อกอินซ้อน (โค้ดสุดเจ๋งของคุณพงศ์ภัค)
+      // 🚨 กรณีที่ 1: โดนเตะออกเพราะล็อกอินซ้อน
       if (error.response.data && error.response.data.code === 'SESSION_SUPERSEDED') {
         if (!isRedirecting) {
           isRedirecting = true;
@@ -68,8 +77,8 @@ api.interceptors.response.use(
 
         try {
           // วิ่งไปขอ Access Token ดอกใหม่แบบเงียบๆ
-          const res = await api.post('/refresh-token');
-          const newAccessToken = res.data.accessToken;
+          const res = await api.post('/auth/refresh-token');
+          const newAccessToken = res.data.token;
           
           // อัปเดตกุญแจดอกใหม่ลง LocalStorage
           localStorage.setItem('token', newAccessToken);
