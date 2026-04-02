@@ -1,7 +1,15 @@
 import React, { useState } from "react";
-import { X, User, Calendar, Timer, Edit3, Trash2, Save, Ban, MessageSquare, CheckCircle, XCircle, Clock as ClockIcon } from "lucide-react";
+import { X, User, Calendar, Timer, Edit3, Trash2, Save, Ban, MessageSquare, CheckCircle, XCircle, Clock as ClockIcon, ChevronRight } from "lucide-react";
 import { DetailItem, EditField } from "./NotificationComponents";
 import Button from "../common/Button";
+
+// สร้างช่วงเวลา 08:00 - 20:00 (ห่างกันทุก 30 นาที)
+const baseTimes = [];
+for (let i = 8; i <= 20; i++) {
+  const h = i.toString().padStart(2, "0");
+  baseTimes.push(`${h}:00`);
+  if (i !== 20) baseTimes.push(`${h}:30`);
+}
 
 const BookingDetailModal = ({ 
   booking, userRole, onClose, onUpdateStatus, onCancel, onBan, onUpdateBooking, getFullName, showAlert 
@@ -32,31 +40,72 @@ const BookingDetailModal = ({
     if (result?.success) {
       setIsEditing(false);
       onClose();
-      // ส่งครบ 8 ตำแหน่ง: title, icon, onConfirm, showConfirm, variant, showCloseButton, autoClose, showButtons
       showAlert(
         "บันทึกการแก้ไขสำเร็จ", 
         <CheckCircle size={50} className="text-[#B2BB1E]" />, 
-        null, 
-        false,      // showConfirm
-        "primary",  // variant
-        false,      // showCloseButton
-        true,       // autoClose
-        false       // showButtons (ตัวที่ต้องการซ่อน)
+        null, false, "primary", false, true, false
       );
     } else {
       showAlert(
         "แก้ไขไม่สำเร็จ", 
         <XCircle size={50} className="text-red-500" />, 
-        null, 
-        false,      // showConfirm
-        "danger",   // variant
-        true,       // showCloseButton
-        false,      // autoClose
-        true        // showButtons (ให้แสดงปุ่มเพื่อให้ user กดปิด error ได้)
+        null, false, "danger", true, false, true
       );
     }
   };
 
+  // 👇 ฟังก์ชันสร้าง Dropdown เลือกเวลาให้หน้าตาเหมือน EditField 👇
+  // 👇 ฟังก์ชันสร้างตัวเลือกเวลา (อัปเดตใช้ <select> เพื่อให้ลอยทะลุ Modal ทรงเดียวกับภาพที่ 2) 👇
+  const renderTimeDropdown = (key, label) => {
+    const availableTimes = baseTimes.filter((t) => {
+      if (key === "end_time" && t === "08:00") return false;
+      if (key === "start_time" && t === "20:00") return false;
+      if (key === "end_time" && editForm.start_time) return t > editForm.start_time;
+      if (key === "start_time" && editForm.end_time) return t < editForm.end_time;
+      return true;
+    });
+
+    return (
+      <div className="flex flex-col gap-2 w-full font-sans group relative">
+        <label className="text-xs font-medium text-gray-400 ml-1">
+          {label}
+        </label>
+        
+        <details className="group/dropdown w-full" id={`dropdown-${key}`}>
+          <summary className="list-none outline-none cursor-pointer">
+            <div className="relative flex items-center">
+              <ClockIcon size={18} className="absolute left-4 text-gray-400 group-focus-within/dropdown:text-[#B2BB1E] transition-colors z-10" />
+              <div className="w-full pl-11 pr-10 py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 text-base font-bold text-[#302782] dark:text-white flex justify-between items-center group-hover:border-[#B2BB1E]/50 transition-all">
+                <span>{editForm[key] ? `${editForm[key]} น.` : "เลือกเวลา"}</span>
+                <ChevronRight size={18} className="text-gray-400 rotate-90 group-open/dropdown:-rotate-90 transition-transform" />
+              </div>
+            </div>
+          </summary>
+
+          {/* แผง Dropdown: ใช้ fixed เพื่อให้ลอยทะลุขอบ Modal ออกมาเลย */}
+          <div className="fixed z-[9999] mt-1 w-[calc(100vw-80px)] max-w-[200px] animate-in fade-in zoom-in duration-200">
+            <ul className="bg-white dark:bg-gray-700 rounded-[20px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-600 overflow-hidden">
+              <div className="max-h-[200px] overflow-y-auto py-2 custom-scrollbar">
+                {availableTimes.map((t) => (
+                  <li 
+                    key={t} 
+                    className="px-6 py-3 text-[#302782] dark:text-white text-sm font-bold hover:bg-[#B2BB1E] hover:text-white cursor-pointer transition-colors"
+                    onClick={() => {
+                      setEditForm({ ...editForm, [key]: t });
+                      document.getElementById(`dropdown-${key}`).removeAttribute("open");
+                    }}
+                  >
+                    {t} น.
+                  </li>
+                ))}
+              </div>
+            </ul>
+          </div>
+        </details>
+      </div>
+    );
+  };
+  
   if (!booking) return null;
 
   return (
@@ -68,10 +117,8 @@ const BookingDetailModal = ({
         className="bg-[#FFFFFF] dark:bg-gray-800 w-full max-w-lg rounded-t-[40px] sm:rounded-[32px] p-6 sm:p-8 flex flex-col shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300 max-h-[95vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Handle bar สำหรับ Mobile */}
         <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-6 sm:hidden" />
 
-        {/* Header */}
         <div className="flex justify-between items-center mb-6 flex-shrink-0">
           <div>
             <h3 className="text-2xl font-black text-[#302782] dark:text-white">
@@ -86,15 +133,16 @@ const BookingDetailModal = ({
           </button>
         </div>
 
-        {/* Content Scroll Area */}
         <div className="flex-grow overflow-y-auto pr-1 custom-scrollbar space-y-4">
           {isEditing ? (
             <div className="space-y-5 py-2">
               <EditField icon={MessageSquare} label="วัตถุประสงค์การใช้ห้อง" value={editForm.purpose} onChange={v => setEditForm({...editForm, purpose: v})} />
               <EditField icon={Calendar} label="วันที่ต้องการใช้งาน" type="date" value={editForm.date} onChange={v => setEditForm({...editForm, date: v})} />
               <div className="grid grid-cols-2 gap-4">
-                <EditField icon={ClockIcon} label="เวลาเริ่ม" type="time" value={editForm.start_time} onChange={v => setEditForm({...editForm, start_time: v})} />
-                <EditField icon={ClockIcon} label="เวลาสิ้นสุด" type="time" value={editForm.end_time} onChange={v => setEditForm({...editForm, end_time: v})} />
+                {/* 👇 เรียกใช้ Dropdown แทน Input Type Time แบบเก่า 👇 */}
+                {renderTimeDropdown("start_time", "เวลาเริ่ม")}
+                {renderTimeDropdown("end_time", "เวลาสิ้นสุด")}
+                {/* 👆 สิ้นสุดการเรียกใช้งาน 👆 */}
               </div>
             </div>
           ) : (
@@ -109,7 +157,6 @@ const BookingDetailModal = ({
           )}
         </div>
 
-        {/* Action Section */}
         {!booking.isHistory && (
           <div className="pt-6 sm:pt-8 border-t border-gray-100 dark:border-gray-700 flex-shrink-0 mt-4">
             {isEditing ? (

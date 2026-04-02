@@ -104,7 +104,8 @@ export const DetailItem = ({ icon: Icon, label, value }) => (
 );
 
 // 4. EditField: ฟิลด์กรอกข้อมูล (ใช้ร่วมกับ Input หลัก)
-export const EditField = ({ label, value, onChange, type = "text", icon: Icon }) => (
+// 4. EditField: ฟิลด์กรอกข้อมูล (ใช้ร่วมกับ Input หลัก)
+export const EditField = ({ label, value, onChange, type = "text", icon: Icon, ...props }) => (
   <div className="flex flex-col gap-2 w-full font-sans group">
     <label className="text-xs font-medium text-gray-400 ml-1">
       {label}
@@ -116,6 +117,7 @@ export const EditField = ({ label, value, onChange, type = "text", icon: Icon })
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 text-base font-bold text-[#302782] dark:text-white transition-all placeholder:text-gray-300`}
+        {...props}
       />
     </div>
   </div>
