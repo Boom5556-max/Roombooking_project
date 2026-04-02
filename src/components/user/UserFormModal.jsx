@@ -66,7 +66,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
         <div className="flex justify-between items-start mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-black text-[#302782] dark:text-white tracking-tight">
-              {user ? "แก้ไขโปรไฟล์" : "เพิ่มผู้ใช้งานใหม่"}
+              {user ? "แก้ไขข้อมูล" : "เพิ่มผู้ใช้งานใหม่"}
             </h2>
           </div>
           <button

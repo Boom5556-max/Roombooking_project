@@ -15,6 +15,8 @@ import CalendarView from "../components/calendar/CalendarView";
 import EventModal from "../components/calendar/EventModal";
 import ActionModal from "../components/common/ActionModal.jsx";
 import LoadingSpinner from "../components/common/LoadingSpinner";
+// 🚩 เพิ่ม Import สำหรับถอดรหัส Token
+import { jwtDecode } from "jwt-decode";
 
 const Calendar = () => {
   const { id } = useParams();
@@ -30,18 +32,20 @@ const Calendar = () => {
     handleRestoreSchedule,
   } = useCalendarData(id);
 
+  // 🚩 แก้ไขให้ดึงข้อมูลจาก Token แทน localStorage.getItem("user")
   const userData = useMemo(() => {
     try {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
+      const token = localStorage.getItem("token");
+      if (token) {
+        const decoded = jwtDecode(token);
         return {
-          id: parsed?.user_id || parsed?.id,
-          role: String(parsed?.role || "").toLowerCase().trim(),
+          // เช็คชื่อตัวแปร id ตามที่ Backend ส่งมาใน payload (มักจะเป็น user_id หรือ id)
+          id: String(decoded?.user_id || decoded?.id || ""),
+          role: String(decoded?.role || "").toLowerCase().trim(),
         };
       }
     } catch (err) {
-      console.error("User Parse Error", err);
+      console.error("Token Decode Error:", err);
     }
     return { id: null, role: "student" };
   }, []);
@@ -61,24 +65,31 @@ const Calendar = () => {
 
   const checkPermission = (event) => {
     const props = event.extendedProps;
+    
+    // 1. เช็คว่าเป็นตารางหลักหรือไม่
     if (!props?.isSchedule) {
       setAlertConfig({
         show: true,
         title: "ดำเนินการไม่ได้",
-        msg: "จัดการได้เฉพาะ 'ตารางเรียนหลัก' เท่านั้น",
+        msg: "เมนูนี้จัดการได้เฉพาะ 'ตารางเรียนหลัก' เท่านั้นครับ หากต้องการยกเลิกการจองทั่วไป กรุณาทำที่หน้าประวัติการจอง",
       });
       return false;
     }
 
-    const isOwner = String(props?.teacher_id || "") === String(userData.id || "");
+    // 2. เช็คสิทธิ์ (ดักทั้ง teacher_id และ user_id เผื่อหลังบ้านใช้ชื่อฟิลด์ต่างกัน)
+    const ownerId = String(props?.teacher_id || props?.user_id || "");
+    const myId = String(userData.id || "");
+    
+    const isOwner = ownerId === myId;
     const isStaff = userData.role === "staff";
 
     if (isOwner || isStaff) return true;
 
+    // 3. ถ้าไม่ใช่เจ้าของ ให้แสดง ID ออกมาดูเลยว่าทำไมถึงไม่ตรงกัน
     setAlertConfig({
       show: true,
       title: "สิทธิ์ไม่เพียงพอ",
-      msg: "เฉพาะเจ้าหน้าที่หรืออาจารย์เจ้าของวิชาเท่านั้นที่จัดการได้",
+      msg: `เฉพาะเจ้าหน้าที่หรืออาจารย์เจ้าของวิชาเท่านั้น (ผู้สอน: ${ownerId || "ไม่พบ ID"} / คุณ: ${myId})`,
     });
     return false;
   };
@@ -97,7 +108,7 @@ const Calendar = () => {
               rooms={rooms}
               selectedRoom={selectedRoom}
               onSelect={setSelectedRoom}
-              disabled={isCancelMode} // 🚩 เพิ่มบรรทัดนี้เพื่อส่งสถานะล็อคไปให้ Component ย่อย
+              disabled={isCancelMode}
             />
           </div>
 
@@ -117,6 +128,7 @@ const Calendar = () => {
         </div>
 
         {/* Calendar Box: พื้นที่นี้จะขยายใหญ่ที่สุด */}
+        {/* 🚩 แก้คำผิด roAunded ให้เป็น rounded */}
         <div className="flex-grow bg-white dark:bg-gray-800 rounded-[24px] sm:rounded-[32px] shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
           <CalendarView
             events={events}

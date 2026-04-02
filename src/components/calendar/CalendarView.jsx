@@ -19,7 +19,14 @@ const CalendarView = ({
     const isClosed = props.temporarily_closed;
     const isRoomView = props.isRoomView; 
 
-    const isOwner = String(props.teacher_id) === String(currentUserId);
+    // ดึงทั้ง teacher_id และ user_id มาเช็ค เผื่อข้อมูลอยู่สลับฟิลด์กัน
+    const ownerId = String(props.teacher_id || props.user_id || "");
+    const myId = String(currentUserId || "");
+    
+    let isOwner = false;
+    if (ownerId !== "" && ownerId !== "null" && ownerId !== "undefined") {
+      isOwner = ownerId === myId;
+    }
     const isStaff = String(currentUserRole || "").toLowerCase().trim() === "staff";
     const hasPermission = isOwner || isStaff;
 
@@ -134,7 +141,7 @@ const CalendarView = ({
         />
       </div>
 
-      <style>{`
+     <style>{`
         @media (max-width: 640px) {
           .fc .fc-toolbar-title { font-size: 1rem !important; }
           .fc .fc-button { padding: 4px 6px !important; font-size: 0.7rem !important; }
@@ -184,10 +191,18 @@ const CalendarView = ({
         }
 
         ${isCancelMode ? `
+          /* 🚫 บล็อกการคลิกวิชาของคนอื่น */
           .fc-event:not(:has(.elevated-clean)):not(:has(.elevated-restore)) {
-            opacity: 0.2;
+            opacity: 0.3;
             filter: grayscale(100%);
-            pointer-events: none;
+            pointer-events: none !important; 
+            cursor: default !important;
+          }
+
+          /* ✅ อนุญาตให้คลิกวิชาของเราได้ตามปกติ */
+          .fc-event:has(.elevated-clean), .fc-event:has(.elevated-restore) {
+            pointer-events: auto !important;
+            cursor: pointer !important;
           }
         ` : ""}
 

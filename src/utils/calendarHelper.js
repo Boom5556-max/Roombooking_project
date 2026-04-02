@@ -36,6 +36,7 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
   };
 
   const processItem = (item, type) => {
+    
     if (type === "booking" && (item.status === "pending" || item.status === "rejected")) {
         return null;
     }
