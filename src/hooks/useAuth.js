@@ -17,11 +17,11 @@ export const useAuth = () => {
 
   const requestOTP = async (email) => {
     if (!email) {
-      setStatusMsg("❌ กรุณากรอกอีเมล");
+      setStatusMsg("กรุณากรอกอีเมล");
       return;
     }
     setIsLoading(true);
-    setStatusMsg("⏳ กำลังส่งรหัส...");
+    setStatusMsg("กำลังส่งรหัส...");
 
     try {
       // Axios ไม่ต้องมี method: "POST" และไม่ต้อง JSON.stringify
@@ -30,7 +30,7 @@ export const useAuth = () => {
       // Axios เก็บข้อมูลไว้ใน .data ทันที
       setIsSent(true);
       setTimer(60); // ปรับเป็น 60 วินาทีตามมาตรฐาน
-      setStatusMsg("✅ ส่งรหัสเรียบร้อยแล้ว");
+      setStatusMsg("ส่งรหัสเรียบร้อยแล้ว");
     } catch (err) {
       // Axios จะโยน Error มาที่ catch เลยถ้า status ไม่ใช่ 2xx
       const message = err.response?.data?.message || "เชื่อมต่อเซิร์ฟเวอร์ไม่ได้";
