@@ -114,7 +114,7 @@ const Rooms = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-sans">
       <Navbar />
 
-      <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-7xl mx-auto w-full">
+      <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-5xl mx-auto w-full">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-2">
@@ -145,37 +145,15 @@ const Rooms = () => {
         {isLoading ? (
           <LoadingSpinner text="กำลังโหลดข้อมูลห้อง..." />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6">
             {rooms.length > 0 ? (
               rooms.map((room) => (
-                <div
+                <RoomCard
                   key={room.room_id}
-                  className="relative group bg-white dark:bg-gray-800 rounded-[35px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 pb-16 hover:border-[#B2BB1E] hover:ring-2 hover:ring-[#B2BB1E]"
-                >
-                  <RoomCard room={room} />
-
-                  {/* Staff Actions Overlay */}
-                  {userRole === "staff" && (
-                    <div className="absolute bottom-3 left-5 flex gap-2 z-10">
-                      <button
-                        onClick={() => openModal(room)}
-                        className="p-3 rounded-2xl text-gray-400 hover:text-[#302782] hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
-                        title="แก้ไข"
-                      >
-                        <Edit3 size={24} />
-                      </button>
-
-                      <button
-                        // 🚩 เปลี่ยนไปใช้ confirmDelete แทน handleDelete เดิม
-                        onClick={() => confirmDelete(room.room_id)}
-                        className="p-3 rounded-2xl text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-200"
-                        title="ลบ"
-                      >
-                        <Trash2 size={24} />
-                      </button>
-                    </div>
-                  )}
-                </div>
+                  room={room}
+                  onEdit={openModal}
+                  onDelete={confirmDelete}
+                />
               ))
             ) : (
               <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-[40px] border-2 border-dashed border-gray-200 dark:border-gray-700">

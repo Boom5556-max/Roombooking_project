@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, Wrench, ChevronRight, Settings, Users } from 'lucide-react';
+import { 
+  Lock, 
+  Wrench, 
+  Settings, 
+  Users as UsersIcon, 
+  DoorOpen, 
+  Edit3, 
+  Trash2,
+  Building
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 
-const RoomCard = ({ room }) => {
+const RoomCard = ({ room, onEdit, onDelete }) => {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState("");
 
@@ -20,9 +29,12 @@ const RoomCard = ({ room }) => {
   }, []);
 
   const isCurrentlyInRepair = room.repair === true;
-  const isDisabledForUser = isCurrentlyInRepair && userRole !== "staff";
+  const isStaff = userRole === "staff";
+  const isDisabledForUser = isCurrentlyInRepair && !isStaff;
 
-  const handleCardClick = () => {
+  const handleCardClick = (e) => {
+    // If clicking a button, don't navigate
+    if (e.target.closest('button')) return;
     if (isDisabledForUser) return;
     navigate(`/room-detail/${room.room_id}`);
   };
@@ -30,72 +42,93 @@ const RoomCard = ({ room }) => {
   return (
     <div
       onClick={handleCardClick}
-      className={`group relative bg-[#FFFFFF] dark:bg-gray-800 rounded-[28px] sm:rounded-[32px] p-5 sm:p-6 flex justify-between items-center border transition-all duration-300 mb-4 font-sans
-        ${isDisabledForUser 
-          // เพิ่ม dark:bg-gray-800 และ dark:border-gray-700 เพื่อไม่ให้พื้นหลังโปร่งแสงจนกลืนไปกับสีจอด้านหลัง
-          ? "opacity-60 grayscale cursor-not-allowed border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 shadow-none" 
-          : "hover:border-[#B2BB1E] hover:shadow-[0_15px_40px_-12px_rgba(48,39,130,0.12)] cursor-pointer border-gray-100 dark:border-gray-700 shadow-[0_4px_15px_-4px_rgba(0,0,0,0.03)] active:scale-[0.98]"
-        }
-        ${isCurrentlyInRepair && userRole === "staff" ? "border-amber-200 bg-amber-50/20 dark:border-amber-500/30 dark:bg-amber-500/10" : ""} `}
+      className={`bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-[30px] sm:rounded-[35px] shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group ${
+        isDisabledForUser ? "opacity-60 grayscale cursor-not-allowed" : "cursor-pointer"
+      }`}
     >
-      <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
-        {/* ชื่อห้องและประเภท */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* เพิ่ม dark:text-gray-300 ให้ตัวหนังสือสว่างขึ้นเวลาโดน grayscale */}
-          <h3 className={`text-xl sm:text-2xl font-black leading-none tracking-tight ${isDisabledForUser ? "text-gray-500 dark:text-gray-300" : "text-[#302782] dark:text-white"}`}>
-            {room.room_id}
-          </h3>
-          <span className="text-gray-200 dark:text-gray-600 text-lg sm:text-xl font-light">|</span>
-          <p className={`text-sm sm:text-base font-black truncate ${isDisabledForUser ? "text-gray-400 dark:text-gray-400" : "text-gray-500 dark:text-gray-300"}`}>
-            {room.room_type}
-          </p>
-        </div>
-        
-        {/* สถานที่ */}
-        <p className="text-gray-400 dark:text-gray-400 text-xs sm:text-sm font-bold ml-0.5 opacity-80 uppercase tracking-wide">
-          {room.location}
-        </p>
-
-        {/* Badges Area */}
-        <div className="flex flex-wrap items-center gap-2 mt-2">
-          {/* เพิ่ม dark:bg-gray-700 และ dark:text-gray-300 เพื่อให้ป้ายที่นั่งในโหมดคนธรรมดาอ่านง่ายขึ้น */}
-          <span className={`text-[10px] sm:text-xs px-3 sm:px-4 py-1.5 rounded-xl font-black flex items-center gap-1.5 ${
-            isDisabledForUser ? "bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300" : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-white border border-gray-100 dark:border-gray-600"
-          }`}>
-            <Users size={12} strokeWidth={3} /> {room.capacity} ที่นั่ง
-          </span>
-
-          {isCurrentlyInRepair && (
-            <span className="text-[10px] sm:text-xs bg-red-800 px-3 sm:px-4 py-1.5 rounded-xl text-white font-black flex items-center gap-2 shadow-sm animate-pulse-subtle">
-              <Wrench size={12} strokeWidth={3} /> กำลังปรับปรุง
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Right Action Area */}
-      <div className="flex items-center gap-3 sm:gap-4 ml-4">
-        {!isDisabledForUser && isCurrentlyInRepair && (
-          <span className="hidden lg:block text-[10px] font-black tracking-widest text-amber-600 bg-amber-100 dark:bg-amber-900/40 dark:text-amber-400 px-3 py-1.5 rounded-lg uppercase">
-            Admin Mode
-          </span>
-        )}
-
-         {/* เพิ่ม dark:bg-gray-700 และ dark:text-gray-400 ให้กล่องไอคอนแม่กุญแจ */}
-         <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 shrink-0 ${
-          isDisabledForUser 
-            ? "bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-300" 
-            : "bg-gray-50 dark:bg-gray-700 text-gray-400 dark:text-gray-300 group-hover:bg-[#302782] group-hover:text-[#FFFFFF] group-hover:shadow-lg group-hover:shadow-[#302782]/20"
-        }`}>
+      <div className="flex items-center gap-4 sm:gap-5 w-full">
+        {/* Left Icon Section */}
+        <div className={`shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl sm:rounded-[24px] flex items-center justify-center border transition-all duration-300 
+          ${isDisabledForUser 
+            ? "bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-300 border-gray-100 dark:border-gray-600" 
+            : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E] border-gray-100 dark:border-gray-600 group-hover:bg-[#302782] group-hover:text-white group-hover:shadow-lg group-hover:shadow-[#302782]/20"
+          }`}
+        >
           {isDisabledForUser ? (
-            <Lock size={24} sm:size={28} strokeWidth={2.5} />
+            <Lock size={28} className="sm:w-8 sm:h-8" />
           ) : isCurrentlyInRepair ? (
-            <Settings size={24} sm:size={28} strokeWidth={2.5} className="group-hover:rotate-180 transition-transform duration-700" />
+            <Settings size={28} className="sm:w-8 sm:h-8 group-hover:rotate-180 transition-transform duration-700" />
           ) : (
-            <ChevronRight size={24} sm:size={28} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
+            <DoorOpen size={28} className="sm:w-8 sm:h-8" />
           )}
         </div>
+
+        {/* Info Section */}
+        <div className="flex-grow min-w-0">
+          <div className="flex flex-wrap items-center gap-x-2">
+            <h3 className={`text-lg sm:text-xl font-black truncate ${isDisabledForUser ? "text-gray-500 dark:text-gray-300" : "text-[#302782] dark:text-white"}`}>
+              {room.room_id}
+            </h3>
+            <span className="text-gray-200 dark:text-gray-600 text-sm font-light">|</span>
+            <p className={`text-sm sm:text-base font-bold truncate ${isDisabledForUser ? "text-gray-400 dark:text-gray-400" : "text-gray-500 dark:text-gray-300"}`}>
+              {room.room_type}
+            </p>
+          </div>
+
+          <p className="text-gray-400 font-bold text-xs flex items-center gap-1.5 mt-1 truncate uppercase tracking-wide">
+            <Building size={14} className="shrink-0 text-[#B2BB1E]" />
+            <span className="truncate">{room.location}</span>
+          </p>
+
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <span className={`text-[10px] px-3 py-1 rounded-full font-black flex items-center gap-1.5 border ${
+              isDisabledForUser 
+                ? "bg-gray-100 text-gray-400 border-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:border-gray-600" 
+                : "bg-[#302782]/5 dark:bg-[#302782]/20 text-[#302782] dark:text-[#B2BB1E] border-[#302782]/10 dark:border-[#302782]/30"
+            }`}>
+              <UsersIcon size={12} strokeWidth={3} /> {room.capacity} ที่นั่ง
+            </span>
+
+            {isCurrentlyInRepair && (
+              <span className="text-[10px] bg-red-800 px-3 py-1 rounded-full text-white font-black flex items-center gap-1.5 shadow-sm animate-pulse-subtle">
+                <Wrench size={12} strokeWidth={3} /> กำลังปรับปรุง
+              </span>
+            )}
+
+            {isStaff && isCurrentlyInRepair && (
+              <span className="text-[10px] font-black tracking-widest text-amber-600 bg-amber-100 dark:bg-amber-900/40 dark:text-amber-400 px-3 py-1 rounded-full uppercase border border-amber-200 dark:border-amber-500/30">
+                Admin Mode
+              </span>
+            )}
+          </div>
+        </div>
       </div>
+
+      {/* Actions Section */}
+      {isStaff && (
+        <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50 dark:border-gray-700 mt-1 sm:mt-0">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(room);
+            }}
+            className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-gray-400 hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:border-[#302782]/20 transition-all active:scale-[0.98] flex justify-center items-center"
+            title="แก้ไข"
+          >
+            <Edit3 size={20} />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(room.room_id);
+            }}
+            className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-gray-400 hover:text-red-500 hover:border-red-100 transition-all active:scale-[0.98] flex justify-center items-center"
+            title="ลบ"
+          >
+            <Trash2 size={20} />
+          </button>
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes pulse-subtle {
@@ -110,4 +143,4 @@ const RoomCard = ({ room }) => {
   );
 };
 
-export default RoomCard;
+export default RoomCard;
