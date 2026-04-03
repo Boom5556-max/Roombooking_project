@@ -217,8 +217,8 @@ const Notification = () => {
         className={`flex-grow overflow-y-auto bg-white dark:bg-gray-800 p-4 sm:p-8 lg:px-12 xl:px-16 shadow-inner transition-all duration-500 
         ${userRole === "staff" ? "rounded-t-[40px] sm:rounded-t-[50px] mt-4" : "rounded-b-none sm:rounded-b-[50px]"}`}
       >
-        {/* ✅ เปลี่ยนจาก max-w-4xl เป็น max-w-7xl เพื่อให้หน้าจอโน้ตบุ๊กแสดงผลได้กว้างขึ้น */}
-        <div className="w-full max-w-7xl mx-auto pb-24">
+        {/* ✅ ปรับ max-w-3xl เพื่อให้อยู่ตรงกลางและดูพอดีกับรายการแนวตั้ง */}
+        <div className="w-full max-w-3xl mx-auto pb-24">
           {userRole === "staff" ? (
             <div className="space-y-10">
               <StaffSection
@@ -385,8 +385,8 @@ const StaffSection = ({
     <div className="mb-4">
       <SectionTitle title={title} icon={icon} colorClass={color} />
     </div>
-    {/* ✅ ถ้าเนื้อหากว้างขึ้นแล้วอยากให้การ์ดเรียงกัน 2 คอลัมน์บนจอใหญ่ สามารถเพิ่ม lg:grid-cols-2 ได้ครับ (ถ้าชอบแบบแถวยาวๆ เหมือนเดิมก็ให้คง grid-cols-1 ไว้ครับ) */}
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+    {/* ✅ ปรับเป็น grid-cols-1 เพื่อให้รายการไล่ลงมาเรื่อยๆ ตามที่ผู้ใช้ต้องการ */}
+    <div className="grid grid-cols-1 gap-4">
       {data.length > 0 ? (
         data.map((req) => (
           <BookingCard
