@@ -57,7 +57,7 @@ const Notification = () => {
     variant = "primary",
     showCloseButton = true,
     autoClose = false,
-    showButtons = true, // <--- เพิ่ม Default เป็น true เพื่อให้ Modal ปกติยังมีปุ่ม
+    showButtons = true,
   ) => {
     setAlertConfig({
       isOpen: true,
@@ -67,7 +67,7 @@ const Notification = () => {
       variant,
       showCloseButton,
       autoClose,
-      showButtons, // <--- บันทึกลง state
+      showButtons,
       onConfirm:
         onConfirm ||
         (() => setAlertConfig((prev) => ({ ...prev, isOpen: false }))),
@@ -76,47 +76,45 @@ const Notification = () => {
 
   const showResult = (success, successTitle, errorTitle) => {
     showAlert(
-      success ? successTitle : errorTitle, // เลือก title ตามสถานะ
+      success ? successTitle : errorTitle,
       success ? (
         <CheckCircle size={50} className="text-green-500" />
       ) : (
         <XCircle size={50} className="text-red-500" />
-      ), // เลือกไอคอนตามสถานะ
-      null, // onConfirm
-      false, // showConfirm
-      success ? "primary" : "danger", // เลือกสีตามสถานะ
-      false, // showCloseButton
-      true, // autoClose
-      false, // showButtons (ซ่อนปุ่มทั้งหมด)
+      ),
+      null,
+      false,
+      success ? "primary" : "danger",
+      false,
+      true,
+      false,
     );
   };
-  // --- Logic Functions ---
+
   const handleApproveClick = (bookingId) => {
-  showAlert(
-    "คุณต้องการอนุมัติคำขอนี้ใช่หรือไม่?",
-    <CheckCircle size={50} className="text-[#B2BB1E]" />,
-    async () => {
-      setAlertConfig((prev) => ({ ...prev, isOpen: false }));
-      setSelectedBooking(null); // ปิด Modal รายละเอียด
-      const result = await handleUpdateStatus(bookingId, "approved");
-      
-      // แสดงเฉพาะข้อความผลลัพธ์
-      setTimeout(() => {
-        setAlertConfig({
-          isOpen: true,
-          title: result?.success ? "อนุมัติการจองสำเร็จ" : "เกิดข้อผิดพลาด",
-          icon: result?.success ? <CheckCircle size={50} className="text-green-500"/> : <XCircle size={50} className="text-red-500"/>,
-          showButtons: false, 
-          autoClose: true,
-          variant: result?.success ? "primary" : "danger"
-        });
-      }, 150);
-    }
-  );
-};
+    showAlert(
+      "คุณต้องการอนุมัติคำขอนี้ใช่หรือไม่?",
+      <CheckCircle size={50} className="text-[#B2BB1E]" />,
+      async () => {
+        setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+        setSelectedBooking(null);
+        const result = await handleUpdateStatus(bookingId, "approved");
+        
+        setTimeout(() => {
+          setAlertConfig({
+            isOpen: true,
+            title: result?.success ? "อนุมัติการจองสำเร็จ" : "เกิดข้อผิดพลาด",
+            icon: result?.success ? <CheckCircle size={50} className="text-green-500"/> : <XCircle size={50} className="text-red-500"/>,
+            showButtons: false, 
+            autoClose: true,
+            variant: result?.success ? "primary" : "danger"
+          });
+        }, 150);
+      }
+    );
+  };
 
   const handleCancelClick = (bookingId) => {
-    // 1. เช็ค Role เพื่อกำหนดข้อความแจ้งเตือน และ ข้อความตอนสำเร็จ
     const confirmMessage = 
       userRole === "staff" 
         ? "คุณต้องการไม่อนุมัติคำขอนี้ใช่หรือไม่?" 
@@ -127,26 +125,20 @@ const Notification = () => {
         ? "ไม่อนุมัติคำขอสำเร็จ"
         : "ยกเลิกการจองสำเร็จ";
 
-    // 2. เรียก Modal เพื่อยืนยันก่อน
     showAlert(
       confirmMessage,
       <Trash2 size={50} className="text-red-500" />,
       async () => {
-        // 3. เมื่อกดตกลงแล้ว ให้ปิด Modal ยืนยัน
         setAlertConfig((prev) => ({ ...prev, isOpen: false }));
         setSelectedBooking(null);
         
-        // ✨ แก้ไขตรงนี้: แยก Logic การเรียก API 
         let result;
         if (userRole === "staff") {
-          // ถ้ายูสเซอร์เป็น Staff ให้ใช้ฟังก์ชันเปลี่ยนสถานะเป็น "rejected"
           result = await handleUpdateStatus(bookingId, "rejected"); 
         } else {
-          // ถ้าเป็น Teacher ให้ใช้ฟังก์ชันยกเลิกปกติ
           result = await handleCancelBooking(bookingId); 
         }
         
-        // 4. แสดงผลลัพธ์แบบ "มีแต่ข้อความ"
         setTimeout(() => {
           setAlertConfig({
             isOpen: true,
@@ -158,34 +150,35 @@ const Notification = () => {
           });
         }, 150);
       },
-      true, // showConfirm
+      true,
       "danger"
     );
   };
+
   const handleBanClick = (bookingId) => {
-  showAlert(
-    "คุณแน่ใจหรือไม่ที่จะงดการใช้ห้องนี้?",
-    <Ban size={50} className="text-red-500" />,
-    async () => {
-      setAlertConfig((prev) => ({ ...prev, isOpen: false }));
-      setSelectedBooking(null); // ปิด Modal รายละเอียด
-      const result = await handleCancelBooking(bookingId);
-      
-      setTimeout(() => {
-        setAlertConfig({
-          isOpen: true,
-          title: result?.success ? "งดใช้ห้องสำเร็จ" : "งดใช้ห้องไม่สำเร็จ",
-          icon: result?.success ? <CheckCircle size={50} className="text-green-500"/> : <XCircle size={50} className="text-red-500"/>,
-          showButtons: false,
-          autoClose: true,
-          variant: result?.success ? "primary" : "danger"
-        });
-      }, 150);
-    },
-    true,
-    "danger"
-  );
-};
+    showAlert(
+      "คุณแน่ใจหรือไม่ที่จะงดการใช้ห้องนี้?",
+      <Ban size={50} className="text-red-500" />,
+      async () => {
+        setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+        setSelectedBooking(null);
+        const result = await handleCancelBooking(bookingId);
+        
+        setTimeout(() => {
+          setAlertConfig({
+            isOpen: true,
+            title: result?.success ? "งดใช้ห้องสำเร็จ" : "งดใช้ห้องไม่สำเร็จ",
+            icon: result?.success ? <CheckCircle size={50} className="text-green-500"/> : <XCircle size={50} className="text-red-500"/>,
+            showButtons: false,
+            autoClose: true,
+            variant: result?.success ? "primary" : "danger"
+          });
+        }, 150);
+      },
+      true,
+      "danger"
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
@@ -194,17 +187,16 @@ const Notification = () => {
       {/* Tabs สำหรับ User Role: Teacher */}
       {userRole === "teacher" && (
         <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-4 bg-[#302782] dark:bg-gray-950">
-          {/* ✅ ปรับความกว้างของ Tabs ให้สอดคล้องกับเนื้อหาด้านล่าง */}
           <div className="flex gap-3 w-full max-w-7xl mx-auto">
             <button
               onClick={() => setActiveTab("current")}
-              className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "current" ? "bg-white dark:bg-gray-800 text-[#302782] dark:text-white shadow-lg" : "bg-white/10 text-white hover:bg-white/20"}`}
+              className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "current" ? "bg-white dark:bg-gray-800 text-[#302782] dark:text-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)]" : "bg-white/10 text-white hover:bg-white/20"}`}
             >
               การจองของฉัน
             </button>
             <button
               onClick={() => setActiveTab("history")}
-              className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "history" ? "bg-white dark:bg-gray-800 text-[#302782] dark:text-white shadow-lg" : "bg-white/10 text-white hover:bg-white/20"}`}
+              className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "history" ? "bg-white dark:bg-gray-800 text-[#302782] dark:text-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)]" : "bg-white/10 text-white hover:bg-white/20"}`}
             >
               ประวัติการจอง
             </button>
@@ -214,10 +206,9 @@ const Notification = () => {
 
       {/* Main Content Area */}
       <div
-        className={`flex-grow overflow-y-auto bg-white dark:bg-gray-800 p-4 sm:p-8 lg:px-12 xl:px-16 shadow-inner transition-all duration-500 
-        ${userRole === "staff" ? "rounded-t-[40px] sm:rounded-t-[50px] mt-4" : "rounded-b-none sm:rounded-b-[50px]"}`}
+        className={`flex-grow overflow-y-auto bg-white dark:bg-gray-800 p-4 sm:p-8 lg:px-12 xl:px-16 transition-all duration-500 
+        ${userRole === "staff" ? "rounded-t-[40px] sm:rounded-t-[50px] mt-4" : ""}`}
       >
-        {/* ✅ เปลี่ยนจาก max-w-4xl เป็น max-w-7xl เพื่อให้หน้าจอโน้ตบุ๊กแสดงผลได้กว้างขึ้น */}
         <div className="w-full max-w-7xl mx-auto pb-24">
           {userRole === "staff" ? (
             <div className="space-y-10">
@@ -355,7 +346,7 @@ const Notification = () => {
           showConfirm={alertConfig.showConfirm}
           showCloseButton={alertConfig.showCloseButton}
           autoClose={alertConfig.autoClose}
-          showButtons={alertConfig.showButtons} // <--- ส่งค่านี้เข้าไป
+          showButtons={alertConfig.showButtons}
           variant={alertConfig.variant}
           onClose={() => setAlertConfig((prev) => ({ ...prev, isOpen: false }))}
           onConfirm={alertConfig.onConfirm}
@@ -365,7 +356,6 @@ const Notification = () => {
   );
 };
 
-// Component เสริมสำหรับแสดงเมื่อไม่มีข้อมูล
 const EmptyState = () => (
   <p className="text-gray-400 text-sm text-center py-8 bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-600">
     ไม่มีรายการในขณะนี้
@@ -385,7 +375,6 @@ const StaffSection = ({
     <div className="mb-4">
       <SectionTitle title={title} icon={icon} colorClass={color} />
     </div>
-    {/* ✅ ถ้าเนื้อหากว้างขึ้นแล้วอยากให้การ์ดเรียงกัน 2 คอลัมน์บนจอใหญ่ สามารถเพิ่ม lg:grid-cols-2 ได้ครับ (ถ้าชอบแบบแถวยาวๆ เหมือนเดิมก็ให้คง grid-cols-1 ไว้ครับ) */}
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
       {data.length > 0 ? (
         data.map((req) => (

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useCalendarData } from "../hooks/useCalendarData";
 import {
   Check,
+  CheckCircle,
   X,
   Power,
   RotateCcw,
@@ -15,7 +16,6 @@ import CalendarView from "../components/calendar/CalendarView";
 import EventModal from "../components/calendar/EventModal";
 import ActionModal from "../components/common/ActionModal.jsx";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-// 🚩 เพิ่ม Import สำหรับถอดรหัส Token
 import { jwtDecode } from "jwt-decode";
 
 const Calendar = () => {
@@ -32,14 +32,12 @@ const Calendar = () => {
     handleRestoreSchedule,
   } = useCalendarData(id);
 
-  // 🚩 แก้ไขให้ดึงข้อมูลจาก Token แทน localStorage.getItem("user")
   const userData = useMemo(() => {
     try {
       const token = localStorage.getItem("token");
       if (token) {
         const decoded = jwtDecode(token);
         return {
-          // เช็คชื่อตัวแปร id ตามที่ Backend ส่งมาใน payload (มักจะเป็น user_id หรือ id)
           id: String(decoded?.user_id || decoded?.id || ""),
           role: String(decoded?.role || "").toLowerCase().trim(),
         };
@@ -59,6 +57,7 @@ const Calendar = () => {
     show: false,
     title: "",
     msg: "",
+    type: "error", // 'error' | 'success'
   });
 
   if (isLoading) return <LoadingSpinner fullPage text="กำลังจัดเตรียมตารางเรียน..." />;
@@ -66,17 +65,16 @@ const Calendar = () => {
   const checkPermission = (event) => {
     const props = event.extendedProps;
     
-    // 1. เช็คว่าเป็นตารางหลักหรือไม่
     if (!props?.isSchedule) {
       setAlertConfig({
         show: true,
         title: "ดำเนินการไม่ได้",
         msg: "เมนูนี้จัดการได้เฉพาะ 'ตารางเรียนหลัก' เท่านั้นครับ หากต้องการยกเลิกการจองทั่วไป กรุณาทำที่หน้าประวัติการจอง",
+        type: "error",
       });
       return false;
     }
 
-    // 2. เช็คสิทธิ์ (ดักทั้ง teacher_id และ user_id เผื่อหลังบ้านใช้ชื่อฟิลด์ต่างกัน)
     const ownerId = String(props?.teacher_id || props?.user_id || "");
     const myId = String(userData.id || "");
     
@@ -85,11 +83,11 @@ const Calendar = () => {
 
     if (isOwner || isStaff) return true;
 
-    // 3. ถ้าไม่ใช่เจ้าของ ให้แสดง ID ออกมาดูเลยว่าทำไมถึงไม่ตรงกัน
     setAlertConfig({
       show: true,
       title: "สิทธิ์ไม่เพียงพอ",
       msg: `เฉพาะเจ้าหน้าที่หรืออาจารย์เจ้าของวิชาเท่านั้น (ผู้สอน: ${ownerId || "ไม่พบ ID"} / คุณ: ${myId})`,
+      type: "error",
     });
     return false;
   };
@@ -98,10 +96,8 @@ const Calendar = () => {
     <div className="h-screen bg-[#FDFDFF] dark:bg-gray-900 flex flex-col overflow-hidden font-sans">
       <Navbar />
 
-      {/* Main Container: จำกัดความสูงเท่าพื้นที่ที่เหลือ */}
       <main className="flex-grow flex flex-col overflow-hidden p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1800px] mx-auto w-full">
         
-        {/* Top Controls: ยืดหยุ่นตามหน้าจอ */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 flex-shrink-0">
           <div className="w-full sm:w-auto flex-grow max-w-md">
             <RoomSelector
@@ -127,8 +123,6 @@ const Calendar = () => {
           )}
         </div>
 
-        {/* Calendar Box: พื้นที่นี้จะขยายใหญ่ที่สุด */}
-        {/* 🚩 แก้คำผิด roAunded ให้เป็น rounded */}
         <div className="flex-grow bg-white dark:bg-gray-800 rounded-[24px] sm:rounded-[32px] shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
           <CalendarView
             events={events}
@@ -168,7 +162,15 @@ const Calendar = () => {
           onClose={() => setShowConfirmCancel(null)}
           onConfirm={async () => {
             const res = await handleCancelSchedule(showConfirmCancel.id);
-            if (res.success) setShowConfirmCancel(null);
+            if (res.success) {
+              setShowConfirmCancel(null);
+              setAlertConfig({
+                show: true,
+                title: "สำเร็จ",
+                msg: "ตั้งสถานะงดใช้ห้องเรียนเรียบร้อยแล้ว",
+                type: "success"
+              });
+            }
           }}
         />
       )}
@@ -181,25 +183,46 @@ const Calendar = () => {
           onClose={() => setShowConfirmRestore(null)}
           onConfirm={async () => {
             const res = await handleRestoreSchedule(showConfirmRestore.id);
-            if (res.success) setShowConfirmRestore(null);
+            if (res.success) {
+              setShowConfirmRestore(null);
+              setAlertConfig({
+                show: true,
+                title: "สำเร็จ",
+                msg: "เปิดการใช้งานห้องเรียนเรียบร้อยแล้ว",
+                type: "success"
+              });
+            }
           }}
         />
       )}
 
-      {/* Alert Modal: Responsive Size */}
+      {/* Alert Modal: ปรับสีและดีไซน์ให้เหมือนหน้าอื่นๆ */}
       {alertConfig.show && (
-        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-[#302782]/20 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-gray-800 rounded-[32px] p-8 w-full max-w-xs sm:max-w-sm shadow-2xl text-center border border-white dark:border-gray-700 scale-in">
-            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-12">
-              <AlertCircle size={32} strokeWidth={2.5} />
-            </div>
-            <h3 className="text-xl font-bold text-[#302782] dark:text-white mb-2">{alertConfig.title}</h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed font-medium">{alertConfig.msg}</p>
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-[#302782]/30 dark:bg-black/40 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-800 rounded-[32px] p-8 w-full max-w-xs sm:max-w-sm shadow-2xl text-center border border-white dark:border-gray-700 scale-in flex flex-col items-center">
+            
+            {/* ไอคอนจะเปลี่ยนไปตาม type */}
+            {alertConfig.type === 'success' ? (
+              <CheckCircle size={64} className="text-[#B2BB1E] mb-5" strokeWidth={2} />
+            ) : (
+              <div className="text-red-500 mb-5">
+                <AlertCircle size={64} strokeWidth={2} />
+              </div>
+            )}
+
+            <h3 className="text-2xl font-black text-[#302782] dark:text-white mb-2">
+              {alertConfig.title}
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed font-medium">
+              {alertConfig.msg}
+            </p>
+            
+            {/* ปุ่มกดยืนยัน ใช้สีน้ำเงินเข้มเหมือนหน้าอื่นๆ เสมอ */}
             <button
               onClick={() => setAlertConfig({ ...alertConfig, show: false })}
-              className="w-full py-4 bg-[#302782] text-white rounded-xl font-bold text-base active:scale-[0.98] transition-all"
+              className="w-full py-4 bg-[#302782] text-white rounded-2xl font-bold text-base active:scale-[0.98] transition-all hover:bg-[#201a57]"
             >
-              รับทราบ
+              {alertConfig.type === 'success' ? 'ตกลง' : 'รับทราบ'}
             </button>
           </div>
         </div>
