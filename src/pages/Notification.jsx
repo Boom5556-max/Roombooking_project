@@ -209,7 +209,8 @@ const Notification = () => {
         className={`flex-grow overflow-y-auto bg-white dark:bg-gray-800 p-4 sm:p-8 lg:px-12 xl:px-16 transition-all duration-500 
         ${userRole === "staff" ? "rounded-t-[40px] sm:rounded-t-[50px] mt-4" : ""}`}
       >
-        <div className="w-full max-w-7xl mx-auto pb-24">
+        {/* ✅ ปรับ max-w-3xl เพื่อให้อยู่ตรงกลางและดูพอดีกับรายการแนวตั้ง */}
+        <div className="w-full max-w-3xl mx-auto pb-24">
           {userRole === "staff" ? (
             <div className="space-y-10">
               <StaffSection
@@ -375,7 +376,8 @@ const StaffSection = ({
     <div className="mb-4">
       <SectionTitle title={title} icon={icon} colorClass={color} />
     </div>
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+    {/* ✅ ปรับเป็น grid-cols-1 เพื่อให้รายการไล่ลงมาเรื่อยๆ ตามที่ผู้ใช้ต้องการ */}
+    <div className="grid grid-cols-1 gap-4">
       {data.length > 0 ? (
         data.map((req) => (
           <BookingCard
