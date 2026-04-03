@@ -145,7 +145,6 @@ const ScheduleManagement = () => {
               <thead className="bg-gray-50 dark:bg-gray-700/50 text-[#302782] dark:text-[#B2BB1E] uppercase text-xs font-bold tracking-wider">
                 <tr>
                   <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">อัปเดตล่าสุด</th>
-                  <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">รหัสชุดตารางเรียน</th>
                   <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ภาควิชา</th>
                   <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ชั้นปี</th>
                   <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ภาค</th>
@@ -154,14 +153,13 @@ const ScheduleManagement = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {isLoading ? (
-                  <tr><td colSpan="6" className="text-center py-8">กำลังโหลดข้อมูล...</td></tr>
+                  <tr><td colSpan="5" className="text-center py-8">กำลังโหลดข้อมูล...</td></tr>
                 ) : schedules.length === 0 ? (
-                  <tr><td colSpan="6" className="text-center py-8 text-gray-500">ไม่มีประวัติตารางเรียนในระบบ</td></tr>
+                  <tr><td colSpan="5" className="text-center py-8 text-gray-500">ไม่มีประวัติตารางเรียนในระบบ</td></tr>
                 ) : (
                   schedules.map((schedule) => (
                     <tr key={schedule.unique_schedules} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                       <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">{formatDate(schedule.date_create)}</td>
-                      <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap font-mono text-xs text-blue-600 dark:text-blue-400 font-semibold">{schedule.unique_schedules}</td>
                       <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">{schedule.department}</td>
                       <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ปี {schedule.study_year}</td>
                       <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">{schedule.program_type}</td>
@@ -204,7 +202,6 @@ const ScheduleManagement = () => {
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4">
             <div className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all overflow-y-auto max-h-[90vh]">
               <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[#302782] dark:text-[#B2BB1E]">แก้ไขรายละเอียด</h2>
-              <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">ชุดตารางเรียน: <span className="font-mono text-blue-500">{editingSchedule.id}</span></div>
               <form onSubmit={onSaveEdit}>
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">ภาควิชา</label>
