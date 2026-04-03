@@ -5,6 +5,14 @@ import Button from "../components/common/Button.jsx";
 import { useBookingLogic } from "../hooks/useBooking.js";
 import { FormField } from "../components/common/FormField.jsx";
 
+// 👇 1. สร้างช่วงเวลา 08:00 - 20:00 (ห่างกันทุก 30 นาที) ไว้ด้านนอก Component 👇
+const baseTimes = [];
+for (let i = 8; i <= 20; i++) {
+  const h = i.toString().padStart(2, "0");
+  baseTimes.push(`${h}:00`);
+  if (i !== 20) baseTimes.push(`${h}:30`);
+}
+
 const BookingRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -19,6 +27,54 @@ const BookingRoom = () => {
     serverMessage,
     setShowStatus,
   } = useBookingLogic(id);
+
+  // 👇 2. ฟังก์ชันสร้าง Dropdown เลือกเวลา 👇
+  const renderTimeDropdown = (key, label) => {
+    const availableTimes = baseTimes.filter((t) => {
+      if (key === "end_time" && t === "08:00") return false;
+      if (key === "start_time" && t === "20:00") return false;
+      // กรองเวลาไม่ให้เลือกขัดแย้งกัน
+      if (key === "end_time" && formData.start_time) return t > formData.start_time;
+      if (key === "start_time" && formData.end_time) return t < formData.end_time;
+      return true;
+    });
+
+    return (
+      <FormField label={label} icon={<Clock size={16} />}>
+        <details className="group/dropdown w-full relative" id={`dropdown-${key}`}>
+          <summary className="list-none outline-none cursor-pointer">
+            <div className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 flex justify-between items-center group-hover/dropdown:border-[#B2BB1E]/50 focus-within:border-[#B2BB1E] transition-all">
+              <span className={`font-semibold text-base ${formData[key] ? "text-[#302782] dark:text-white" : "text-gray-400"}`}>
+                {formData[key] ? `${formData[key]} น.` : "เลือกเวลา"}
+              </span>
+              <ChevronDown className="text-gray-400 group-open/dropdown:rotate-180 transition-transform pointer-events-none" size={20} />
+            </div>
+          </summary>
+
+          {/* รายการเวลาที่ลอยออกมา */}
+          <div className="absolute left-0 top-[calc(100%+8px)] w-full z-[100] animate-in fade-in zoom-in duration-200">
+            <ul className="bg-white dark:bg-gray-800 rounded-[20px] shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+              <div className="max-h-[200px] overflow-y-auto py-2 custom-scrollbar">
+                {availableTimes.map((t) => (
+                  <li 
+                    key={t} 
+                    className="px-6 py-3 text-[#302782] dark:text-white text-base font-bold hover:bg-[#B2BB1E] hover:text-white cursor-pointer transition-colors"
+                    onClick={() => {
+                      setFormData({ ...formData, [key]: t });
+                      document.getElementById(`dropdown-${key}`).removeAttribute("open");
+                      setShowStatus(false);
+                    }}
+                  >
+                    {t} น.
+                  </li>
+                ))}
+              </div>
+            </ul>
+          </div>
+        </details>
+      </FormField>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] dark:bg-gray-900 flex items-center justify-center p-0 sm:p-4 md:p-8 font-sans">
@@ -36,6 +92,7 @@ const BookingRoom = () => {
             </p>
           </div>
           <button
+            type="button"
             onClick={() => navigate(-1)}
             className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-red-50 hover:text-red-500 rounded-full text-gray-400 transition-all duration-200"
           >
@@ -46,7 +103,6 @@ const BookingRoom = () => {
         {/* Form Section */}
         <form onSubmit={handleSubmit} className="p-6 sm:p-10 space-y-6 sm:space-y-8">
           
-          {/* 1. เลือกห้อง */}
           {/* 1. เลือกห้อง */}
           <FormField label="ห้องที่ต้องการจอง" icon={<Edit3 size={16} />}>
             <div className="relative group">
@@ -66,7 +122,6 @@ const BookingRoom = () => {
                   <option 
                     key={r.room_id} 
                     value={r.room_id} 
-                    // 🚩 เพิ่ม className ให้กับ option ตรงนี้ครับ
                     className="dark:bg-gray-800 dark:text-white text-gray-900" 
                   >
                     {r.room_type} — {r.room_id}
@@ -83,7 +138,7 @@ const BookingRoom = () => {
               type="date"
               required
               min={new Date().toISOString().split("T")[0]}
-              className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 text-[#302782] dark:text-white font-semibold transition-all text-base"
+              className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 text-[#302782] dark:text-white font-semibold transition-all text-base cursor-pointer"
               value={formData.date}
               onChange={(e) => {
                 setFormData({ ...formData, date: e.target.value });
@@ -92,26 +147,10 @@ const BookingRoom = () => {
             />
           </FormField>
 
-          {/* 3. เวลา (Responsive Grid) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <FormField label="เวลาเริ่ม" icon={<Clock size={16} />}>
-              <input
-                type="time"
-                required
-                className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] text-[#302782] dark:text-white font-semibold transition-all"
-                value={formData.start_time}
-                onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-              />
-            </FormField>
-            <FormField label="เวลาสิ้นสุด" icon={<Clock size={16} />}>
-              <input
-                type="time"
-                required
-                className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] text-[#302782] dark:text-white font-semibold transition-all"
-                value={formData.end_time}
-                onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-              />
-            </FormField>
+          {/* 👇 3. เวลา (เรียกใช้ฟังก์ชัน Custom Dropdown) 👇 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 relative">
+            {renderTimeDropdown("start_time", "เวลาเริ่ม")}
+            {renderTimeDropdown("end_time", "เวลาสิ้นสุด")}
           </div>
 
           {/* 4. วัตถุประสงค์ */}
