@@ -7,14 +7,14 @@ import {
   History,
   Trash2,
 } from "lucide-react";
-import { useNotificationLogic } from "../hooks/useNotificationLogic.js";
+import { useManageBooking } from "../hooks/useManage_Booking.js"; // อัปเดตชื่อ Hook ตามที่คุณเพิ่งเปลี่ยน
 import {
   BookingCard,
   SectionTitle,
-} from "../components/notification/NotificationComponents.jsx";
+} from "../components/notification/Manage_BookingComponents.jsx";
 import Navbar from "../components/layout/Navbar.jsx";
-import ActionModal from "../components/common/ActionModal";
-import BookingDetailModal from "../components/notification/BookingDetailModal";
+import ActionModal from "../components/common/ActionModal.jsx";
+import BookingDetailModal from "../components/notification/BookingDetailModal.jsx";
 
 const isPastDate = (dateString) => {
   if (!dateString) return false;
@@ -25,7 +25,8 @@ const isPastDate = (dateString) => {
   return bookingDate < today;
 };
 
-const Notification = () => {
+// ✅ เปลี่ยนชื่อ Component เป็น ManageBooking
+const ManageBooking = () => {
   const {
     pendingRequests,
     approvedRequests,
@@ -37,7 +38,7 @@ const Notification = () => {
     handleUpdateBooking,
     handleCancelBooking,
     getFullName,
-  } = useNotificationLogic();
+  } = useManageBooking(); // ✅ เรียกใช้ชื่อ Hook ใหม่
 
   const [activeTab, setActiveTab] = useState("current");
   const [alertConfig, setAlertConfig] = useState({
@@ -209,7 +210,6 @@ const Notification = () => {
         className={`flex-grow overflow-y-auto bg-white dark:bg-gray-800 p-4 sm:p-8 lg:px-12 xl:px-16 transition-all duration-500 
         ${userRole === "staff" ? "rounded-t-[40px] sm:rounded-t-[50px] mt-4" : ""}`}
       >
-        {/* ✅ ปรับ max-w-3xl เพื่อให้อยู่ตรงกลางและดูพอดีกับรายการแนวตั้ง */}
         <div className="w-full max-w-3xl mx-auto pb-24">
           {userRole === "staff" ? (
             <div className="space-y-10">
@@ -376,7 +376,6 @@ const StaffSection = ({
     <div className="mb-4">
       <SectionTitle title={title} icon={icon} colorClass={color} />
     </div>
-    {/* ✅ ปรับเป็น grid-cols-1 เพื่อให้รายการไล่ลงมาเรื่อยๆ ตามที่ผู้ใช้ต้องการ */}
     <div className="grid grid-cols-1 gap-4">
       {data.length > 0 ? (
         data.map((req) => (
@@ -395,4 +394,5 @@ const StaffSection = ({
   </section>
 );
 
-export default Notification;
+// ✅ อัปเดตการ Export ให้ตรงกับชื่อ Component ใหม่
+export default ManageBooking;

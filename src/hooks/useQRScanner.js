@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Html5Qrcode } from "html5-qrcode";
 import jsQR from "jsqr";
 
-export const useQRScannerLogic = (activeTab, showAlert) => {
+export const useQRScanner = (activeTab, showAlert) => {
   const navigate = useNavigate();
   const [errorMsg, setErrorMsg] = useState("");
   const [scanResult, setScanResult] = useState("");

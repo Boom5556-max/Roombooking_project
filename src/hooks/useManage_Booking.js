@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 import api from "../api/axios";
 
-export const useNotificationLogic = () => {
+export const useManageBooking = () => {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [approvedRequests, setApprovedRequests] = useState([]);
   const [historyRequests, setHistoryRequests] = useState([]);
@@ -49,35 +49,54 @@ export const useNotificationLogic = () => {
     }
   }, []);
 
-  // ✨ ปรับให้ return ค่า success กลับไป แทนการใช้ alert
   const handleUpdateStatus = async (bookingId, status) => {
     try {
       await api.put(`/bookings/${bookingId}/status`, { status });
-      fetchBookings(); // ดึงข้อมูลใหม่
+      fetchBookings(); 
       return { success: true };
     } catch (error) {
       return { success: false, message: error.response?.data?.message || "อัปเดตไม่สำเร็จ" };
     }
   };
 
-  // ✨ ปรับให้ return ค่า success กลับไป และลบ alert ออก
+  // ✨ ฟังก์ชันที่ถูกแก้ไขเพื่อแก้ปัญหาวันที่ -1 วัน
   const handleUpdateBooking = async (bookingId, updatedData) => {
     try {
-      await api.put(`/bookings/${bookingId}`, updatedData);
-      fetchBookings(); // ดึงข้อมูลใหม่
+      const fixedData = { ...updatedData };
+
+      // ฟังก์ชันตัวช่วยดึงวันที่ตามเวลา Local จริงๆ ไม่สน Timezone
+      const formatLocalDate = (dateString) => {
+        if (!dateString) return dateString;
+        const d = new Date(dateString);
+        if (isNaN(d.getTime())) return dateString; 
+
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`; 
+      };
+
+      // แปลง Format วันที่ก่อนส่งไป Backend
+      if (fixedData.booking_date) {
+        fixedData.booking_date = formatLocalDate(fixedData.booking_date);
+      }
+      if (fixedData.date) {
+        fixedData.date = formatLocalDate(fixedData.date);
+      }
+      
+
+      await api.put(`/bookings/${bookingId}`, fixedData);
+      fetchBookings(); 
       return { success: true };
     } catch (error) {
       return { success: false, message: error.response?.data?.message || "แก้ไขไม่สำเร็จ" };
     }
   };
 
-  // ✨ ปรับให้ return ค่า success กลับไป และลบ window.confirm กับ alert ออก
   const handleCancelBooking = async (bookingId) => {
     try {
-      // ✨ 1. เปลี่ยนเป็น api.patch (ถ้า backend ใช้ route แบบ router.patch('/:id/cancel', ...))
       const response = await api.put(`/bookings/${bookingId}/cancel`);
-      fetchBookings(); // ดึงข้อมูลใหม่
-      // ✨ 2. ดึงเอาข้อความ success จาก backend ส่งกลับไปด้วย
+      fetchBookings(); 
       return { success: true, message: response.data.message }; 
     } catch (error) {
       return { success: false, message: error.response?.data?.message || "ยกเลิกไม่สำเร็จ" };
@@ -94,6 +113,7 @@ export const useNotificationLogic = () => {
   return {
     pendingRequests, approvedRequests, historyRequests,
     userRole, selectedBooking, setSelectedBooking, isLoading,
-    handleUpdateStatus, handleUpdateBooking, handleCancelBooking, getFullName
+    handleUpdateStatus, handleUpdateBooking, handleCancelBooking, getFullName,
+    refreshData: fetchBookings 
   };
 };

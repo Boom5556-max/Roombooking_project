@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 // 1. 🚩 เพิ่ม FileText เข้ามาสำหรับใช้เป็นไอคอนจัดการตารางเรียน
-import { Home, Calendar as CalendarIcon, Bell, QrCode, LogOut, Users, FileText, Download, MoreHorizontal } from 'lucide-react';
+import { Home, Calendar as CalendarIcon, Contact, QrCode, LogOut, Users, FileText, Download, MoreHorizontal } from 'lucide-react';
 import { jwtDecode } from "jwt-decode";
 import ActionModal from "../common/ActionModal";
 import ProfileDropdown from "./ProfileDropdown";
@@ -151,10 +151,10 @@ const Navbar = () => {
             title="หน้าหลัก" 
           />
           <NavItem 
-            onClick={() => { navigate("/notification"); setIsMoreMenuOpen(false); }} 
-            style={getNavStyle("/notification")} 
-            icon={<Bell size={24} />} 
-            title="แจ้งเตือน" 
+            onClick={() => { navigate("/manage-booking"); setIsMoreMenuOpen(false); }} 
+            style={getNavStyle("/manage-booking")} 
+            icon={<Contact size={24} />} 
+            title="จัดการการจอง" 
           />
           <NavItem 
             onClick={() => { navigate("/scanner"); setIsMoreMenuOpen(false); }} 
@@ -186,7 +186,7 @@ const Navbar = () => {
               <MobileMoreMenuItem 
                 onClick={() => { navigate("/calendar"); setIsMoreMenuOpen(false); }}
                 icon={<CalendarIcon size={20} />}
-                title="ตารางรายเดือน"
+                title="ปฏิทิน"
                 isActive={location.pathname === "/calendar"}
               />
               {userRole === "staff" && (
@@ -242,7 +242,7 @@ const NavItemsGroup = ({ navigate, getNavStyle, userRole, isMobile = false }) =>
       onClick={() => navigate("/calendar")} 
       style={getNavStyle("/calendar")} 
       icon={<CalendarIcon size={isMobile ? 24 : 22} />} 
-      title="ตาราง" 
+      title="ปฏิทิน" 
     />
     
     {/* 2. 🚩 ส่วนนี้จะถูกเรนเดอร์เฉพาะเมื่อ userRole เป็น staff */}
@@ -272,10 +272,10 @@ const NavItemsGroup = ({ navigate, getNavStyle, userRole, isMobile = false }) =>
     )}
 
     <NavItem 
-      onClick={() => navigate("/notification")} 
-      style={getNavStyle("/notification")} 
-      icon={<Bell size={isMobile ? 24 : 22} />} 
-      title="แจ้งเตือน" 
+      onClick={() => navigate("/manage-booking")} 
+      style={getNavStyle("/manage-booking")} 
+      icon={<Contact size={isMobile ? 24 : 22} />} 
+      title="จัดการการจอง" 
     />
     <NavItem 
       onClick={() => navigate("/scanner")} 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X, User, Calendar, Timer, Edit3, Trash2, Save, Ban, MessageSquare, CheckCircle, XCircle, Clock as ClockIcon, ChevronRight } from "lucide-react";
-import { DetailItem, EditField } from "./NotificationComponents";
+import { DetailItem, EditField } from "./Manage_BookingComponents";
 import Button from "../common/Button";
 
 // สร้างช่วงเวลา 08:00 - 20:00 (ห่างกันทุก 30 นาที)
@@ -17,10 +17,27 @@ const BookingDetailModal = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ purpose: "", date: "", start_time: "", end_time: "" });
 
+  // 👇 แก้ไขตรงนี้: ปรับมาใช้เวลา Local แทนเพื่อป้องกันวันที่ถอยหลัง 1 วัน
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return "";
+
+    // ถ้ารูปแบบมาเป็น "YYYY-MM-DD" อยู่แล้ว (10 ตัวอักษร) ให้ใช้ได้เลย ไม่ต้องแปลง
+    if (typeof dateString === 'string' && dateString.length === 10) {
+      return dateString;
+    }
+
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
+    if (isNaN(date.getTime())) {
+      // กรณีค่าที่ส่งมาไม่ใช่รูปแบบวันที่ที่ถูกต้อง
+      return typeof dateString === 'string' ? dateString.split('T')[0] : "";
+    }
+
+    // ใช้เวลาท้องถิ่น (Local Time) ของเครื่องแทน UTC
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
   };
 
   const startEditing = () => {
@@ -54,8 +71,6 @@ const BookingDetailModal = ({
     }
   };
 
-  // 👇 ฟังก์ชันสร้าง Dropdown เลือกเวลาให้หน้าตาเหมือน EditField 👇
-  // 👇 ฟังก์ชันสร้างตัวเลือกเวลา (อัปเดตใช้ <select> เพื่อให้ลอยทะลุ Modal ทรงเดียวกับภาพที่ 2) 👇
   const renderTimeDropdown = (key, label) => {
     const availableTimes = baseTimes.filter((t) => {
       if (key === "end_time" && t === "08:00") return false;
@@ -82,7 +97,6 @@ const BookingDetailModal = ({
             </div>
           </summary>
 
-          {/* แผง Dropdown: ใช้ fixed เพื่อให้ลอยทะลุขอบ Modal ออกมาเลย */}
           <div className="fixed z-[9999] mt-1 w-[calc(100vw-80px)] max-w-[200px] animate-in fade-in zoom-in duration-200">
             <ul className="bg-white dark:bg-gray-700 rounded-[20px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-600 overflow-hidden">
               <div className="max-h-[200px] overflow-y-auto py-2 custom-scrollbar">
@@ -139,10 +153,8 @@ const BookingDetailModal = ({
               <EditField icon={MessageSquare} label="วัตถุประสงค์การใช้ห้อง" value={editForm.purpose} onChange={v => setEditForm({...editForm, purpose: v})} />
               <EditField icon={Calendar} label="วันที่ต้องการใช้งาน" type="date" value={editForm.date} onChange={v => setEditForm({...editForm, date: v})} />
               <div className="grid grid-cols-2 gap-4">
-                {/* 👇 เรียกใช้ Dropdown แทน Input Type Time แบบเก่า 👇 */}
                 {renderTimeDropdown("start_time", "เวลาเริ่ม")}
                 {renderTimeDropdown("end_time", "เวลาสิ้นสุด")}
-                {/* 👆 สิ้นสุดการเรียกใช้งาน 👆 */}
               </div>
             </div>
           ) : (

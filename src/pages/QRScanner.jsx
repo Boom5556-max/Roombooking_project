@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Camera, Image as ImageIcon, XCircle } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Button from "../components/common/Button.jsx";
-import { useQRScannerLogic } from "../hooks/useQRScannerLogic.js";
+import { useQRScanner } from "../hooks/useQRScanner.js";
 import { SuccessOverlay, LoadingOverlay, CameraErrorOverlay } from "../components/qrscan/ScannerOverlays.jsx";
 import ActionModal from "../components/common/ActionModal";
 
@@ -18,7 +18,7 @@ const QRScanner = () => {
     errorMsg, scanResult, isScanningFile, 
     handleFileChange, setScanResult, setErrorMsg,
     isCameraActive, startCamera, stopCamera
-  } = useQRScannerLogic(activeTab, showAlert); // ส่ง showAlert ไปให้ Hook ใช้ด้วย
+  } = useQRScanner(activeTab, showAlert); // ส่ง showAlert ไปให้ Hook ใช้ด้วย
   
   return (
     <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
