@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { UserCircle, Mail, User, Shield, Edit3, Trash2, Check, AlertCircle, Sun, Moon } from 'lucide-react';
+import { UserCircle, Mail, Shield, Edit3, Trash2, Check, AlertCircle, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import UserFormModal from '../user/UserFormModal';
 import ActionModal from '../common/ActionModal';
@@ -272,15 +272,7 @@ const ProfileDropdown = ({ isMobile }) => {
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-300">
-                <User size={16} />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">รหัสผู้ใช้</span>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{userData.user_id || "-"}</span>
-              </div>
-            </div>
+
           </div>
           
           <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-2">
