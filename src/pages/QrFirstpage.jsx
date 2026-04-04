@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/common/Button.jsx";
-import { useQRScannerLogic } from "../hooks/useQRScannerLogic.js";
+import { useQRScanner } from "../hooks/useQRScanner.js";
 import {
   SuccessOverlay,
   LoadingOverlay,
@@ -37,7 +37,7 @@ const QrFirstpage = () => {
     isCameraActive,
     startCamera,
     stopCamera
-  } = useQRScannerLogic(activeTab, showAlert); // 3. ส่ง showAlert เข้า Hook
+  } = useQRScanner(activeTab, showAlert); // 3. ส่ง showAlert เข้า Hook
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-sans">

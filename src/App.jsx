@@ -8,7 +8,7 @@ import Rooms from './pages/Rooms';
 import QrFirstpage from './pages/QrFirstpage'; 
 import QRScanner from './pages/QRScanner';     
 
-import Notification from './pages/Notification';
+import ManageBooking from './pages/ManageBooking';
 import RoomStatus from './pages/RoomStatus';
 import Calendar from './pages/Calendar';
 import RoomDetail from './pages/RoomDetail';
@@ -81,7 +81,7 @@ function App() {
         <Route path="/bookingRoom/:id" element={<ProtectedRoute><BookingRoom /></ProtectedRoute>} />
         <Route path="/calendar/" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
         <Route path="/calendar/:id" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
-        <Route path="/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
+        <Route path="/manage-booking" element={<ProtectedRoute><ManageBooking /></ProtectedRoute>} />
         <Route path="/room-detail/:id" element={<ProtectedRoute><RoomDetail /></ProtectedRoute>} />
 
       </Routes>
