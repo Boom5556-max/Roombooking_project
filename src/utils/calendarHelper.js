@@ -74,16 +74,14 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
     let eventClasses = []; // 🚩 เพิ่ม Array เก็บ class แยก
 
     if (isClosed) {
-        // เปลี่ยนพื้นหลังให้โปร่งใสแบบสีแดง เพื่อไม่ให้สว่างจ้าใน Dark Mode
         finalBgColor = "rgba(239, 68, 68, 0.15)"; 
         finalBorderColor = "#ef4444";
-        finalTextColor = ""; // 🚩 ปล่อยว่างเพื่อไม่ให้ FullCalendar ฝัง inline style
+        finalTextColor = ""; 
         eventClasses.push("!text-red-700 dark:!text-red-300 font-medium");
     } else if (isRoomView) {
-        // เปลี่ยนเป็นโปร่งใสบางๆ 
         finalBgColor = "rgba(128, 128, 128, 0.15)"; 
         finalBorderColor = roomTheme.bg;
-        finalTextColor = ""; // 🚩 ปล่อยว่างเพื่อไม่ให้ FullCalendar ฝัง inline style
+        finalTextColor = ""; 
         eventClasses.push("!text-gray-800 dark:!text-gray-100 font-medium");
     }
 
@@ -101,13 +99,19 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
             room_name: finalRoomName,
             isRoomView: isRoomView,
             isUpload: isUploadItem,
+            
+            // 🚩 [ส่วนที่แก้ไข] ยัดค่า rawDate (YYYY-MM-DD ที่ปรับ Timezone ไทยแล้ว) กลับเข้าไปทับตัวเดิม 
+            // เพื่อให้เวลา Modal ดึงค่านี้ไปใช้ วันที่จะได้ไม่เพี้ยนลดลง 1 วัน
+            displayDate: rawDate, 
+            booking_date: type === "booking" ? rawDate : item.booking_date,
+            schedule_date: type === "schedule" ? rawDate : item.schedule_date,
+            date: rawDate
         },
         backgroundColor: finalBgColor,
         borderColor: finalBorderColor,
-        className: eventClasses.join(" "), // 🚩 โยนคลาส Tailwind เข้าไปคุมสีข้อความแทน
+        className: eventClasses.join(" "), 
     };
 
-    // ฝัง textColor เข้าไปแค่กรณีที่เป็นตารางปกติ (สีเข้ม ตัวหนังสือขาว)
     if (finalTextColor) {
         eventData.textColor = finalTextColor;
     }

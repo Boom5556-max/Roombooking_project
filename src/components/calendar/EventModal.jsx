@@ -12,8 +12,22 @@ const EventModal = ({ event, onClose }) => {
     ? `${props.teacher_name} ${props.teacher_surname && props.teacher_surname !== '-' ? props.teacher_surname : ""}` 
     : "ไม่ระบุอาจารย์";
 
-  // จัดรูปแบบวันที่
-  const formattedDate = props.date ? props.date.split('T')[0] : "ไม่ระบุวันที่";
+  // 🚩 ฟังก์ชันแปลงวันที่ YYYY-MM-DD เป็นรูปแบบภาษาไทย (เช่น 6 เม.ย. 2569)
+  const getThaiDate = (dateString) => {
+    if (!dateString) return "ไม่ระบุวันที่";
+    try {
+      const parts = dateString.split('T')[0].split('-');
+      if (parts.length !== 3) return dateString;
+      const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+      return `${parseInt(parts[2])} ${months[parseInt(parts[1]) - 1]} ${parseInt(parts[0]) + 543}`;
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  // 🚩 ดึง displayDate ที่เราแก้ปัญหา Timezone แล้วมาใช้เป็นหลัก ถ้าไม่มีค่อยใช้ date
+  const rawDateStr = props.displayDate || props.date;
+  const formattedDate = rawDateStr ? getThaiDate(rawDateStr) : "ไม่ระบุวันที่";
 
   // จัดรูปแบบเวลา
   const formatTime = (time) => {
@@ -21,7 +35,7 @@ const EventModal = ({ event, onClose }) => {
     return time.length > 5 ? time.substring(0, 5) : time;
   };
 
-  // 🚩 เช็คเงื่อนไขการงดใช้ห้องหรือยกเลิก
+  // เช็คเงื่อนไขการงดใช้ห้องหรือยกเลิก
   const isClosed = props.temporarily_closed === true || props.status === 'cancelled';
 
   return (
@@ -57,9 +71,6 @@ const EventModal = ({ event, onClose }) => {
             <h4 className="text-[#302782] dark:text-white font-extrabold text-xl sm:text-2xl leading-tight">
               {title}
             </h4>
-            {/* {props.purpose && (
-              <p className="mt-2 text-sm text-gray-500 font-medium">วัตถุประสงค์: {props.purpose}</p>
-            )} */}
           </div>
 
           <div className="space-y-6">
@@ -93,7 +104,7 @@ const EventModal = ({ event, onClose }) => {
               </div>
             </div>
 
-            {/* 🚩 ส่วนแจ้งเตือน: แสดงเฉพาะเมื่อมีการงดใช้ห้องหรือยกเลิกเท่านั้น */}
+            {/* ส่วนแจ้งเตือน: แสดงเฉพาะเมื่อมีการงดใช้ห้องหรือยกเลิกเท่านั้น */}
             {isClosed && (
               <div className="mt-8 p-4 bg-red-50 border border-red-100 rounded-3xl flex items-center gap-4 animate-pulse">
                 <div className="bg-red-500 p-2 rounded-full text-white shrink-0">
@@ -118,22 +129,16 @@ const EventModal = ({ event, onClose }) => {
 };
 
 const InfoRow = ({ icon, label, value, color = "text-[#302782]" }) => {
-  // 🚩 ปรับตรรกะสีใหม่: สร้างตัวแปรสำหรับสีไอคอนและตัวหนังสือตามเงื่อนไข
-  // กรณีปกติ (เช่น ผู้สอน / ผู้จอง): สีน้ำเงินเข้ม `#302782` / Dark Mode: สีฟ้าสว่าง `dark:text-blue-300`
   const defaultSyncedColor = "text-[#302782] dark:text-blue-300";
-  
-  // กรณีสีพิเศษ (เช่น สถานที่ / ห้องเรียน): สีเขียว `#B2BB1E` (เราจะปล่อยให้ไอคอนเป็นสีนี้ ส่วนตัวหนังสือเป็นสีหลัก)
   const isSpecialColor = color === 'text-[#B2BB1E]';
 
   return (
     <div className="flex items-start gap-4 group">
-      {/* 🚩 แก้ไขสีไอคอน: ถ้าเป็นสีปกติ ให้ใช้ตัวแปร defaultSyncedColor แทน ${color} */}
       <div className={`bg-gray-50 dark:bg-gray-700 p-3.5 rounded-2xl ${isSpecialColor ? color : defaultSyncedColor} border border-gray-100 dark:border-gray-600 shrink-0`}>
         {icon}
       </div>
       <div className="pt-0.5">
         <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-1">{label}</p>
-        {/* 🚩 แก้ไขสีตัวหนังสือ: ถ้าเป็นสีปกติ ให้ใช้ตัวแปร defaultSyncedColor ตัวเดียวกัน */}
         <p className={`text-sm sm:text-base font-bold ${isSpecialColor ? 'text-[#302782] dark:text-white' : defaultSyncedColor}`}>
           {value}
         </p>
