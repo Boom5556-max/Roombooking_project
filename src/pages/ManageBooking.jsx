@@ -11,10 +11,10 @@ import { useManageBooking } from "../hooks/useManage_Booking.js"; // อัป�
 import {
   BookingCard,
   SectionTitle,
-} from "../components/notification/Manage_BookingComponents.jsx";
+} from "../components/managebooking/Manage_BookingComponents.jsx";
 import Navbar from "../components/layout/Navbar.jsx";
 import ActionModal from "../components/common/ActionModal.jsx";
-import BookingDetailModal from "../components/notification/BookingDetailModal.jsx";
+import BookingDetailModal from "../components/managebooking/BookingDetailModal.jsx";
 
 const isPastDate = (dateString) => {
   if (!dateString) return false;

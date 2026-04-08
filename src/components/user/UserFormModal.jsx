@@ -100,6 +100,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
                   <option value="นาย">นาย</option>
                   <option value="นาง">นาง</option>
                   <option value="นางสาว">นางสาว</option>
+                  <option value="อาจารย์">อาจารย์</option>
                   <option value="ดร.">ดร.</option>
                   <option value="ผศ.ดร.">ผศ.ดร.</option>
                 </select>

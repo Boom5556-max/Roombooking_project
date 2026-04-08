@@ -53,9 +53,9 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
         <h3 className="font-black text-[10px] sm:text-xs text-gray-400 uppercase tracking-[0.2em] mb-1">
           Current Status
         </h3>
-        <p className={`text-xl sm:text-2xl font-black ${!isAvailable ? "text-red-500" : "text-[#B2BB1E]"}`}>
+        {/* <p className={`text-xl sm:text-2xl font-black ${!isAvailable ? "text-red-500" : "text-[#B2BB1E]"}`}>
           {!isAvailable ? "มีการใช้งานอยู่" : "พร้อมสำหรับการจอง"}
-        </p>
+        </p> */}
       </div>
       <div
         className={`px-5 py-2.5 rounded-2xl text-[#FFFFFF] text-xs sm:text-xs font-black uppercase tracking-widest transition-all ${
