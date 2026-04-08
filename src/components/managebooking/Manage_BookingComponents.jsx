@@ -19,11 +19,25 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
       label: "อนุมัติแล้ว"
     },
     rejected: {
+      borderColor: "border-red-100 dark:border-red-900/30",
+      statusColor: "text-red-500",
+      bgColor: "bg-red-50 dark:bg-red-900/20",
+      Icon: XCircle,
+      label: "ไม่อนุมัติ"
+    },
+    cancelled: {
       borderColor: "border-gray-100 dark:border-gray-600",
       statusColor: "text-gray-400 dark:text-gray-400",
       bgColor: "bg-gray-100 dark:bg-gray-700/50",
       Icon: XCircle,
       label: "ยกเลิกแล้ว"
+    },
+    class_cancelled: {
+      borderColor: "border-orange-100 dark:border-orange-900/30",
+      statusColor: "text-orange-500",
+      bgColor: "bg-orange-50 dark:bg-orange-900/20",
+      Icon: Hash,
+      label: "ยกเลิกคลาส"
     },
   };
 

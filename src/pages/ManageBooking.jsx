@@ -308,7 +308,7 @@ const ManageBooking = () => {
                       <BookingCard
                         key={req.id || req.booking_id}
                         req={req}
-                        variant="rejected"
+                        variant={req.status || "rejected"}
                         getFullName={getFullName}
                         onClick={(b) =>
                           setSelectedBooking({ ...b, isHistory: true })
@@ -379,13 +379,13 @@ const StaffSection = ({
     <div className="grid grid-cols-1 gap-4">
       {data.length > 0 ? (
         data.map((req) => (
-          <BookingCard
-            key={req.booking_id || req.id}
-            req={req}
-            variant={variant}
-            getFullName={getFullName}
-            onClick={onSelect}
-          />
+            <BookingCard
+              key={req.booking_id || req.id}
+              req={req}
+              variant={req.status || variant}
+              getFullName={getFullName}
+              onClick={onSelect}
+            />
         ))
       ) : (
         <EmptyState />
