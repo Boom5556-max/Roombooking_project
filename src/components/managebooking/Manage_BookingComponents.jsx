@@ -23,7 +23,7 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
       statusColor: "text-red-500",
       bgColor: "bg-red-50 dark:bg-red-900/20",
       Icon: XCircle,
-      label: "ไม่อนุมัติ"
+      label: "ไม่อนุญาต"
     },
     cancelled: {
       borderColor: "border-gray-100 dark:border-gray-600",

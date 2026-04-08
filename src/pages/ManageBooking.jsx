@@ -382,7 +382,10 @@ const StaffSection = ({
             <BookingCard
               key={req.booking_id || req.id}
               req={req}
-              variant={req.status || variant}
+              variant={
+                variant === "rejected" ? "rejected" : 
+                (req.status || variant)
+              }
               getFullName={getFullName}
               onClick={onSelect}
             />
