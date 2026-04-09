@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Monitor, Save, Check, AlertCircle, Trash2 } from "lucide-react";
 import Button from "../common/Button.jsx";
-import InputField from "../common/InputField.jsx"; // เรียกใช้ InputField ที่เรา Refactor ไว้
+import InputField from "../common/InputField.jsx";
 
 const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
   const [formData, setFormData] = useState({
@@ -37,10 +37,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
     };
     const result = await onSave(payload.room_id, payload);
     if (result.success) {
-      // 1. ปิด Form ก่อน เพื่อให้หน้าจอด้านหลังเคลียร์
       onClose();
-
-      // 2. ตามด้วยเรียก showAlert (ซึ่งจะเปิด Modal แจ้งเตือนขึ้นมาแทนที่)
       showAlert(
         "บันทึกข้อมูลสำเร็จ",
         <Check size={50} className="text-[#B2BB1E]" />,
@@ -53,7 +50,6 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
         false,
       );
     } else {
-      // กรณีไม่สำเร็จ อาจจะยังไม่ปิด Form ก็ได้ เพื่อให้ผู้ใช้แก้ข้อมูลต่อ
       showAlert(
         "เกิดข้อผิดพลาด: " + (result.message || "ไม่สามารถบันทึกข้อมูลได้"),
         <AlertCircle size={50} className="text-red-500" />,
@@ -137,13 +133,30 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* 🚩 แก้ไขช่องความจุตรงนี้ */}
             <InputField
               label="ความจุ (จำนวนที่นั่ง)"
               type="number"
+              min="0"
+              max="200"
               value={formData.capacity}
-              onChange={(e) =>
-                setFormData({ ...formData, capacity: e.target.value })
-              }
+              onKeyDown={(e) => {
+                // 🚩 ดักจับปุ่มบนคีย์บอร์ด ไม่ให้พิมพ์ ลบ(-), บวก(+), ทศนิยม(.), และตัวอักษร e
+                if (["-", "+", "e", "E", "."].includes(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              onChange={(e) => {
+                // 🚩 กรองให้เหลือแต่ตัวเลขล้วน
+                let sanitizedValue = String(e.target.value).replace(/[^0-9]/g, "");
+                
+                // 🚩 เช็คว่าถ้าเลขที่พิมพ์เข้ามาเกิน 200 ให้ปรับเป็น 200
+                if (sanitizedValue !== "" && parseInt(sanitizedValue, 10) > 200) {
+                  sanitizedValue = "200";
+                }
+
+                setFormData({ ...formData, capacity: sanitizedValue });
+              }}
             />
 
             <div className="flex flex-col gap-2">
@@ -270,7 +283,16 @@ const EqInput = ({ label, value, onChange }) => (
       min="0"
       className="w-full bg-transparent text-center font-black text-lg text-[#302782] dark:text-white outline-none"
       value={value ?? 0}
-      onChange={(e) => onChange(parseInt(e.target.value) || 0)}
+      // 🚩 เสริมให้ช่องอุปกรณ์ ไม่สามารถกดเครื่องหมายลบ หรือทศนิยม ได้เช่นกัน
+      onKeyDown={(e) => {
+        if (["-", "+", "e", "E", "."].includes(e.key)) {
+          e.preventDefault();
+        }
+      }}
+      onChange={(e) => {
+        let val = e.target.value.replace(/[^0-9]/g, "");
+        onChange(val === "" ? "" : parseInt(val) || 0);
+      }}
     />
   </div>
 );
