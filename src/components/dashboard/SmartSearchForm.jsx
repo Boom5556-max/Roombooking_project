@@ -78,9 +78,28 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
             <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
             <input 
               type="number" 
-              placeholder="เช่น 50" 
+              min="1" 
+              max="200" // 🚩 เพิ่ม max attribute
+              placeholder="เช่น 50 " 
               className="w-full bg-white/10 border-white/10 rounded-xl h-[48px] pl-11 text-white focus:bg-white focus:text-[#302782] outline-none font-bold"
-              onChange={(e) => setSearchQuery({ ...searchQuery, capacity: e.target.value })}
+              onKeyDown={(e) => {
+                if (["-", "+", "e", "E", "."].includes(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              onChange={(e) => {
+                // กรองให้เหลือแต่ตัวเลขล้วน
+                let sanitizedValue = e.target.value.replace(/[^0-9]/g, "");
+                
+                // 🚩 เช็คว่าถ้าเลขที่พิมพ์เข้ามาเกิน 200 ให้ปรับเป็น 200
+                if (sanitizedValue !== "" && parseInt(sanitizedValue, 10) > 200) {
+                  sanitizedValue = "200";
+                }
+
+                setSearchQuery({ ...searchQuery, capacity: sanitizedValue });
+                // บังคับให้ input บนหน้าจอแสดงแค่ตัวเลขที่กรองแล้ว/ไม่เกินขีดจำกัด
+                e.target.value = sanitizedValue;
+              }}
             />
           </div>
         </div>
