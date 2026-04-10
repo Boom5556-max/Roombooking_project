@@ -17,9 +17,7 @@ const CalendarView = ({
     const isSchedule = props.isSchedule; 
     const isBooking = props.type === "booking";
     const isClosed = props.temporarily_closed;
-    const isRoomView = props.isRoomView; 
 
-    // ดึงทั้ง teacher_id และ user_id มาเช็ค เผื่อข้อมูลอยู่สลับฟิลด์กัน
     const ownerId = String(props.teacher_id || props.user_id || "");
     const myId = String(currentUserId || "");
     
@@ -35,7 +33,7 @@ const CalendarView = ({
 
     const getDotConfig = () => {
       if (isClosed) return { bg: "#9CA3AF", border: "border-transparent" }; 
-      const isLightBg = isRoomView || isClosed || shouldElevate || shouldRestore;
+      const isLightBg = isClosed || shouldElevate || shouldRestore;
       if (isBooking) {
         return { 
           bg: "#F59E0B", 
@@ -50,28 +48,32 @@ const CalendarView = ({
 
     const dotConfig = getDotConfig();
 
-    // 🟢 ตรรกะใหม่สำหรับสี "ป้ายเวลา"
+    // 🟢 สี "ป้ายเวลา" (ใช้แบบดั้งเดิม)
+    // 🟢 สี "ป้ายเวลา"
+    // 🟢 สี "ป้ายเวลา"
     let timeClasses = "";
     if (shouldElevate) {
         timeClasses = "bg-[#302782] text-white"; 
     } else if (shouldRestore) {
         timeClasses = "bg-[#9CA3AF] text-white";
-    } else if (isRoomView || isClosed) {
-        timeClasses = "bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-100 shadow-inner";
+    } else if (isClosed) {
+        timeClasses = "bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-100 shadow-inner";
     } else {
-        timeClasses = "text-white";
+        // ✨ ใช้พื้นหลังเวลาสีดำโปร่งแสง และตัวหนังสือสีขาว
+        timeClasses = "bg-black/20 !text-white font-medium";
     }
 
-    // 🟢 ตรรกะใหม่สำหรับสี "ชื่อวิชา"
+    // 🟢 สี "ชื่อวิชา"
     let titleClasses = "";
     if (shouldElevate) {
         titleClasses = "text-[#302782] font-bold"; 
     } else if (shouldRestore) {
         titleClasses = "text-gray-500 font-bold"; 
-    } else if (isRoomView || isClosed) {
+    } else if (isClosed) {
         titleClasses = "text-gray-900 dark:text-gray-100";
     } else {
-        titleClasses = "text-white";
+        // ✨ บังคับใช้ตัวหนังสือสีขาวเสมอ เพื่อให้อ่านง่ายบนพื้นสีสด
+        titleClasses = "!text-white font-bold drop-shadow-sm"; 
     }
 
     return (
@@ -84,15 +86,17 @@ const CalendarView = ({
         title={isClosed ? "งดใช้ห้อง" : (isBooking ? "การจองทั่วไป" : "ตารางเรียนหลัก")}
       >
         <span 
-          className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0 shadow-sm border-[1.5px] ${dotConfig.border}`}
+          className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0 shadow-sm border-[1.5px] ${dotConfig.border}`}
           style={{ backgroundColor: dotConfig.bg }}
         ></span>
         
-        <span className={`fc-event-time-bold text-[9px] sm:text-[0.8rem] rounded px-1 ${timeClasses}`}>
+        {/* 🟢 ปรับเวลาให้ใหญ่ขึ้น: ใช้ text-[11px] สำหรับจอมือถือ และ sm:text-[0.9rem] สำหรับจอคอม */}
+        <span className={`fc-event-time-bold text-[11px] sm:text-[0.9rem] rounded px-1.5 py-0.5 ${timeClasses}`}>
           {eventInfo.timeText}
         </span>
         
-        <span className={`fc-event-title-light text-[10px] sm:text-[0.85rem] font-semibold overflow-hidden text-overflow-ellipsis white-space-nowrap ${titleClasses}`}>
+        {/* 🟢 ปรับชื่อวิชาให้ใหญ่ขึ้น: ใช้ text-[13px] สำหรับจอมือถือ และ sm:text-[1rem] สำหรับจอคอม */}
+        <span className={`fc-event-title-light text-[13px] sm:text-[1rem] overflow-hidden text-ellipsis whitespace-nowrap ${titleClasses}`}>
           {isClosed ? ` ${eventInfo.event.title}` : eventInfo.event.title}
         </span>
       </div>
@@ -100,14 +104,13 @@ const CalendarView = ({
   };
 
   const processedEvents = events?.map(event => {
-    const isRoomView = event.extendedProps?.isRoomView;
     const isClosed = event.extendedProps?.temporarily_closed;
 
     return {
       ...event,
       display: 'block', 
-      backgroundColor: isClosed ? "#f1f5f9" : (isRoomView ? "rgba(0,0,0,0.02)" : event.backgroundColor),
-      borderColor: isClosed ? "#ef4444" : (isRoomView ? event.borderColor : "transparent"),
+      backgroundColor: isClosed ? "#f1f5f9" : event.backgroundColor,
+      borderColor: isClosed ? "#ef4444" : (event.borderColor || "transparent"),
       textColor: "" 
     };
   });
@@ -141,7 +144,7 @@ const CalendarView = ({
         />
       </div>
 
-     <style>{`
+      <style>{`
         @media (max-width: 640px) {
           .fc .fc-toolbar-title { font-size: 1rem !important; }
           .fc .fc-button { padding: 4px 6px !important; font-size: 0.7rem !important; }
@@ -153,7 +156,7 @@ const CalendarView = ({
           display: flex; 
           align-items: center; 
           gap: 6px; 
-          padding: 3px 6px; 
+          padding: 4px 6px; 
           width: 100%; 
           overflow: hidden; 
           border-radius: 6px;
@@ -166,11 +169,7 @@ const CalendarView = ({
           background-color: transparent; 
           border-width: inherit; 
           border-color: inherit; 
-        }
-
-        .dark .fc-h-event.fc-event-background-transparent,
-        .dark .fc-v-event.fc-event-background-transparent {
-          background-color: rgba(255, 255, 255, 0.05);
+          border: none !important; /* ซ่อน border เดิมเพื่อใช้ของ inline-wrapper แทน */
         }
 
         .is-closed { background-color: #F9FAFB !important; border-color: #F3F4F6 !important; }
@@ -180,18 +179,17 @@ const CalendarView = ({
           background-color: #FFFFFF !important;
           z-index: 50 !important;
           box-shadow: 0 4px 12px rgba(48, 39, 130, 0.1) !important;
-          border-color: #302782 !important;
+          border: 2px solid #302782 !important;
         }
 
         .elevated-restore {
           background-color: #FFFFFF !important;
           z-index: 50 !important;
           box-shadow: 0 4px 12px rgba(178, 187, 30, 0.15) !important;
-          border-color: #B2BB1E !important;
+          border: 2px solid #B2BB1E !important;
         }
 
         ${isCancelMode ? `
-          /* 🚫 บล็อกการคลิกวิชาของคนอื่น */
           .fc-event:not(:has(.elevated-clean)):not(:has(.elevated-restore)) {
             opacity: 0.3;
             filter: grayscale(100%);
@@ -199,7 +197,6 @@ const CalendarView = ({
             cursor: default !important;
           }
 
-          /* ✅ อนุญาตให้คลิกวิชาของเราได้ตามปกติ */
           .fc-event:has(.elevated-clean), .fc-event:has(.elevated-restore) {
             pointer-events: auto !important;
             cursor: pointer !important;
