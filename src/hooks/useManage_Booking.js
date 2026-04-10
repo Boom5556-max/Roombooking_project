@@ -93,9 +93,11 @@ export const useManageBooking = () => {
     }
   };
 
-  const handleCancelBooking = async (bookingId) => {
+  // ✨ แก้ไขฟังก์ชันนี้ให้รับและส่ง reason ไปด้วย
+  const handleCancelBooking = async (bookingId, reason = "") => {
     try {
-      const response = await api.put(`/bookings/${bookingId}/cancel`);
+      // 👇 เปลี่ยนตรงนี้เป็น { cancel_reason: reason } เพื่อให้ชื่อตรงกับที่ Backend รอรับ
+      const response = await api.put(`/bookings/${bookingId}/cancel`, { cancel_reason: reason });
       fetchBookings(); 
       return { success: true, message: response.data.message }; 
     } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X, User, Calendar, Timer, Edit3, Trash2, Save, Ban, MessageSquare, CheckCircle, XCircle, Clock as ClockIcon, ChevronRight } from "lucide-react";
-import { DetailItem, EditField } from "./Manage_BookingComponents";
+import { DetailItem, EditField,TextAreaField } from "./Manage_BookingComponents";
 import Button from "../common/Button";
 
 // สร้างช่วงเวลา 08:00 - 20:00 (ห่างกันทุก 30 นาที)
@@ -210,8 +210,13 @@ const ActionButtons = ({ userRole, booking, onUpdateStatus, onCancel, onBan, onE
   const isPending = booking.status === "pending";
   const isApproved = booking.status === "approved";
 
+  // State สำหรับจัดการการแสดงกล่องพิมพ์เหตุผล
+  const [showReasonInput, setShowReasonInput] = useState(false);
+  const [reason, setReason] = useState("");
+
   return (
     <div className="flex flex-col gap-3">
+      {/* สถานะ Pending สำหรับ Staff: อนุมัติ / ไม่อนุมัติ */}
       {userRole === "staff" && isPending && (
         <div className="flex gap-4">
           <Button 
@@ -231,16 +236,46 @@ const ActionButtons = ({ userRole, booking, onUpdateStatus, onCancel, onBan, onE
         </div>
       )}
       
+      {/* 👇 ส่วนของการแจ้งงดใช้ห้อง (แสดงเมื่อ Approved แล้ว) 👇 */}
       {((userRole === "staff" || userRole === "teacher") && isApproved) && (
-        <Button 
-          variant="danger"
-          className="w-full py-4.5 bg-red-500 text-white border-none hover:bg-red-600 shadow-red-100" 
-          onClick={() => onBan(bId)}
-        >
-          <Ban size={18} /> แจ้งงดใช้ห้องเรียนนี้
-        </Button>
+        showReasonInput ? (
+          <div className="space-y-3 animate-in fade-in zoom-in-95 duration-200">
+            <TextAreaField 
+              icon={MessageSquare} 
+              placeholder="ระบุเหตุผลการงดใช้ห้องเรียนนี้..." 
+              value={reason} 
+              onChange={setReason} 
+            />
+            <div className="flex gap-3">
+              <Button 
+                variant="danger" 
+                className="flex-[2] py-4.5 bg-red-500 hover:bg-red-600 shadow-red-100 border-none" 
+                onClick={() => onBan(bId, reason)} // ส่งเหตุผลไปด้วยเมื่อกดยืนยัน
+              >
+                <Ban size={18} /> ยืนยันงดใช้ห้อง
+              </Button>
+              <Button 
+                variant="secondary" 
+                className="flex-1 py-4.5" 
+                onClick={() => { setShowReasonInput(false); setReason(""); }}
+              >
+                ยกเลิก
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <Button 
+            variant="danger"
+            className="w-full py-4.5 bg-red-500 text-white border-none hover:bg-red-600 shadow-red-100" 
+            onClick={() => setShowReasonInput(true)}
+          >
+            <Ban size={18} /> แจ้งงดใช้ห้องเรียนนี้
+          </Button>
+        )
       )}
+      {/* 👆 สิ้นสุดส่วนของการแจ้งงดใช้ห้อง 👆 */}
 
+      {/* สถานะ Pending สำหรับ Teacher: แก้ไข / ยกเลิกคำขอ */}
       {userRole === "teacher" && isPending && (
         <div className="space-y-3">
           <Button 

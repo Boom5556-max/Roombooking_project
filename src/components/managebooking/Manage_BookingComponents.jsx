@@ -48,19 +48,19 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
       onClick={() => onClick(req)}
       className={`group p-4 sm:p-5 rounded-[24px] sm:rounded-[32px] bg-[#FFFFFF] dark:bg-gray-700 border ${borderColor} flex items-center gap-4 transition-all cursor-pointer mb-3 sm:mb-4 shadow-[0_4px_12px_-6px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.1)] active:scale-[0.98] w-full overflow-hidden`}
     >
-      {/* Icon Area: แสดงสถานะด้วยสีพื้นหลังอ่อนๆ */}
+      {/* Icon Area */}
       <div className={`w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 flex items-center justify-center rounded-2xl ${bgColor} ${statusColor} transition-transform group-hover:scale-110`}>
         <Icon size={24} strokeWidth={2.5} />
       </div>
       
-      {/* Content Area: การจัดการตัวหนังสือ */}
+      {/* Content Area */}
       <div className="flex-grow min-w-0">
         <div className="flex items-center justify-between mb-0.5 sm:mb-1">
           <h3 className="font-black text-base sm:text-lg text-[#302782] dark:text-white truncate flex items-center gap-2">
             <span className="text-gray-300"></span>{req.room_id || "---"}
           </h3>
           
-          {/* Badge สถานะแบบ Fixed Width เพื่อความเป๊ะ */}
+          {/* Badge */}
           <span className={`text-[10px] font-black uppercase tracking-tighter py-1 px-3 rounded-lg ${bgColor} ${statusColor} border border-transparent`}>
             {label}
           </span>
@@ -77,7 +77,7 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
         </div>
       </div>
       
-      {/* Arrow Icon: จางๆ แต่จะชัดขึ้นเมื่อ Hover */}
+      {/* Arrow Icon */}
       <div className="hidden sm:flex w-10 h-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-600 text-gray-300 group-hover:text-[#302782] dark:group-hover:text-[#B2BB1E] group-hover:bg-gray-100 dark:group-hover:bg-gray-500 transition-all">
         <ChevronRight size={20} strokeWidth={3} />
       </div>
@@ -118,7 +118,6 @@ export const DetailItem = ({ icon: Icon, label, value }) => (
 );
 
 // 4. EditField: ฟิลด์กรอกข้อมูล (ใช้ร่วมกับ Input หลัก)
-// 4. EditField: ฟิลด์กรอกข้อมูล (ใช้ร่วมกับ Input หลัก)
 export const EditField = ({ label, value, onChange, type = "text", icon: Icon, ...props }) => (
   <div className="flex flex-col gap-2 w-full font-sans group">
     <label className="text-xs font-medium text-gray-400 ml-1">
@@ -131,6 +130,29 @@ export const EditField = ({ label, value, onChange, type = "text", icon: Icon, .
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 text-base font-bold text-[#302782] dark:text-white transition-all placeholder:text-gray-300`}
+        {...props}
+      />
+    </div>
+  </div>
+);
+
+// 5. TextAreaField: ฟิลด์กรอกข้อความแบบหลายบรรทัด (เพิ่มเข้ามาใหม่)
+export const TextAreaField = ({ label, value, onChange, placeholder, icon: Icon, ...props }) => (
+  <div className="flex flex-col gap-2 w-full font-sans group">
+    {label && (
+      <label className="text-xs font-medium text-gray-400 ml-1">
+        {label}
+      </label>
+    )}
+    <div className="relative flex">
+      {/* ปรับตำแหน่งไอคอนให้อยู่ด้านบนซ้ายของกล่องข้อความ */}
+      {Icon && <Icon size={18} className="absolute left-4 top-[18px] text-gray-400 group-focus-within:text-[#B2BB1E] transition-colors" />}
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        // เพิ่ม resize-none ไม่ให้ดึงยืดได้, กำหนดความสูงเริ่มต้น (min-h-[100px]) และการจัดการ Scrollbar
+        className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 text-base font-bold text-[#302782] dark:text-white transition-all placeholder:text-gray-300 resize-none min-h-[110px] custom-scrollbar`}
         {...props}
       />
     </div>

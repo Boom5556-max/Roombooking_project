@@ -135,9 +135,11 @@ const ManageBooking = () => {
         
         let result;
         if (userRole === "staff") {
+          // กรณี Staff ไม่อนุมัติคำขอ (ถ้าไม่ได้ทำ Backend มารับ reason ก็ใช้แบบเดิมได้เลย)
           result = await handleUpdateStatus(bookingId, "rejected"); 
         } else {
-          result = await handleCancelBooking(bookingId); 
+          // 👇 เติม "" (ค่าว่าง) เป็นพารามิเตอร์ที่สอง เพื่อป้องกัน Error ของฟังก์ชันที่เรารับ reason มา
+          result = await handleCancelBooking(bookingId, ""); 
         }
         
         setTimeout(() => {
@@ -154,32 +156,36 @@ const ManageBooking = () => {
       true,
       "danger"
     );
-  };
+};
 
-  const handleBanClick = (bookingId) => {
-    showAlert(
-      "คุณแน่ใจหรือไม่ที่จะงดการใช้ห้องนี้?",
-      <Ban size={50} className="text-red-500" />,
-      async () => {
-        setAlertConfig((prev) => ({ ...prev, isOpen: false }));
-        setSelectedBooking(null);
-        const result = await handleCancelBooking(bookingId);
-        
-        setTimeout(() => {
-          setAlertConfig({
-            isOpen: true,
-            title: result?.success ? "งดใช้ห้องสำเร็จ" : "งดใช้ห้องไม่สำเร็จ",
-            icon: result?.success ? <CheckCircle size={50} className="text-green-500"/> : <XCircle size={50} className="text-red-500"/>,
-            showButtons: false,
-            autoClose: true,
-            variant: result?.success ? "primary" : "danger"
-          });
-        }, 150);
-      },
-      true,
-      "danger"
-    );
-  };
+  // 👇 เพิ่ม reason เข้ามาเป็นพารามิเตอร์ตัวที่สอง
+const handleBanClick = (bookingId, reason) => {
+  showAlert(
+    // ปรับข้อความให้แสดงเหตุผลด้วย เพื่อให้ผู้ใช้ตรวจทานก่อนกดยืนยันอีกรอบ
+    `คุณแน่ใจหรือไม่ที่จะงดการใช้ห้องนี้? \n(เหตุผล: ${reason || "ไม่ได้ระบุ"})`,
+    <Ban size={50} className="text-red-500" />,
+    async () => {
+      setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+      setSelectedBooking(null);
+      
+      // 👇 ส่ง reason เข้าไปในฟังก์ชัน API ด้วย
+      const result = await handleCancelBooking(bookingId, reason); 
+      
+      setTimeout(() => {
+        setAlertConfig({
+          isOpen: true,
+          title: result?.success ? "งดใช้ห้องสำเร็จ" : "งดใช้ห้องไม่สำเร็จ",
+          icon: result?.success ? <CheckCircle size={50} className="text-green-500"/> : <XCircle size={50} className="text-red-500"/>,
+          showButtons: false,
+          autoClose: true,
+          variant: result?.success ? "primary" : "danger"
+        });
+      }, 150);
+    },
+    true,
+    "danger"
+  );
+};
 
   return (
     <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
