@@ -1,46 +1,56 @@
 import React from "react";
-
-const StatusCard = ({ label, value }) => (
-  /* 1. ปรับ Padding: มือถือ p-6, จอใหญ่ขึ้น p-8
-    2. ปรับความสูง: ให้สมดุลในทุกอุปกรณ์
-  */
-  <div className="bg-[#FFFFFF] dark:bg-gray-800 rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 flex flex-col items-center justify-center border border-gray-100 dark:border-gray-700 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] relative overflow-hidden group transition-all hover:shadow-lg">
-    {/* Accent Element */}
-    <div className="absolute top-0 inset-x-0 h-1 bg-[#B2BB1E] opacity-30 group-hover:opacity-100 transition-opacity" />
-    
-    <p className="text-gray-400 font-bold text-[10px] sm:text-xs mb-1 sm:mb-2 text-center uppercase tracking-wider">
-      {label}
-    </p>
-    <span className="text-[#302782] dark:text-white text-4xl sm:text-5xl font-black leading-none">
-      {value}
-    </span>
-  </div>
-);
+import { Building2, Clock, CheckCircle2 } from "lucide-react";
 
 const StatusCards = ({ role, roomCount, pendingCount, approvedCount }) => {
-  const isStaff = role === "staff" || role === "teacher";
-  
   return (
-    /* Logic การจัดวาง:
-       - มือถือ (Default): 1 คอลัมน์ (เรียงลงมา)
-       - แท็บเล็ต (sm): 2 คอลัมน์ (ถ้าเป็น Staff)
-       - จอคอม (lg): 3 คอลัมน์ (เรียงหน้ากระดาน)
-    */
-    <div className={`grid gap-4 sm:gap-6 mb-8 w-full 
-      ${isStaff 
-        ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" 
-        : "grid-cols-1"
-      }`}>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-sans">
       
-      <StatusCard label="ห้องเรียนทั้งหมด" value={roomCount} />
-      
-      {isStaff && (
-        <>
-          {/* บนหน้าจอ Tablet (sm) รายการที่ 2 และ 3 จะอยู่บรรทัดเดียวกัน */}
-          <StatusCard label="รายการที่รออนุมัติ" value={pendingCount} />
-          <StatusCard label="รายการที่อนุมัติแล้ว" value={approvedCount} />
-        </>
+      {/* Card 1: ห้องเรียนทั้งหมด (สีน้ำเงิน) */}
+      <div className="bg-white dark:bg-gray-800 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between transition-all hover:shadow-md">
+        <div>
+          <p className="text-gray-500 text-xs font-bold mb-1">ห้องเรียนทั้งหมด</p>
+          {/* 🚩 สีน้ำเงิน #302782 */}
+          <h3 className="text-4xl font-black text-[#302782] dark:text-blue-400">
+            {roomCount || 0}
+          </h3>
+        </div>
+        <div className="bg-[#302782]/10 p-4 rounded-[20px]">
+          <Building2 size={26} className="text-[#302782] dark:text-blue-400" />
+        </div>
+      </div>
+
+      {/* Card 2: รออนุมัติ (สีส้ม) - เฉพาะ Staff / Teacher */}
+      {(role === "staff" || role === "teacher") && (
+        <div className="bg-white dark:bg-gray-800 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between transition-all hover:shadow-md">
+          <div>
+            <p className="text-gray-500 text-xs font-bold mb-1">คำขอรออนุมัติ</p>
+            {/* 🚩 สีส้ม (Warning) */}
+            <h3 className="text-4xl font-black text-orange-500 dark:text-orange-400">
+              {pendingCount || 0}
+            </h3>
+          </div>
+          <div className="bg-orange-50 dark:bg-orange-500/10 p-4 rounded-[20px]">
+            <Clock size={26} className="text-orange-500 dark:text-orange-400" />
+          </div>
+        </div>
       )}
+
+      {/* Card 3: อนุมัติแล้ว (สีเขียว) - เฉพาะ Staff / Teacher */}
+      {(role === "staff" || role === "teacher") && (
+        <div className="bg-white dark:bg-gray-800 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between transition-all hover:shadow-md">
+          <div>
+            <p className="text-gray-500 text-xs font-bold mb-1">อนุมัติแล้ว</p>
+            {/* 🚩 สีเขียว #B2BB1E */}
+            <h3 className="text-4xl font-black text-[#B2BB1E] dark:text-[#c5cf23]">
+              {approvedCount || 0}
+            </h3>
+          </div>
+          <div className="bg-[#B2BB1E]/10 p-4 rounded-[20px]">
+            <CheckCircle2 size={26} className="text-[#B2BB1E] dark:text-[#c5cf23]" />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
