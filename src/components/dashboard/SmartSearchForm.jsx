@@ -22,16 +22,16 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
     return (
       <div className="relative flex-1 min-w-0">
         <details className="group" id={`time-dropdown-${key}`}>
-          <summary className="w-full bg-[#FFFFFF]/10 border-2 border-transparent hover:border-white/20 rounded-[16px] h-[56px] pl-12 pr-5 flex items-center justify-between text-[#FFFFFF] outline-none text-sm font-bold cursor-pointer list-none hover:bg-white hover:text-[#302782] transition-all">
-            <Clock className="absolute left-4 opacity-70" size={20} />
+          <summary className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-5 flex items-center justify-between text-[#302782] dark:text-white outline-none text-sm font-bold cursor-pointer list-none focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 transition-all">
+            <Clock className="absolute left-4 text-black dark:text-gray-400" size={20} />
             <span className="truncate">{searchQuery[key] || label}</span>
-            <ArrowRight size={16} className="rotate-90 opacity-70 group-open:-rotate-90 transition-transform flex-shrink-0" />
+            <ArrowRight size={16} className="rotate-90 text-black dark:text-gray-400 group-open:-rotate-90 transition-transform flex-shrink-0" />
           </summary>
-          <ul className="absolute left-0 top-[calc(100%+8px)] w-full max-h-[220px] overflow-y-auto bg-white rounded-xl shadow-2xl z-50 py-2 border border-gray-100">
+          <ul className="absolute left-0 top-[calc(100%+8px)] w-full max-h-[220px] overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl z-50 py-2 border border-gray-200 dark:border-gray-700">
             {availableTimes.map((t) => (
               <li 
                 key={t} 
-                className="px-5 py-3 text-[#302782] text-sm font-bold hover:bg-[#B2BB1E] hover:text-white cursor-pointer transition-colors"
+                className="px-5 py-3 text-[#302782] dark:text-gray-200 text-sm font-bold hover:bg-[#B2BB1E] hover:text-white cursor-pointer transition-colors"
                 onClick={() => {
                   setSearchQuery({ ...searchQuery, [key]: t });
                   document.getElementById(`time-dropdown-${key}`).removeAttribute("open");
@@ -49,47 +49,47 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
   const today = new Date().toLocaleDateString('en-CA'); 
 
   return (
-    <div className="bg-[#302782] dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 shadow-xl h-full flex flex-col justify-between">
+    <div className="bg-white dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 shadow-sm border border-gray-200 dark:border-gray-700 h-full flex flex-col justify-between transition-colors">
       <div className="flex flex-col h-full">
         <div className="flex items-center gap-4 mb-8">
-          <div className="p-3 bg-[#B2BB1E] rounded-2xl text-white shadow-sm">
-            <Search size={22} />
+          <div className="p-3 bg-[#302782]/10 dark:bg-[#B2BB1E]/20 rounded-2xl text-[#302782] dark:text-[#B2BB1E]">
+            <Search size={24} />
           </div>
           <div>
-            <h3 className="text-xl font-black text-white leading-tight">ค้นหาห้องว่าง</h3>
-            <p className="text-white/60 text-xs font-medium mt-1">ระบุเวลาและจำนวนคนเพื่อกรองห้อง</p>
+            <h3 className="text-xl font-black text-[#302782] dark:text-white leading-tight">ค้นหาห้องว่าง</h3>
+            {/* แก้ไขคลาสที่พิมพ์ตกหล่น และปรับสี dark mode ให้อ่านง่าย */}
+            <p className="text-black dark:text-gray-300 text-xs font-medium mt-1">ระบุเวลาและจำนวนคนเพื่อกรองห้อง</p>
           </div>
         </div>
         
-        {/* 🚩 เปลี่ยนจากกริด 4 คอลัมน์ เป็น Flex แนวตั้ง (flex-col) ให้กว้างเต็มพื้นที่ */}
         <form onSubmit={onSubmit} className="flex flex-col gap-5 h-full">
           
-          {/* แถวที่ 1: วันที่ & จำนวนนิสิต (แบ่งครึ่ง 2 คอลัมน์) */}
+          {/* แถวที่ 1: วันที่ & จำนวนนิสิต */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-gray-300 ml-2 uppercase tracking-wide">วันที่เข้าใช้งาน</label>
+              <label className="text-[11px] font-black text-black dark:text-gray-300 ml-2 uppercase tracking-wide">วันที่เข้าใช้งาน</label>
               <div className="relative">
-                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" size={20} />
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-gray-400" size={20} />
                 <input 
                   type="date" 
                   required 
                   min={today}
-                  className="w-full bg-white/10 border-2 border-transparent hover:border-white/20 rounded-[16px] h-[56px] pl-12 pr-4 text-white focus:bg-white focus:text-[#302782] outline-none font-bold transition-all cursor-pointer"
+                  className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-4 text-[#302782] dark:text-white outline-none font-bold transition-all cursor-pointer"
                   onChange={(e) => setSearchQuery({ ...searchQuery, date: e.target.value })}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-gray-300 ml-2 uppercase tracking-wide">จำนวนนิสิต</label>
+              <label className="text-[11px] font-black text-black dark:text-gray-300 ml-2 uppercase tracking-wide">จำนวนนิสิต</label>
               <div className="relative">
-                <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-gray-400" size={18} />
                 <input 
                   type="number" 
                   min="1" 
                   max="200" 
                   placeholder="เช่น 50" 
-                  className="w-full bg-white/10 border-2 border-transparent hover:border-white/20 rounded-[16px] h-[56px] pl-12 pr-4 text-white focus:bg-white focus:text-[#302782] outline-none font-bold transition-all placeholder:text-gray-400 placeholder:font-medium"
+                  className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-4 text-[#302782] dark:text-white outline-none font-bold transition-all placeholder:text-black/50 dark:placeholder:text-gray-400"
                   onKeyDown={(e) => {
                     if (["-", "+", "e", "E", "."].includes(e.key)) {
                       e.preventDefault();
@@ -108,22 +108,22 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
             </div>
           </div>
 
-          {/* แถวที่ 2: ช่วงเวลา (เรียงต่อกันเป็นแนวนอน) */}
+          {/* แถวที่ 2: ช่วงเวลา */}
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-gray-300 ml-2 uppercase tracking-wide">ช่วงเวลา (เวลาเริ่ม - สิ้นสุด)</label>
+            <label className="text-[11px] font-black text-black dark:text-gray-300 ml-2 uppercase tracking-wide">ช่วงเวลา (เวลาเริ่ม - สิ้นสุด)</label>
             <div className="flex flex-col sm:flex-row gap-3">
               {renderTimeDropdown("start_time")}
-              {/* ขีดกลางคั่นเวลา (โชว์เฉพาะหน้าจอใหญ่) */}
-              <div className="hidden sm:flex items-center justify-center text-white/30 font-black">
+              {/* ขีดกลางคั่นเวลา */}
+              <div className="hidden sm:flex items-center justify-center text-black dark:text-gray-400 font-black">
                 -
               </div>
               {renderTimeDropdown("end_time")}
             </div>
           </div>
 
-          {/* แถวที่ 3: ปุ่มค้นหา (ดันลงไปชิดด้านล่างสุดเสมอด้วย mt-auto) */}
+          {/* แถวที่ 3: ปุ่มค้นหา */}
           <div className="pt-2 mt-auto">
-            <button type="submit" className="w-full bg-[#B2BB1E] hover:bg-white text-[#302782] font-black h-[60px] text-lg rounded-[16px] flex items-center justify-center gap-3 transition-all hover:shadow-lg hover:-translate-y-1">
+            <button type="submit" className="w-full bg-[#B2BB1E] hover:bg-[#302782] dark:hover:bg-white dark:hover:text-[#302782] text-white font-black h-[60px] text-lg rounded-[16px] flex items-center justify-center gap-3 transition-all shadow-md hover:shadow-xl hover:-translate-y-1 active:scale-[0.98]">
               เริ่มค้นหาห้องว่าง <ArrowRight size={22} />
             </button>
           </div>

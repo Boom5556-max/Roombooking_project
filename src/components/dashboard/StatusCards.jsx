@@ -8,7 +8,7 @@ const StatusCards = ({ role, roomCount, pendingCount, approvedCount }) => {
       {/* Card 1: ห้องเรียนทั้งหมด (สีน้ำเงิน) */}
       <div className="bg-white dark:bg-gray-800 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between transition-all hover:shadow-md">
         <div>
-          <p className="text-gray-500 text-xs font-bold mb-1">ห้องเรียนทั้งหมด</p>
+          <p className="text-black dark:text-white text-xs font-bold mb-1">ห้องเรียนทั้งหมด</p>
           {/* 🚩 สีน้ำเงิน #302782 */}
           <h3 className="text-4xl font-black text-[#302782] dark:text-blue-400">
             {roomCount || 0}
@@ -23,7 +23,7 @@ const StatusCards = ({ role, roomCount, pendingCount, approvedCount }) => {
       {(role === "staff" || role === "teacher") && (
         <div className="bg-white dark:bg-gray-800 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between transition-all hover:shadow-md">
           <div>
-            <p className="text-gray-500 text-xs font-bold mb-1">คำขอรออนุมัติ</p>
+            <p className="text-black dark:text-white text-xs font-bold mb-1">คำขอรออนุมัติ</p>
             {/* 🚩 สีส้ม (Warning) */}
             <h3 className="text-4xl font-black text-orange-500 dark:text-orange-400">
               {pendingCount || 0}
@@ -39,7 +39,7 @@ const StatusCards = ({ role, roomCount, pendingCount, approvedCount }) => {
       {(role === "staff" || role === "teacher") && (
         <div className="bg-white dark:bg-gray-800 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between transition-all hover:shadow-md">
           <div>
-            <p className="text-gray-500 text-xs font-bold mb-1">อนุมัติแล้ว</p>
+            <p className="text-black dark:text-white text-xs font-bold mb-1">อนุมัติแล้ว</p>
             {/* 🚩 สีเขียว #B2BB1E */}
             <h3 className="text-4xl font-black text-[#B2BB1E] dark:text-[#c5cf23]">
               {approvedCount || 0}

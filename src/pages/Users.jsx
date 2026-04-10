@@ -35,16 +35,14 @@ const Users = () => {
   };
 
   // 2. ปรับ Function showAlert ใหม่ ให้รับค่าแค่ข้อความและฟังก์ชันยืนยัน
-  // (พารามิเตอร์อื่นๆ ที่ส่งมาจากหน้า UserFormModal จะถูกละเว้นอัตโนมัติ)
   const showAlert = (title, icon, onConfirmAction = null) => {
     setSimpleAlert({
       isOpen: true,
       message: title,
-      isConfirm: !!onConfirmAction, // ถ้ามี onConfirmAction แปลว่าเป็น Popup ยืนยัน (เช่น ลบ)
+      isConfirm: !!onConfirmAction,
       onConfirm: onConfirmAction,
     });
 
-    // ถ้าเป็นแค่แจ้งเตือนเฉยๆ (ไม่มีปุ่มยืนยัน) ให้ปิดเองอัตโนมัติใน 2 วินาที
     if (!onConfirmAction) {
       setTimeout(() => {
         setSimpleAlert((prev) => ({ ...prev, isOpen: false }));
@@ -68,7 +66,9 @@ const Users = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-sans">
       <Navbar />
 
-      <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-5xl mx-auto w-full">
+      {/* 🚩 แก้ไข: ขยาย max-w ให้กว้างขึ้นเป็น 7xl (หรือ 1600px บนจอใหญ่) เพื่อใช้พื้นที่ให้คุ้ม */}
+      <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-[1600px] mx-auto w-full">
+        
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-2">
@@ -98,7 +98,8 @@ const Users = () => {
           {isLoading ? (
             <LoadingSpinner text="กำลังโหลดข้อมูลผู้ใช้..." />
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:gap-6">
+            /* 🚩 แก้ไข: ปรับเป็น Grid หลายคอลัมน์ (1 คอลัมน์บนมือถือ, 2 บนจอ iPad/Laptop, 3 บนจอใหญ่) */
+            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-6">
               {users.length > 0 ? (
                 users.map((u) => (
                   <div
@@ -152,7 +153,7 @@ const Users = () => {
                   </div>
                 ))
               ) : (
-                <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-[40px] border-2 border-dashed border-gray-100 dark:border-gray-700">
+                <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-[40px] border-2 border-dashed border-gray-100 dark:border-gray-700">
                   <UserCog size={48} className="text-gray-200 mb-4" />
                   <p className="text-gray-400 font-bold">
                     ไม่พบข้อมูลผู้ใช้งานในระบบ
@@ -169,12 +170,11 @@ const Users = () => {
           user={editingUser}
           onClose={() => setIsModalOpen(false)}
           onSave={editingUser ? updateUser : addUser}
-          showAlert={showAlert} // ส่งฟังก์ชัน showAlert ใหม่เข้าไป
+          showAlert={showAlert}
         />
       )}
 
-      {/* 4. กล่อง Alert แจ้งเตือนแบบเน้นข้อความ คลีนๆ ไม่รก */}
-      {/* 4. กล่อง Alert แจ้งเตือนแบบเน้นข้อความ คลีนๆ ไม่รก (ปรับขนาดให้ใหญ่ขึ้น) */}
+      {/* กล่อง Alert */}
       {simpleAlert.isOpen && (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/20 dark:bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200 font-sans">
           <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 w-full max-w-sm text-center">

@@ -72,7 +72,8 @@ const Dashboard = () => {
                 </div>
                 <div className="text-left font-sans">
                   <p className="font-black text-xl text-[#302782] dark:text-white">ดูรายการห้องเรียน</p>
-                  <p className="text-gray-500 text-sm font-medium mt-1">ตรวจสอบตารางการใช้ห้องทั้งหมด</p>
+                  {/* เพิ่ม dark:text-gray-400 */}
+                  <p className="text-black dark:text-gray-400 text-sm font-medium mt-1">ตรวจสอบตารางการใช้ห้องทั้งหมด</p>
                 </div>
               </div>
               <ArrowRight className="text-gray-300 group-hover:text-[#B2BB1E] group-hover:translate-x-1 transition-all w-7 h-7" />
@@ -86,7 +87,8 @@ const Dashboard = () => {
                   </div>
                   <div className="text-left font-sans">
                     <h3 className="font-black text-xl text-[#302782] dark:text-white">ระบบจัดการไฟล์</h3>
-                    <p className="text-gray-500 text-sm font-medium mt-1">อัปโหลดตารางเรียน (.xlsx, .csv)</p>
+                    {/* เพิ่ม dark:text-gray-400 */}
+                    <p className="text-black dark:text-gray-400 text-sm font-medium mt-1">อัปโหลดตารางเรียน (.xlsx, .csv)</p>
                   </div>
                 </div>
                 <ArrowRight className="text-gray-300 group-hover:text-[#302782] group-hover:translate-x-1 transition-all w-7 h-7" />
