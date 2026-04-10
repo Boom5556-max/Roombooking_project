@@ -57,14 +57,13 @@ const Calendar = () => {
     show: false,
     title: "",
     msg: "",
-    type: "error", // 'error' | 'success'
+    type: "error",
   });
 
   if (isLoading) return <LoadingSpinner fullPage text="กำลังจัดเตรียมตารางเรียน..." />;
 
   const checkPermission = (event) => {
     const props = event.extendedProps;
-    
     if (!props?.isSchedule) {
       setAlertConfig({
         show: true,
@@ -74,14 +73,9 @@ const Calendar = () => {
       });
       return false;
     }
-
     const ownerId = String(props?.teacher_id || props?.user_id || "");
     const myId = String(userData.id || "");
-    
-    const isOwner = ownerId === myId;
-    const isStaff = userData.role === "staff";
-
-    if (isOwner || isStaff) return true;
+    if (ownerId === myId || userData.role === "staff") return true;
 
     setAlertConfig({
       show: true,
@@ -93,36 +87,59 @@ const Calendar = () => {
   };
 
   return (
-    <div className="h-screen bg-[#FDFDFF] dark:bg-gray-900 flex flex-col overflow-hidden font-sans">
+    <div className="h-screen bg-[#FDFDFF] dark:bg-gray-900 flex flex-col overflow-hidden font-sans transition-colors duration-200">
       <Navbar />
 
       <main className="flex-grow flex flex-col overflow-hidden p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1800px] mx-auto w-full">
         
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 flex-shrink-0">
-          <div className="w-full sm:w-auto flex-grow max-w-md">
-            <RoomSelector
-              rooms={rooms}
-              selectedRoom={selectedRoom}
-              onSelect={setSelectedRoom}
-              disabled={isCancelMode}
-            />
+        {/* ส่วนหัว: รวมเลือกห้อง, จุดสี และปุ่มจัดการไว้แถวเดียวกัน */}
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 flex-shrink-0">
+          
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full lg:w-auto flex-grow">
+            {/* ตัวเลือกห้อง */}
+            <div className="w-full md:w-80">
+              <RoomSelector
+                rooms={rooms}
+                selectedRoom={selectedRoom}
+                onSelect={setSelectedRoom}
+                disabled={isCancelMode}
+              />
+            </div>
+
+            {/* 🟢 ✨ จุดสีบอกประเภท (Legend) ย้ายมาข้างๆ เลือกห้อง ✨ 🟢 */}
+            <div className="flex flex-wrap items-center gap-4 px-1 text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-sm"></span>
+                <span>อัปโหลดตารางเรียน</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shadow-sm"></span>
+                <span>การจองผ่านระบบ</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#9CA3AF] shadow-sm"></span>
+                <span>งดใช้ห้อง</span>
+              </div>
+            </div>
           </div>
 
+          {/* ปุ่มจัดการงดใช้ห้อง (อยู่ขวาสุดบนคอม) */}
           {selectedRoom && (
             <button
               onClick={() => setIsCancelMode(!isCancelMode)}
-              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 h-12 rounded-2xl font-bold text-sm transition-all shadow-sm active:scale-[0.98] ${
+              className={`w-full lg:w-auto flex items-center justify-center gap-2 px-6 h-12 rounded-2xl font-bold text-sm transition-all shadow-sm active:scale-[0.98] ${
                 isCancelMode
                   ? "bg-[#B2BB1E] text-white ring-4 ring-[#B2BB1E]/20"
                   : "bg-white dark:bg-gray-800 text-[#302782] dark:text-white border border-gray-200 dark:border-gray-700 hover:border-[#302782]"
               }`}
             >
               {isCancelMode ? <X size={18} /> : <Settings2 size={18} />}
-              <span>{isCancelMode ? "เสร็จสิ้นการจัดการ" : "จัดการงดใช้ห้อง"}</span>
+              <span>{isCancelMode ? "เสร็จสิ้น" : "จัดการงดใช้ห้อง"}</span>
             </button>
           )}
         </div>
 
+        {/* ส่วนปฏิทิน */}
         <div className="flex-grow bg-white dark:bg-gray-800 rounded-[24px] sm:rounded-[32px] shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
           <CalendarView
             events={events}
@@ -196,12 +213,10 @@ const Calendar = () => {
         />
       )}
 
-      {/* Alert Modal: ปรับสีและดีไซน์ให้เหมือนหน้าอื่นๆ */}
+      {/* Alert Modal */}
       {alertConfig.show && (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-[#302782]/30 dark:bg-black/40 backdrop-blur-md animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-800 rounded-[32px] p-8 w-full max-w-xs sm:max-w-sm shadow-2xl text-center border border-white dark:border-gray-700 scale-in flex flex-col items-center">
-            
-            {/* ไอคอนจะเปลี่ยนไปตาม type */}
             {alertConfig.type === 'success' ? (
               <CheckCircle size={64} className="text-[#B2BB1E] mb-5" strokeWidth={2} />
             ) : (
@@ -209,15 +224,8 @@ const Calendar = () => {
                 <AlertCircle size={64} strokeWidth={2} />
               </div>
             )}
-
-            <h3 className="text-2xl font-black text-[#302782] dark:text-white mb-2">
-              {alertConfig.title}
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed font-medium">
-              {alertConfig.msg}
-            </p>
-            
-            {/* ปุ่มกดยืนยัน ใช้สีน้ำเงินเข้มเหมือนหน้าอื่นๆ เสมอ */}
+            <h3 className="text-2xl font-black text-[#302782] dark:text-white mb-2">{alertConfig.title}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed font-medium">{alertConfig.msg}</p>
             <button
               onClick={() => setAlertConfig({ ...alertConfig, show: false })}
               className="w-full py-4 bg-[#302782] text-white rounded-2xl font-bold text-base active:scale-[0.98] transition-all hover:bg-[#201a57]"

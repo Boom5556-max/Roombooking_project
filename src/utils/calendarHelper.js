@@ -5,6 +5,7 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
     if (!roomId || roomId === "ไม่ระบุเลขห้อง")
       return { bg: "#475569", border: "#334155" };
 
+    // 🎨 สามารถเพิ่มสีใน Array นี้ได้อีกเรื่อยๆ ถ้าระบบมีห้องเยอะมาก
     const colorPalette = [
       { bg: "#3b82f6", border: "#2563eb" }, { bg: "#8b5cf6", border: "#7c3aed" },
       { bg: "#ec4899", border: "#db2777" }, { bg: "#f97316", border: "#ea580c" },
@@ -12,6 +13,7 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
       { bg: "#0ea5e9", border: "#0284c7" },
     ];
 
+    // ระบบ Hash จะสุ่มสีให้แต่ละห้องอัตโนมัติ และได้สีเดิมเสมอสำหรับห้องเดิม
     let hash = 0;
     const str = String(roomId);
     for (let i = 0; i < str.length; i++) {
@@ -19,20 +21,6 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
     }
     const index = Math.abs(hash) % colorPalette.length;
     return colorPalette[index];
-  };
-
-  const formatThaiDate = (dateStr) => {
-    if (!dateStr || dateStr === "Invalid Date") return "ไม่ระบุวันที่";
-    try {
-      const months = [
-        "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-        "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม",
-      ];
-      const parts = dateStr.split("-");
-      if (parts.length !== 3) return dateStr;
-      const [y, m, day] = parts;
-      return `${parseInt(day)} ${months[parseInt(m) - 1]} ${parseInt(y) + 543}`;
-    } catch (e) { return dateStr; }
   };
 
   const processItem = (item, type) => {
@@ -57,33 +45,24 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
     const isBookingClosed = type === "booking" && (item.status === "cancel" || item.status === "cancelled"); 
     const isClosed = isScheduleClosed || isBookingClosed;
     
-    // 🚩 เช็คว่าเป็นหน้าแยกห้องหรือไม่
     const isRoomView = defRoomId !== null && defRoomId !== "" && defRoomId !== "undefined";
-
-    // 🚩 ตรวจสอบว่าข้อมูลนี้มาจากการอัปโหลดไฟล์หรือไม่
     const isUploadItem = item.is_upload === 1 || item.is_upload === true || item.source === 'excel';
 
-    const roomPrefix = (finalRoomName && finalRoomName !== "ไม่ระบุเลขห้อง" && !isRoomView) ? `[${finalRoomName}] ` : "";
+    const roomPrefix = (finalRoomName && finalRoomName !== "ไม่ระบุเลขห้อง" && !isRoomView) ? `${finalRoomName} ` : "";
     const originalTitle = type === "booking" ? (item.purpose || "จองใช้ห้อง") : (item.subject_name || "ตารางเรียนหลัก");
     const displayTitle = isClosed ? `(งดใช้ห้อง) ${roomPrefix}${originalTitle}` : `${roomPrefix}${originalTitle}`;
 
     const roomTheme = getRoomColor(finalRoomId);
     let finalBgColor = roomTheme.bg;
     let finalBorderColor = roomTheme.border;
-    let finalTextColor = "#ffffff";
-    let eventClasses = []; // 🚩 เพิ่ม Array เก็บ class แยก
+    let eventClasses = []; 
 
     if (isClosed) {
         finalBgColor = "rgba(239, 68, 68, 0.15)"; 
         finalBorderColor = "#ef4444";
-        finalTextColor = ""; 
         eventClasses.push("!text-red-700 dark:!text-red-300 font-medium");
-    } else if (isRoomView) {
-        finalBgColor = "rgba(128, 128, 128, 0.15)"; 
-        finalBorderColor = roomTheme.bg;
-        finalTextColor = ""; 
-        eventClasses.push("!text-gray-800 dark:!text-gray-100 font-medium");
     }
+    // 🔴 เอาเงื่อนไข isRoomView ออกไปแล้ว เพื่อให้มันใช้ finalBgColor ที่เป็นสีห้องตามปกติ
 
     const eventData = {
         id: type === "booking" ? item.booking_id : item.schedule_id,
@@ -99,9 +78,6 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
             room_name: finalRoomName,
             isRoomView: isRoomView,
             isUpload: isUploadItem,
-            
-            // 🚩 [ส่วนที่แก้ไข] ยัดค่า rawDate (YYYY-MM-DD ที่ปรับ Timezone ไทยแล้ว) กลับเข้าไปทับตัวเดิม 
-            // เพื่อให้เวลา Modal ดึงค่านี้ไปใช้ วันที่จะได้ไม่เพี้ยนลดลง 1 วัน
             displayDate: rawDate, 
             booking_date: type === "booking" ? rawDate : item.booking_date,
             schedule_date: type === "schedule" ? rawDate : item.schedule_date,
@@ -110,11 +86,8 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
         backgroundColor: finalBgColor,
         borderColor: finalBorderColor,
         className: eventClasses.join(" "), 
+        // 🔴 ปล่อย textColor เป็นค่าว่าง เพื่อให้ Tailwind จัดการโหมดสว่าง/มืดแทน
     };
-
-    if (finalTextColor) {
-        eventData.textColor = finalTextColor;
-    }
 
     return eventData;
   };
