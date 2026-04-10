@@ -149,9 +149,45 @@ export const useSchedule = () => {
     }
   };
 
+  // 6. GET: ดึงรายวิชาของชุดตารางเรียนนั้น
+  const fetchSubjects = async (unique_schedules) => {
+    try {
+      const res = await api.get(`/schedules/subjects/${unique_schedules}`);
+      return res.data.subjects || [];
+    } catch (error) {
+      console.error('Fetch Subjects Error:', error);
+      throw error;
+    }
+  };
+
+  // 7. PATCH: แก้ไขข้อมูลรายวิชาในชุดตาราง
+  const editSubjectSchedule = async (unique_schedules, payload) => {
+    try {
+      const res = await api.patch(`/schedules/editSubjects/${unique_schedules}`, payload);
+      return { success: true, message: res.data.message };
+    } catch (error) {
+      console.error('Edit Subject Schedule Error:', error);
+      throw error;
+    }
+  };
+
+  // 8. DELETE: ลบรายวิชาออกจากชุดตาราง
+  const deleteSubjectSchedule = async (unique_schedules, subject_name, sec) => {
+    try {
+      const res = await api.delete(`/schedules/deleteSubjects/${unique_schedules}`, {
+        data: { subject_name, sec }
+      });
+      return { success: true, message: res.data.message };
+    } catch (error) {
+      console.error('Delete Subject Schedule Error:', error);
+      throw error;
+    }
+  };
+
   return {
     schedules, isLoading, isEditModalOpen, setIsEditModalOpen, editingSchedule, setEditingSchedule,
     isPreviewModalOpen, setIsPreviewModalOpen, isUploading, previewData, previewErrors, fileInputRef,
-    handleDelete, openEditModal, handleSaveEdit, triggerFileInput, handleFileChange, handleConfirmReupload
+    handleDelete, openEditModal, handleSaveEdit, triggerFileInput, handleFileChange, handleConfirmReupload,
+    fetchSubjects, editSubjectSchedule, deleteSubjectSchedule
   };
 };
