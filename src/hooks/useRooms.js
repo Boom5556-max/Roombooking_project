@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import api from "../api/axios";
+import { data } from "react-router-dom";
 
 export const useRooms = () => {
   const [rooms, setRooms] = useState([]);
@@ -11,6 +12,7 @@ export const useRooms = () => {
     try {
       const response = await api.get("/rooms/");
       setRooms(response.data);
+      console.log(response)
     } catch (error) {
       console.error(
         "Error fetching rooms:",

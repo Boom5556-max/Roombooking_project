@@ -5,7 +5,7 @@ import { Home, Calendar as CalendarIcon, Contact, QrCode, LogOut, Users, FileTex
 import { jwtDecode } from "jwt-decode";
 import ActionModal from "../common/ActionModal";
 import ProfileDropdown from "./ProfileDropdown";
-
+import api from '../../api/axios';
 import logo from "../../assets/image/sci ku src.png";
 
 const Navbar = () => {

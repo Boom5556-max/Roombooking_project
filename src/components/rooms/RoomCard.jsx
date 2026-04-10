@@ -75,10 +75,6 @@ const RoomCard = ({ room, onEdit, onDelete }) => {
             </p>
           </div>
 
-          <p className="text-gray-400 font-bold text-xs flex items-center gap-1.5 mt-1 truncate uppercase tracking-wide">
-            <Building size={14} className="shrink-0 text-[#B2BB1E]" />
-            <span className="truncate">{room.location}</span>
-          </p>
 
           <div className="flex flex-wrap items-center gap-2 mt-2">
             <span className={`text-[10px] px-3 py-1 rounded-full font-black flex items-center gap-1.5 border ${
@@ -95,11 +91,6 @@ const RoomCard = ({ room, onEdit, onDelete }) => {
               </span>
             )}
 
-            {isStaff && isCurrentlyInRepair && (
-              <span className="text-[10px] font-black tracking-widest text-amber-600 bg-amber-100 dark:bg-amber-900/40 dark:text-amber-400 px-3 py-1 rounded-full uppercase border border-amber-200 dark:border-amber-500/30">
-                Admin Mode
-              </span>
-            )}
           </div>
         </div>
       </div>
@@ -143,4 +134,4 @@ const RoomCard = ({ room, onEdit, onDelete }) => {
   );
 };
 
-export default RoomCard;
+export default RoomCard;
