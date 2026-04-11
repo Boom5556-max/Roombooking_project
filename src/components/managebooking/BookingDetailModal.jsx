@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X, User, Calendar, Timer, Edit3, Trash2, Save, Ban, MessageSquare, CheckCircle, XCircle, Clock as ClockIcon, ChevronRight } from "lucide-react";
-import { DetailItem, EditField,TextAreaField } from "./Manage_BookingComponents";
+import { DetailItem, EditField, TextAreaField } from "./Manage_BookingComponents";
 import Button from "../common/Button";
 
 // สร้างช่วงเวลา 08:00 - 20:00 (ห่างกันทุก 30 นาที)
@@ -17,26 +17,14 @@ const BookingDetailModal = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ purpose: "", date: "", start_time: "", end_time: "" });
 
-  // 👇 แก้ไขตรงนี้: ปรับมาใช้เวลา Local แทนเพื่อป้องกันวันที่ถอยหลัง 1 วัน
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return "";
-
-    // ถ้ารูปแบบมาเป็น "YYYY-MM-DD" อยู่แล้ว (10 ตัวอักษร) ให้ใช้ได้เลย ไม่ต้องแปลง
-    if (typeof dateString === 'string' && dateString.length === 10) {
-      return dateString;
-    }
-
+    if (typeof dateString === 'string' && dateString.length === 10) return dateString;
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      // กรณีค่าที่ส่งมาไม่ใช่รูปแบบวันที่ที่ถูกต้อง
-      return typeof dateString === 'string' ? dateString.split('T')[0] : "";
-    }
-
-    // ใช้เวลาท้องถิ่น (Local Time) ของเครื่องแทน UTC
+    if (isNaN(date.getTime())) return typeof dateString === 'string' ? dateString.split('T')[0] : "";
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    
     return `${year}-${month}-${day}`;
   };
 
@@ -53,21 +41,12 @@ const BookingDetailModal = ({
   const onSaveEdit = async () => {
     const bId = booking.booking_id || booking.id;
     const result = await onUpdateBooking(bId, editForm);
-    
     if (result?.success) {
       setIsEditing(false);
       onClose();
-      showAlert(
-        "บันทึกการแก้ไขสำเร็จ", 
-        <CheckCircle size={50} className="text-[#B2BB1E]" />, 
-        null, false, "primary", false, true, false
-      );
+      showAlert("บันทึกการแก้ไขสำเร็จ", <CheckCircle size={50} className="text-[#B2BB1E]" />, null, false, "primary", false, true, false);
     } else {
-      showAlert(
-        "แก้ไขไม่สำเร็จ", 
-        <XCircle size={50} className="text-red-500" />, 
-        null, false, "danger", true, false, true
-      );
+      showAlert("แก้ไขไม่สำเร็จ", <XCircle size={50} className="text-red-500" />, null, false, "danger", true, false, true);
     }
   };
 
@@ -82,10 +61,7 @@ const BookingDetailModal = ({
 
     return (
       <div className="flex flex-col gap-2 w-full font-sans group relative">
-        <label className="text-xs font-medium text-gray-400 ml-1">
-          {label}
-        </label>
-        
+        <label className="text-xs font-medium text-gray-400 ml-1">{label}</label>
         <details className="group/dropdown w-full" id={`dropdown-${key}`}>
           <summary className="list-none outline-none cursor-pointer">
             <div className="relative flex items-center">
@@ -96,19 +72,15 @@ const BookingDetailModal = ({
               </div>
             </div>
           </summary>
-
           <div className="fixed z-[9999] mt-1 w-[calc(100vw-80px)] max-w-[200px] animate-in fade-in zoom-in duration-200">
             <ul className="bg-white dark:bg-gray-700 rounded-[20px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-600 overflow-hidden">
               <div className="max-h-[200px] overflow-y-auto py-2 custom-scrollbar">
                 {availableTimes.map((t) => (
-                  <li 
-                    key={t} 
-                    className="px-6 py-3 text-[#302782] dark:text-white text-sm font-bold hover:bg-[#B2BB1E] hover:text-white cursor-pointer transition-colors"
+                  <li key={t} className="px-6 py-3 text-[#302782] dark:text-white text-sm font-bold hover:bg-[#B2BB1E] hover:text-white cursor-pointer transition-colors"
                     onClick={() => {
                       setEditForm({ ...editForm, [key]: t });
                       document.getElementById(`dropdown-${key}`).removeAttribute("open");
-                    }}
-                  >
+                    }}>
                     {t} น.
                   </li>
                 ))}
@@ -123,26 +95,14 @@ const BookingDetailModal = ({
   if (!booking) return null;
 
   return (
-    <div 
-      className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center bg-[#302782]/30 dark:bg-black/40 backdrop-blur-md p-0 sm:p-4"
-      onClick={onClose}
-    >
-      <div 
-        className="bg-[#FFFFFF] dark:bg-gray-800 w-full max-w-lg rounded-t-[40px] sm:rounded-[32px] p-6 sm:p-8 flex flex-col shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300 max-h-[95vh] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center bg-[#302782]/30 dark:bg-black/40 backdrop-blur-md p-0 sm:p-4" onClick={onClose}>
+      <div className="bg-[#FFFFFF] dark:bg-gray-800 w-full max-w-lg rounded-t-[40px] sm:rounded-[32px] p-6 sm:p-8 flex flex-col shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300 max-h-[95vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
         <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-6 sm:hidden" />
-
         <div className="flex justify-between items-center mb-6 flex-shrink-0">
-          <div>
-            <h3 className="text-2xl font-black text-[#302782] dark:text-white">
-              {isEditing ? "แก้ไขข้อมูลจอง" : `ห้อง ${booking.room_id}`}
-            </h3>
-          </div>
-          <button 
-            onClick={onClose} 
-            className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 transition-all active:scale-90"
-          >
+          <h3 className="text-2xl font-black text-[#302782] dark:text-white">
+            {isEditing ? "แก้ไขข้อมูลจอง" : `ห้อง ${booking.room_id}`}
+          </h3>
+          <button onClick={onClose} className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 transition-all active:scale-90">
             <X size={20}/>
           </button>
         </div>
@@ -165,6 +125,21 @@ const BookingDetailModal = ({
               <DetailItem icon={Timer} label="ช่วงเวลา" value={`${booking.start_time?.slice(0,5)} - ${booking.end_time?.slice(0,5)} น.`} />
               <div className="h-px bg-gray-100 dark:bg-gray-700 w-full" />
               <DetailItem icon={MessageSquare} label="วัตถุประสงค์" value={booking.purpose} />
+
+              {(booking.status === "rejected" || booking.status === "cancelled") && (
+                <>
+                  <div className="h-px bg-gray-100 dark:bg-gray-700 w-full" />
+                  <div className="bg-red-50 dark:bg-red-500/10 p-4 rounded-xl border border-red-100 dark:border-red-500/20">
+                    <div className="flex gap-3 text-red-600 dark:text-red-400">
+                      <XCircle size={20} className="mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-xs font-bold mb-1">เหตุผลที่{booking.status === "rejected" ? "ไม่อนุมัติ" : "ยกเลิก"}</p>
+                        <p className="text-sm font-medium text-red-700 dark:text-red-300">{booking.cancel_reason || "ไม่ได้ระบุเหตุผล"}</p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -173,30 +148,11 @@ const BookingDetailModal = ({
           <div className="pt-6 sm:pt-8 border-t border-gray-100 dark:border-gray-700 flex-shrink-0 mt-4">
             {isEditing ? (
               <div className="flex gap-3">
-                <Button 
-                  variant="secondary"
-                  className="flex-[2] py-4" 
-                  onClick={onSaveEdit}
-                >
-                  <Save size={18} /> บันทึกการแก้ไข
-                </Button>
-                <Button 
-                  variant="danger" 
-                  className="flex-1 py-4"
-                  onClick={() => setIsEditing(false)}
-                >
-                  ยกเลิก
-                </Button>
+                <Button variant="secondary" className="flex-[2] py-4" onClick={onSaveEdit}><Save size={18} /> บันทึกการแก้ไข</Button>
+                <Button variant="danger" className="flex-1 py-4" onClick={() => setIsEditing(false)}>ยกเลิก</Button>
               </div>
             ) : (
-              <ActionButtons 
-                userRole={userRole} 
-                booking={booking} 
-                onUpdateStatus={onUpdateStatus} 
-                onCancel={onCancel} 
-                onBan={onBan} 
-                onEdit={startEditing} 
-              />
+              <ActionButtons userRole={userRole} booking={booking} onUpdateStatus={onUpdateStatus} onCancel={onCancel} onBan={onBan} onEdit={startEditing} />
             )}
           </div>
         )}
@@ -210,85 +166,88 @@ const ActionButtons = ({ userRole, booking, onUpdateStatus, onCancel, onBan, onE
   const isPending = booking.status === "pending";
   const isApproved = booking.status === "approved";
 
-  // State สำหรับจัดการการแสดงกล่องพิมพ์เหตุผล
-  const [showReasonInput, setShowReasonInput] = useState(false);
+  const [actionType, setActionType] = useState(null); // 'reject' หรือ 'ban'
   const [reason, setReason] = useState("");
 
+  // ฟังก์ชันสำหรับกดยืนยันหลังจากกรอกเหตุผล (สำหรับ Reject และ Ban)
+  const handleConfirmWithReason = () => {
+    if (actionType === "ban") {
+      onBan(bId, reason);
+    } else if (actionType === "reject") {
+      onCancel(bId, reason);
+    }
+    // รีเซ็ตค่าเมื่อทำงานเสร็จ
+    setActionType(null);
+    setReason("");
+  };
+
+  // --- ส่วนที่ 1: แสดงช่องกรอกเหตุผล (UI ภายใน Modal) ---
+  if (actionType) {
+    const config = {
+      reject: { title: "เหตุผลการไม่อนุมัติ", icon: <XCircle size={18} />, btnText: "ยืนยันไม่อนุมัติ" },
+      ban: { title: "เหตุผลการงดใช้ห้อง", icon: <Ban size={18} />, btnText: "ยืนยันงดใช้ห้อง" }
+    }[actionType];
+
+    return (
+      <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
+        <div>
+          <label className="block text-sm font-bold text-[#302782] dark:text-gray-300 mb-2 ml-1">
+            {config.title} <span className="text-red-500">*</span>
+          </label>
+          <TextAreaField 
+            icon={MessageSquare} 
+            placeholder={`ระบุ${config.title}...`} 
+            value={reason} 
+            onChange={setReason} 
+          />
+        </div>
+        <div className="flex gap-3 mt-2">
+          <Button 
+            disabled={!reason.trim()} 
+            className={`flex-[2] py-4.5 border-none transition-all duration-300 flex justify-center items-center gap-2 ${
+              reason.trim() ? "bg-red-600 !text-white hover:bg-red-700 shadow-lg shadow-red-500/40" : "bg-red-300 !text-white/90 cursor-not-allowed" 
+            }`} 
+            onClick={handleConfirmWithReason}
+          >
+            {config.icon} {config.btnText}
+          </Button>
+          <Button variant="secondary" className="flex-1 py-4.5" onClick={() => { setActionType(null); setReason(""); }}>ย้อนกลับ</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // --- ส่วนที่ 2: หน้าตาปุ่มกดปกติ ---
   return (
     <div className="flex flex-col gap-3">
-      {/* สถานะ Pending สำหรับ Staff: อนุมัติ / ไม่อนุมัติ */}
+      {/* CASE 1: STAFF - อยู่ในสถานะรออนุมัติ */}
       {userRole === "staff" && isPending && (
         <div className="flex gap-4">
-          <Button 
-            variant="primary"
-            className="flex-1 py-4.5 shadow-lime-200" 
-            onClick={() => onUpdateStatus(bId)}
-          >
-            อนุมัติคำขอ
-          </Button>
-          <Button 
-            variant="danger"
-            className="flex-1 py-4.5 bg-red-500 text-white border-none hover:bg-red-600" 
-            onClick={() => onCancel(bId)}
-          >
+          <Button variant="primary" className="flex-1 py-4.5 shadow-lime-200" onClick={() => onUpdateStatus(bId)}>อนุมัติคำขอ</Button>
+          <Button variant="danger" className="flex-1 py-4.5 bg-red-500 text-white border-none hover:bg-red-600" onClick={() => setActionType("reject")}>
             ไม่อนุมัติ
           </Button>
         </div>
       )}
       
-      {/* 👇 ส่วนของการแจ้งงดใช้ห้อง (แสดงเมื่อ Approved แล้ว) 👇 */}
-      {((userRole === "staff" || userRole === "teacher") && isApproved) && (
-        showReasonInput ? (
-          <div className="space-y-3 animate-in fade-in zoom-in-95 duration-200">
-            <TextAreaField 
-              icon={MessageSquare} 
-              placeholder="ระบุเหตุผลการงดใช้ห้องเรียนนี้..." 
-              value={reason} 
-              onChange={setReason} 
-            />
-            <div className="flex gap-3">
-              <Button 
-                variant="danger" 
-                className="flex-[2] py-4.5 bg-red-500 hover:bg-red-600 shadow-red-100 border-none" 
-                onClick={() => onBan(bId, reason)} // ส่งเหตุผลไปด้วยเมื่อกดยืนยัน
-              >
-                <Ban size={18} /> ยืนยันงดใช้ห้อง
-              </Button>
-              <Button 
-                variant="secondary" 
-                className="flex-1 py-4.5" 
-                onClick={() => { setShowReasonInput(false); setReason(""); }}
-              >
-                ยกเลิก
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <Button 
-            variant="danger"
-            className="w-full py-4.5 bg-red-500 text-white border-none hover:bg-red-600 shadow-red-100" 
-            onClick={() => setShowReasonInput(true)}
-          >
-            <Ban size={18} /> แจ้งงดใช้ห้องเรียนนี้
-          </Button>
-        )
+      {/* CASE 2: งดใช้ห้อง (Staff หรือ Teacher ก็ได้ ถ้าอนุมัติไปแล้ว) */}
+      {isApproved && (
+        <Button variant="danger" className="w-full py-4.5 bg-red-500 text-white border-none hover:bg-red-600 shadow-red-100" onClick={() => setActionType("ban")}>
+          <Ban size={18} /> แจ้งงดใช้ห้องเรียนนี้
+        </Button>
       )}
-      {/* 👆 สิ้นสุดส่วนของการแจ้งงดใช้ห้อง 👆 */}
 
-      {/* สถานะ Pending สำหรับ Teacher: แก้ไข / ยกเลิกคำขอ */}
+      {/* CASE 3: TEACHER - อยู่ในสถานะรออนุมัติ */}
       {userRole === "teacher" && isPending && (
         <div className="space-y-3">
-          <Button 
-            variant="secondary"
-            className="w-full py-4.5" 
-            onClick={onEdit}
-          >
+          <Button variant="secondary" className="w-full py-4.5" onClick={onEdit}>
             <Edit3 size={18} /> แก้ไขข้อมูลการจอง
           </Button>
+          {/* ✨ ไฮไลท์: เรียก onCancel ตรงๆ เลย (ส่งเหตุผลเป็นค่าว่าง) เพื่อให้ showAlert ในหน้า Parent เด้งทันที */}
           <Button 
-            variant="ghost"
-            className="w-full py-4 text-red-500 hover:bg-red-50 hover:text-red-600" 
-            onClick={() => onCancel(bId)}
+            variant="ghost" 
+            className="w-full py-4 text-red-500 hover:bg-red-50 hover:text-red-600 font-bold" 
+            onClick={() => onCancel(bId, "")}
           >
             <Trash2 size={18} /> ยกเลิกคำขอจอง
           </Button>
