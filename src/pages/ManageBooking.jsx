@@ -115,7 +115,8 @@ const ManageBooking = () => {
     );
   };
 
-  const handleCancelClick = (bookingId) => {
+  // ✨ 1. เพิ่มพารามิเตอร์ reason มารับค่าจาก Modal
+  const handleCancelClick = (bookingId, reason) => { 
     const confirmMessage = 
       userRole === "staff" 
         ? "คุณต้องการไม่อนุมัติคำขอนี้ใช่หรือไม่?" 
@@ -135,11 +136,12 @@ const ManageBooking = () => {
         
         let result;
         if (userRole === "staff") {
-          // กรณี Staff ไม่อนุมัติคำขอ (ถ้าไม่ได้ทำ Backend มารับ reason ก็ใช้แบบเดิมได้เลย)
-          result = await handleUpdateStatus(bookingId, "rejected"); 
+          // ✨ 2. ส่ง reason พ่วงไปด้วย (กรณี staff ปฏิเสธ)
+          // หมายเหตุ: ต้องแน่ใจว่า handleUpdateStatus ใน Hook ถูกเขียนให้รับ parameter ตัวที่ 3 ด้วยนะครับ
+          result = await handleUpdateStatus(bookingId, "rejected", reason); 
         } else {
-          // 👇 เติม "" (ค่าว่าง) เป็นพารามิเตอร์ที่สอง เพื่อป้องกัน Error ของฟังก์ชันที่เรารับ reason มา
-          result = await handleCancelBooking(bookingId, ""); 
+          // ✨ 3. เอา "" ออก แล้วใส่ reason ที่รับมาแทน (กรณียกเลิกของ Teacher)
+          result = await handleCancelBooking(bookingId, reason); 
         }
         
         setTimeout(() => {
@@ -156,13 +158,13 @@ const ManageBooking = () => {
       true,
       "danger"
     );
-};
+  };
 
   // 👇 เพิ่ม reason เข้ามาเป็นพารามิเตอร์ตัวที่สอง
 const handleBanClick = (bookingId, reason) => {
   showAlert(
     // ปรับข้อความให้แสดงเหตุผลด้วย เพื่อให้ผู้ใช้ตรวจทานก่อนกดยืนยันอีกรอบ
-    `คุณแน่ใจหรือไม่ที่จะงดการใช้ห้องนี้? \n(เหตุผล: ${reason || "ไม่ได้ระบุ"})`,
+    `คุณแน่ใจหรือไม่ที่จะงดการใช้ห้องนี้?`,
     <Ban size={50} className="text-red-500" />,
     async () => {
       setAlertConfig((prev) => ({ ...prev, isOpen: false }));

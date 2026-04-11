@@ -13,7 +13,6 @@ export const useCalendarData = (roomIdFromUrl) => {
     try {
       const res = await api.get("/rooms/");
       if (res.data?.length > 0) {
-        // เอาเฉพาะห้องที่ repair เป็น false หรือไม่ใช่ true
         const activeRooms = res.data.filter((room) => room.repair !== true);
         setRooms(activeRooms);
       }
@@ -26,16 +25,12 @@ export const useCalendarData = (roomIdFromUrl) => {
     setIsLoading(true);
     try {
       let bookingUrl, scheduleUrl;
-      
-      // ✅ 1. เพิ่ม Query String เพื่อบอก Backend ให้ส่งมาให้ครบทุกสถานะ
       const statusParams = "?status=approved,cancel,cancelled";
 
       if (selectedRoom && selectedRoom !== "") {
-        // ✅ 2. แนบ statusParams ต่อท้าย URL
         bookingUrl = `/bookings/allBookingSpecific/${selectedRoom}${statusParams}`; 
         scheduleUrl = `/schedules/${selectedRoom}`;
       } else {
-        // ✅ 3. แนบ statusParams ต่อท้าย URL
         bookingUrl = `/bookings/allBooking${statusParams}`; 
         scheduleUrl = `/schedules/`;
       }
@@ -46,12 +41,9 @@ export const useCalendarData = (roomIdFromUrl) => {
       ]);
 
       const rawSchedules = schedRes.data?.schedules || schedRes.data || [];
-
-      // ค้นหาชื่อห้องจาก state 'rooms' ที่ดึงมาตอนแรก
       const matchedRoom = rooms.find((r) => String(r.room_id) === String(selectedRoom));
       const defaultRoomName = matchedRoom ? matchedRoom.room_name : "";
 
-      // ส่งข้อมูลไปจัดรูปแบบที่ calendarHelper
       const formatted = formatCalendarEvents(
         bookRes.data || [], 
         rawSchedules,
@@ -66,25 +58,25 @@ export const useCalendarData = (roomIdFromUrl) => {
     } finally {
       setTimeout(() => setIsLoading(false), 300);
     }
-  }, [selectedRoom, rooms]); // อัปเดตเมื่อ selectedRoom หรือ rooms เปลี่ยน
+  }, [selectedRoom, rooms]);
 
-  const updateStatus = async (id, isClosed) => {
+  // ✨ เพิ่ม parameter reason รับค่าเหตุผลการงดใช้ห้อง
+  const updateStatus = async (id, isClosed, reason = "") => {
     if (!id) {
       console.error("Update Error: Missing schedule ID");
       return { success: false };
     }
 
     try {
-      const payload = { temporarily_closed: isClosed };
+      // ✨ แนบ closed_reason ไปใน Payload เพื่อส่งให้ Backend
+      const payload = { temporarily_closed: isClosed, closed_reason: reason };
       const response = await api.patch(`/schedules/${id}/status`, payload);
       await fetchData();
       return { success: true };
     } catch (err) {
       console.error("❌ API Error Details:", err.response?.data || err.message);
-
       const isForbidden = err.response?.status === 403;
       const message = err.response?.data?.message || "เกิดข้อผิดพลาด";
-
       return { success: false, isForbidden, message };
     }
   };
@@ -105,7 +97,8 @@ export const useCalendarData = (roomIdFromUrl) => {
     isLoading,
     isCancelMode,
     setIsCancelMode,
-    handleCancelSchedule: async (id) => await updateStatus(id, true),
+    // ✨ อัปเดตให้ handleCancelSchedule รับค่า reason ด้วย
+    handleCancelSchedule: async (id, reason) => await updateStatus(id, true, reason),
     handleRestoreSchedule: async (id) => await updateStatus(id, false),
     refreshData: fetchData,
   };

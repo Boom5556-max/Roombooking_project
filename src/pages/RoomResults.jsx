@@ -10,7 +10,6 @@ import {
   ArrowRight,
   FileText,
   Send,
-  Bookmark,
   Check,
   AlertCircle,
 } from "lucide-react";
@@ -133,10 +132,10 @@ const RoomResults = () => {
         )}
       </div>
 
-      {/* 🚩 Booking Modal - ปรับเป็น Full Screen ในมือถือ */}
+      {/* 🚩 Booking Modal - แก้ไข z-[100] เป็น z-[9999] เพื่อให้ทับ Navbar สนิท */}
       {selectedRoom && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#302782]/20 dark:bg-black/60 backdrop-blur-md p-4 sm:p-6 animate-in fade-in duration-300">
-          <div className="bg-white dark:bg-gray-800 w-full max-w-lg max-h-[90vh] rounded-[40px] md:rounded-[50px] p-6 sm:p-10 shadow-2xl flex flex-col relative border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#302782]/20 dark:bg-black/60 backdrop-blur-md p-4 sm:p-8 animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-gray-800 w-full max-w-lg max-h-[85vh] rounded-[40px] md:rounded-[50px] p-6 sm:p-10 shadow-2xl flex flex-col relative border border-gray-100 dark:border-gray-700 overflow-hidden">
             <div className="flex justify-between items-center mb-6 sm:mb-8 flex-shrink-0">
               <h3 className="text-xl sm:text-2xl font-black text-[#302782] dark:text-white flex items-center gap-3">
                 <FileText className="text-[#B2BB1E]" /> รายละเอียดการจอง
@@ -150,7 +149,7 @@ const RoomResults = () => {
               </button>
             </div>
 
-            <div className="flex-grow overflow-y-auto pr-2 -mr-2 space-y-6 sm:space-y-8">
+            <div className="flex-grow overflow-y-auto pr-2 -mr-2 space-y-6 sm:space-y-8 custom-scrollbar">
               <div className="bg-gray-50 dark:bg-white/5 p-5 sm:p-6 rounded-3xl border border-gray-100 dark:border-white/10 grid grid-cols-2 gap-4">
                 <div className="col-span-2 border-b border-gray-200 dark:border-white/10 pb-3 mb-1">
                   <p className="text-[10px] text-gray-400 dark:text-gray-500 font-black uppercase">ห้องที่เลือก</p>
@@ -174,10 +173,10 @@ const RoomResults = () => {
 
             <div className="pt-6 sm:pt-10 flex-shrink-0">
               <button
-                disabled={isSubmitting}
+                disabled={isSubmitting || !purpose.trim()}
                 onClick={onBookingClick}
                 className={`w-full py-4 sm:py-5 rounded-2xl sm:rounded-[30px] font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all shadow-lg active:scale-[0.98] ${
-                  isSubmitting ? "bg-gray-100 dark:bg-gray-700 text-gray-400" : "bg-[#B2BB1E] text-white hover:bg-[#302782]"
+                  isSubmitting || !purpose.trim() ? "bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed" : "bg-[#B2BB1E] text-white hover:bg-[#302782] cursor-pointer"
                 }`}
               >
                 {isSubmitting ? "กำลังบันทึก..." : "ยืนยันการจอง"} <Send size={20} />
@@ -200,7 +199,7 @@ const RoomResults = () => {
   );
 };
 
-// --- Sub-components for better Clean Code & Responsibility ---
+// --- Sub-components ---
 
 const Badge = ({ icon, text }) => (
   <div className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-50 dark:bg-white/5 text-[#302782] dark:text-white rounded-xl text-[10px] sm:text-xs font-black border border-gray-100 dark:border-white/10">
@@ -209,18 +208,11 @@ const Badge = ({ icon, text }) => (
 );
 
 const InfoBox = ({ label, value, icon }) => (
-  <div 
-    className="bg-gray-50 dark:bg-white/5 p-3 sm:p-4 rounded-2xl sm:rounded-[28px] border border-gray-100 dark:border-white/10 flex flex-col justify-center overflow-hidden"
-    title={value} // เพิ่ม Tooltip ให้แสดงข้อความเต็มเวลาเอาเมาส์ชี้
-  >
-    <p className="text-[9px] sm:text-[10px] text-gray-400 dark:text-gray-500 font-black mb-1 uppercase tracking-tighter truncate">
-      {label}
-    </p>
+  <div className="bg-gray-50 dark:bg-white/5 p-3 sm:p-4 rounded-2xl sm:rounded-[28px] border border-gray-100 dark:border-white/10 flex flex-col justify-center overflow-hidden" title={value}>
+    <p className="text-[9px] sm:text-[10px] text-gray-400 dark:text-gray-500 font-black mb-1 uppercase tracking-tighter truncate">{label}</p>
     <div className="text-[#302782] dark:text-white font-black text-xs sm:text-sm lg:text-base flex items-center gap-1.5 w-full overflow-hidden">
       {icon && <div className="shrink-0">{icon}</div>}
-      <span className="truncate w-full leading-tight block">
-        {value}
-      </span>
+      <span className="truncate w-full leading-tight block">{value}</span>
     </div>
   </div>
 );
@@ -247,8 +239,9 @@ const StatusModal = ({ isOpen, status, errorMessage, onClose }) => {
   const isTeacher = user?.role === "teacher";
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="bg-white dark:bg-gray-800/80 backdrop-blur-xl rounded-[40px] p-8 w-full max-w-sm shadow-2xl text-center animate-in zoom-in duration-300 border border-white/50">
+    // 🚩 แก้ไข z-[100] เป็น z-[9999] ตรงนี้ด้วยเหมือนกันครับ
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300">
+      <div className="bg-white dark:bg-gray-800/80 backdrop-blur-xl rounded-[40px] p-8 w-full max-w-sm shadow-2xl text-center animate-in zoom-in duration-300 border border-white/50 m-auto">
         <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center mx-auto mb-6 ${isSuccess ? 'bg-[#B2BB1E]/10 text-[#B2BB1E]' : 'bg-red-50 dark:bg-red-500/10 text-red-500'}`}>
           {isSuccess ? <Check size={40} strokeWidth={3} /> : <AlertCircle size={40} strokeWidth={3} />}
         </div>

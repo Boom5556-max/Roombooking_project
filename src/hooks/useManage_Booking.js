@@ -29,6 +29,7 @@ export const useManageBooking = () => {
           api.get("/bookings/approved"),
           api.get("/bookings/rejected")
         ]);
+        console.log(rRes)
         setPendingRequests(pRes.data || []);
         setApprovedRequests(aRes.data || []);
         setHistoryRequests(rRes.data || []);
@@ -49,9 +50,13 @@ export const useManageBooking = () => {
     }
   }, []);
 
-  const handleUpdateStatus = async (bookingId, status) => {
+  // ✨ แก้ไข: รับพารามิเตอร์ reason เข้ามาและส่งไปให้ Backend (cancel_reason)
+  const handleUpdateStatus = async (bookingId, status, reason = "") => {
     try {
-      await api.put(`/bookings/${bookingId}/status`, { status });
+      await api.put(`/bookings/${bookingId}/status`, { 
+        status, 
+        cancel_reason: reason // ส่งไปเผื่อกรณีที่ status เป็น 'rejected'
+      });
       fetchBookings(); 
       return { success: true };
     } catch (error) {
@@ -59,12 +64,10 @@ export const useManageBooking = () => {
     }
   };
 
-  // ✨ ฟังก์ชันที่ถูกแก้ไขเพื่อแก้ปัญหาวันที่ -1 วัน
   const handleUpdateBooking = async (bookingId, updatedData) => {
     try {
       const fixedData = { ...updatedData };
 
-      // ฟังก์ชันตัวช่วยดึงวันที่ตามเวลา Local จริงๆ ไม่สน Timezone
       const formatLocalDate = (dateString) => {
         if (!dateString) return dateString;
         const d = new Date(dateString);
@@ -76,14 +79,12 @@ export const useManageBooking = () => {
         return `${year}-${month}-${day}`; 
       };
 
-      // แปลง Format วันที่ก่อนส่งไป Backend
       if (fixedData.booking_date) {
         fixedData.booking_date = formatLocalDate(fixedData.booking_date);
       }
       if (fixedData.date) {
         fixedData.date = formatLocalDate(fixedData.date);
       }
-      
 
       await api.put(`/bookings/${bookingId}`, fixedData);
       fetchBookings(); 
@@ -93,10 +94,8 @@ export const useManageBooking = () => {
     }
   };
 
-  // ✨ แก้ไขฟังก์ชันนี้ให้รับและส่ง reason ไปด้วย
   const handleCancelBooking = async (bookingId, reason = "") => {
     try {
-      // 👇 เปลี่ยนตรงนี้เป็น { cancel_reason: reason } เพื่อให้ชื่อตรงกับที่ Backend รอรับ
       const response = await api.put(`/bookings/${bookingId}/cancel`, { cancel_reason: reason });
       fetchBookings(); 
       return { success: true, message: response.data.message }; 
