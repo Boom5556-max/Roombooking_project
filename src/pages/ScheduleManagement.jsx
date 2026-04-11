@@ -67,13 +67,14 @@ const ScheduleManagement = () => {
     setIsSubjectEditModalOpen(true);
   };
 
-  const onSaveSubjectEdit = async (e) => {
-    e.preventDefault();
+  const onSaveSubjectEdit = async (e, force_cancel = false) => {
+    if (e) e.preventDefault();
     setIsSavingSubject(true);
     try {
       await editSubjectSchedule(subjectEditScheduleId, {
         ...editingSubjectData,
         repeat: Number(editingSubjectData.repeat),
+        force_cancel: force_cancel
       });
       setIsSubjectEditModalOpen(false);
       // ล้าง Cache แล้วโหลดข้อมูลรายวิชาใหม่
@@ -86,7 +87,25 @@ const ScheduleManagement = () => {
       }
       showResultAlert(true, 'แก้ไขรายวิชาสำเร็จ', '');
     } catch (error) {
-      showResultAlert(false, '', error.response?.data?.message || 'เกิดข้อผิดพลาดในการแก้ไขรายวิชา');
+      const isConflict = error.response?.status === 409 || error.response?.data?.code === 'BOOKING_CONFLICT';
+      
+      if (isConflict) {
+        setAlertConfig({
+          isOpen: true,
+          title: error.response?.data?.message || 'พบตารางจองที่ทับซ้อน คุณต้องการดำเนินการต่อหรือไม่?',
+          icon: <AlertCircle size={50} className="text-yellow-500" />,
+          variant: "warning",
+          showConfirm: true,
+          showButtons: true,
+          autoClose: false,
+          onConfirm: async () => {
+            closeAlert();
+            await onSaveSubjectEdit(null, true);
+          }
+        });
+      } else {
+        showResultAlert(false, '', error.response?.data?.message || 'เกิดข้อผิดพลาดในการแก้ไขรายวิชา');
+      }
     } finally {
       setIsSavingSubject(false);
     }
@@ -255,7 +274,7 @@ const ScheduleManagement = () => {
             <table className="min-w-full text-left text-sm text-gray-700 dark:text-gray-300">
               <thead className="bg-gray-50 dark:bg-gray-700/50 text-[#302782] dark:text-[#B2BB1E] uppercase text-xs font-bold tracking-wider">
                 <tr>
-                  <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">อัปเดตล่าสุด</th>
+                  <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">อัปโหลดไฟล์ล่าสุด</th>
                   <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ภาควิชา</th>
                   <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ชั้นปี</th>
                   <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ภาค</th>
