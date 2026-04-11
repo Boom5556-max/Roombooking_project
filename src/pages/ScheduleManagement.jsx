@@ -62,7 +62,6 @@ const ScheduleManagement = () => {
       teacher_name: subj.teacher_name || '',
       teacher_surname: subj.teacher_surname || '',
       repeat: 1,
-      semester_id: subj.semester_id || '',
     });
     setIsSubjectEditModalOpen(true);
   };
@@ -381,14 +380,14 @@ const ScheduleManagement = () => {
                                               <div className="flex items-center justify-center gap-1.5">
                                                 <button
                                                   onClick={(e) => { e.stopPropagation(); openSubjectEditModal(id, subj); }}
-                                                  className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900/40 dark:hover:bg-yellow-800/60 text-yellow-600 dark:text-yellow-400 transition-colors"
+                                                  className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white transition-all shadow-sm hover:-translate-y-px active:scale-95"
                                                   title="แก้ไขรายวิชานี้"
                                                 >
                                                   <Edit2 size={14} />
                                                 </button>
                                                 <button
                                                   onClick={(e) => { e.stopPropagation(); confirmDeleteSubject(id, subj); }}
-                                                  className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-900/40 dark:hover:bg-red-800/60 text-red-500 dark:text-red-400 transition-colors"
+                                                  className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-all shadow-sm hover:-translate-y-px active:scale-95"
                                                   title="ลบรายวิชานี้"
                                                 >
                                                   <Trash2 size={14} />
@@ -592,22 +591,13 @@ const ScheduleManagement = () => {
               </div>
 
               {/* แถว 3: ห้อง + เทอม */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ห้อง (room_id)</label>
                   <input
                     value={editingSubjectData.room_id || ''}
                     onChange={(e) => updateSubjectField('room_id', e.target.value)}
                     className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">เทอม (semester_id)</label>
-                  <input
-                    value={editingSubjectData.semester_id || ''}
-                    onChange={(e) => updateSubjectField('semester_id', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                    placeholder="(ถ้าไม่กรอกจะใช้ค่าเดิม)"
                   />
                 </div>
               </div>

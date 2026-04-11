@@ -35,7 +35,15 @@ const ActionModal = ({
         className="bg-white dark:bg-gray-800 rounded-3xl p-6 w-full max-w-sm shadow-xl text-center border border-gray-100 dark:border-gray-700" 
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={`mx-auto mb-5 flex items-center justify-center w-16 h-16 rounded-2xl ${showBg ? (variant === "danger" ? "bg-red-50 dark:bg-red-500/10 text-red-500" : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E]") : "text-[#302782] dark:text-[#B2BB1E]"}`}>
+        <div className={`mx-auto mb-5 flex items-center justify-center w-16 h-16 rounded-2xl ${
+          showBg ? (
+            variant === "danger" 
+              ? "bg-red-50 dark:bg-red-500/10 text-red-500" 
+              : variant === "warning"
+                ? "bg-yellow-50 dark:bg-yellow-500/10 text-yellow-600"
+                : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E]"
+          ) : "text-[#302782] dark:text-[#B2BB1E]"
+        }`}>
           {icon}
         </div>
         
@@ -48,7 +56,7 @@ const ActionModal = ({
             {showCloseButton && (
               <button 
                 onClick={onClose} 
-                className="flex-1 py-3 flex items-center justify-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95 transition-all font-medium text-sm"
+                className="flex-1 py-3 flex items-center justify-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95 transition-all font-medium text-sm"
               >
                 <X size={16} />
                 ยกเลิก
@@ -57,7 +65,13 @@ const ActionModal = ({
             {showConfirm !== null && (
               <button 
                 onClick={onConfirm} 
-                className={`flex-1 py-3 flex items-center justify-center gap-2 text-white rounded-2xl active:scale-95 transition-all font-medium text-sm ${variant === "danger" ? "bg-red-500 hover:bg-red-600" : "bg-[#302782] hover:bg-[#B2BB1E]"}`}
+                className={`flex-1 py-3 flex items-center justify-center gap-2 text-white rounded-xl active:scale-95 transition-all font-medium text-sm ${
+                  variant === "danger" 
+                    ? "bg-red-500 hover:bg-red-600" 
+                    : variant === "warning"
+                      ? "bg-yellow-500 hover:bg-yellow-600"
+                      : "bg-[#302782] hover:bg-[#4338ca]"
+                }`}
               >
                 <Check size={16} />
                 ยืนยัน
