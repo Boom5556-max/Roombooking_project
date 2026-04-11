@@ -117,6 +117,7 @@ const ManageBooking = () => {
 
   // ✨ 1. เพิ่มพารามิเตอร์ reason มารับค่าจาก Modal
   const handleCancelClick = (bookingId, reason) => { 
+    console.log("reason ที่รับมา:", reason)
     const confirmMessage = 
       userRole === "staff" 
         ? "คุณต้องการไม่อนุมัติคำขอนี้ใช่หรือไม่?" 
@@ -138,6 +139,7 @@ const ManageBooking = () => {
         if (userRole === "staff") {
           // ✨ 2. ส่ง reason พ่วงไปด้วย (กรณี staff ปฏิเสธ)
           // หมายเหตุ: ต้องแน่ใจว่า handleUpdateStatus ใน Hook ถูกเขียนให้รับ parameter ตัวที่ 3 ด้วยนะครับ
+          console.log("reason ตอนส่ง API:", reason)
           result = await handleUpdateStatus(bookingId, "rejected", reason); 
         } else {
           // ✨ 3. เอา "" ออก แล้วใส่ reason ที่รับมาแทน (กรณียกเลิกของ Teacher)

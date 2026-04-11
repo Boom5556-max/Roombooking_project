@@ -29,7 +29,6 @@ export const useManageBooking = () => {
           api.get("/bookings/approved"),
           api.get("/bookings/rejected")
         ]);
-        console.log(rRes)
         setPendingRequests(pRes.data || []);
         setApprovedRequests(aRes.data || []);
         setHistoryRequests(rRes.data || []);
