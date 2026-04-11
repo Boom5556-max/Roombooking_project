@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Kanit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Bai Jamjuree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         // เลื่อนขึ้น 2 ระดับ: เฉพาะ font เท่านั้น (spacing/padding/margin ไม่เปลี่ยน)
