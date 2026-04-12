@@ -174,12 +174,12 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
               <div className="grid grid-cols-2 gap-3">
                 <RoleOption
                   selected={formData.role === "teacher"}
-                  label="อาจารย์"
+                  label="บุคลากร"
                   onClick={() => setFormData({ ...formData, role: "teacher" })}
                 />
                 <RoleOption
                   selected={formData.role === "staff"}
-                  label="เจ้าหน้าที่"
+                  label="ผู้ดูเเลระบบ"
                   onClick={() => setFormData({ ...formData, role: "staff" })}
                 />
               </div>

@@ -66,18 +66,19 @@ const Users = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-sans">
       <Navbar />
 
-      {/* 🚩 แก้ไข: ขยาย max-w ให้กว้างขึ้นเป็น 7xl (หรือ 1600px บนจอใหญ่) เพื่อใช้พื้นที่ให้คุ้ม */}
       <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-[1600px] mx-auto w-full">
-        
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8">
           <div className="flex items-center gap-4">
-            <button 
-              onClick={() => navigate(-1)} 
+            <button
+              onClick={() => navigate(-1)}
               className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
               title="ย้อนกลับ"
             >
-              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+              <ChevronLeft
+                size={24}
+                className="transition-transform group-hover:-translate-x-0.5"
+              />
             </button>
             <h1 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white">
               จัดการผู้ใช้งาน
@@ -97,7 +98,6 @@ const Users = () => {
           {isLoading ? (
             <LoadingSpinner text="กำลังโหลดข้อมูลผู้ใช้..." />
           ) : (
-            /* 🚩 แก้ไข: ปรับเป็น Grid หลายคอลัมน์ (1 คอลัมน์บนมือถือ, 2 บนจอ iPad/Laptop, 3 บนจอใหญ่) */
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-6">
               {users.length > 0 ? (
                 users.map((u) => (
@@ -105,20 +105,19 @@ const Users = () => {
                     key={u.user_id}
                     className="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-[30px] sm:rounded-[35px] shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group"
                   >
-                    <div className="flex items-center gap-4 sm:gap-5 w-full">
+                    <div className="flex items-center gap-4 sm:gap-5 w-full overflow-hidden">
                       <div className="shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-gray-50 dark:bg-gray-700 rounded-2xl sm:rounded-[24px] flex items-center justify-center text-[#302782] dark:text-[#B2BB1E] border border-gray-100 dark:border-gray-600">
                         <UserCog size={28} className="sm:w-8 sm:h-8" />
                       </div>
 
                       <div className="flex-grow min-w-0">
-                        <div className="flex flex-wrap items-center gap-x-2">
-                          <span className="text-[10px] sm:text-xs font-black text-black dark:text-white uppercase tracking-tighter">
+                        {/* 🚩 แก้ไข: รวมคำนำหน้าและชื่อให้อยู่ใน h3 เดียวกันเพื่อให้มันอยู่บรรทัดเดียวกันเสมอ */}
+                        <h3 className="text-lg sm:text-xl font-black text-[#302782] dark:text-white truncate w-full">
+                          <span className="text-sm font-black text-black dark:text-white mr-1.5 tracking-tight">
                             {u.title}
                           </span>
-                          <h3 className="text-lg sm:text-xl font-black text-[#302782] dark:text-white truncate">
-                            {u.name} {u.surname}
-                          </h3>
-                        </div>
+                          {u.name} {u.surname}
+                        </h3>
 
                         <p className="text-black dark:text-white font-bold text-xs flex items-center gap-1.5 mt-1 truncate">
                           <Mail size={14} className="shrink-0 text-[#B2BB1E]" />
@@ -127,13 +126,17 @@ const Users = () => {
 
                         <div className="mt-2.5">
                           <span className="inline-block px-3 py-1 rounded-full text-[10px] bg-[#302782]/5 dark:bg-[#302782]/20 text-[#302782] dark:text-[#B2BB1E] font-black uppercase tracking-widest border border-[#302782]/10 dark:border-[#302782]/30">
-                            {u.role}
+                            {u.role === "teacher"
+                              ? "บุคลากร"
+                              : u.role === "staff"
+                                ? "ผู้ดูแลระบบ"
+                                : u.role}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50 dark:border-gray-700 mt-1 sm:mt-0">
+                    <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50 dark:border-gray-700 mt-1 sm:mt-0 shrink-0">
                       <button
                         onClick={() => openModal(u)}
                         className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-black dark:text-white hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:border-[#302782]/20 transition-all active:scale-[0.98] flex justify-center items-center"
@@ -153,7 +156,10 @@ const Users = () => {
                 ))
               ) : (
                 <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-[40px] border-2 border-dashed border-gray-100 dark:border-gray-700">
-                  <UserCog size={48} className="text-black dark:text-white mb-4" />
+                  <UserCog
+                    size={48}
+                    className="text-black dark:text-white mb-4"
+                  />
                   <p className="text-black dark:text-white font-bold">
                     ไม่พบข้อมูลผู้ใช้งานในระบบ
                   </p>
