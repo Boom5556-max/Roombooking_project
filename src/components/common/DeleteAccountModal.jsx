@@ -31,24 +31,24 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
         </div>
 
         {/* Warning Section */}
-        <div className="mx-6 mb-5 p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-2xl">
+        <div className="mx-6 mb-5 p-4 bg-[#EF4444]/10 border border-[#EF4444]/20 rounded-2xl">
           <div className="flex items-start gap-3">
-            <div className="shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-              <AlertTriangle size={20} className="text-red-500" />
+            <div className="shrink-0 w-10 h-10 rounded-full bg-[#EF4444]/10 flex items-center justify-center">
+              <AlertTriangle size={20} className="text-[#EF4444]" />
             </div>
             <div>
-              <h4 className="font-bold text-red-700 text-sm mb-2">คำเตือน: การดำเนินการนี้ไม่สามารถย้อนกลับได้</h4>
-              <ul className="space-y-1.5 text-xs text-red-600/80">
+              <h4 className="font-bold text-[#EF4444] text-sm mb-2">คำเตือน: การดำเนินการนี้ไม่สามารถย้อนกลับได้</h4>
+              <ul className="space-y-1.5 text-xs text-[#EF4444]/80">
                 <li className="flex items-start gap-2">
-                  <span className="shrink-0 mt-0.5 w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                  <span className="shrink-0 mt-0.5 w-1.5 h-1.5 rounded-full bg-[#EF4444]/40"></span>
                   ข้อมูลส่วนตัวของคุณจะถูกลบออกจากระบบ
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="shrink-0 mt-0.5 w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                  <span className="shrink-0 mt-0.5 w-1.5 h-1.5 rounded-full bg-[#EF4444]/40"></span>
                   คุณจะไม่สามารถเข้าสู่ระบบด้วยบัญชีนี้ได้อีก
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="shrink-0 mt-0.5 w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                  <span className="shrink-0 mt-0.5 w-1.5 h-1.5 rounded-full bg-[#EF4444]/40"></span>
                   การดำเนินการนี้ไม่สามารถกู้คืนได้
                 </li>
               </ul>
@@ -70,7 +70,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={confirmText}
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-black dark:text-white placeholder:text-black dark:placeholder:text-white focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 dark:focus:ring-red-500/20 transition-all"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-black dark:text-white placeholder:text-black dark:placeholder:text-white focus:outline-none focus:border-[#EF4444] focus:ring-2 focus:ring-[#EF4444]/10 dark:focus:ring-[#EF4444]/20 transition-all"
             autoFocus
           />
 
@@ -89,7 +89,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
               disabled={!isMatch}
               className={`flex-1 py-3 rounded-xl font-bold transition-all active:scale-95 ${
                 isMatch
-                  ? "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-200"
+                  ? "bg-[#EF4444] text-white hover:opacity-90 shadow-lg shadow-[#EF4444]/20"
                   : "bg-gray-100 text-black dark:text-white cursor-not-allowed"
               }`}
             >

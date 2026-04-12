@@ -38,9 +38,9 @@ const ActionModal = ({
         <div className={`mx-auto mb-5 flex items-center justify-center w-16 h-16 rounded-2xl ${
           showBg ? (
             variant === "danger" 
-              ? "bg-red-50 dark:bg-red-500/10 text-red-500" 
+              ? "bg-[#EF4444]/10 text-[#EF4444]" 
               : variant === "warning"
-                ? "bg-yellow-50 dark:bg-yellow-500/10 text-yellow-600"
+                ? "bg-[#F59E0B]/10 text-[#F59E0B]"
                 : "bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E]"
           ) : "text-[#302782] dark:text-[#B2BB1E]"
         }`}>
@@ -67,9 +67,9 @@ const ActionModal = ({
                 onClick={onConfirm} 
                 className={`flex-1 py-3 flex items-center justify-center gap-2 text-white rounded-xl active:scale-95 transition-all font-medium text-sm ${
                   variant === "danger" 
-                    ? "bg-red-500 hover:bg-red-600" 
+                    ? "bg-[#EF4444] hover:opacity-90" 
                     : variant === "warning"
-                      ? "bg-yellow-500 hover:bg-yellow-600"
+                      ? "bg-[#F59E0B] hover:opacity-90"
                       : "bg-[#302782] hover:bg-[#4338ca]"
                 }`}
               >

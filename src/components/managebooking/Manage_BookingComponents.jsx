@@ -6,22 +6,22 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
   const styles = {
     pending: {
       borderColor: "border-gray-100 dark:border-gray-600",
-      statusColor: "text-[#302782] dark:text-[#B2BB1E]",
-      bgColor: "bg-[#302782]/5 dark:bg-[#302782]/20",
+      statusColor: "text-[#0EA5E9]",
+      bgColor: "bg-[#0EA5E9]/10",
       Icon: Clock,
       label: "รออนุมัติ"
     },
     approved: {
-      borderColor: "border-[#B2BB1E]/20 dark:border-[#B2BB1E]/40",
-      statusColor: "text-[#B2BB1E]",
-      bgColor: "bg-[#B2BB1E]/5 dark:bg-[#B2BB1E]/10",
+      borderColor: "border-[#10B981]/20 dark:border-[#10B981]/40",
+      statusColor: "text-[#10B981]",
+      bgColor: "bg-[#10B981]/10",
       Icon: CheckCircle2,
       label: "อนุมัติแล้ว"
     },
     rejected: {
-      borderColor: "border-red-100 dark:border-red-900/30",
-      statusColor: "text-red-500",
-      bgColor: "bg-red-50 dark:bg-red-900/20",
+      borderColor: "border-[#EF4444]/20 dark:border-[#EF4444]/40",
+      statusColor: "text-[#EF4444]",
+      bgColor: "bg-[#EF4444]/10",
       Icon: XCircle,
       label: "ไม่อนุมัติ"
     },
@@ -33,9 +33,9 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
       label: "ยกเลิกแล้ว"
     },
     class_cancelled: {
-      borderColor: "border-orange-100 dark:border-orange-900/30",
-      statusColor: "text-orange-500",
-      bgColor: "bg-orange-50 dark:bg-orange-900/20",
+      borderColor: "border-[#F59E0B]/20 dark:border-[#F59E0B]/40",
+      statusColor: "text-[#F59E0B]",
+      bgColor: "bg-[#F59E0B]/10",
       Icon: Hash,
       label: "ยกเลิกคลาส"
     },

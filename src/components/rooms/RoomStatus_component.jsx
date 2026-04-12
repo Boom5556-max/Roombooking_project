@@ -44,8 +44,8 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
   <div
     className={`rounded-[40px] p-6 sm:p-10 border-2 transition-all duration-500 shadow-[0_15px_45px_-15px_rgba(0,0,0,0.08)] ${
       !isAvailable
-        ? "bg-[#FFFFFF] dark:bg-white/5 border-red-100 dark:border-white/10"
-        : "bg-[#FFFFFF] dark:bg-white/5 border-[#B2BB1E]/20 dark:border-white/10"
+        ? "bg-[#FFFFFF] dark:bg-white/5 border-[#EF4444]/20 dark:border-white/10"
+        : "bg-[#FFFFFF] dark:bg-white/5 border-[#10B981]/20 dark:border-white/10"
     } animate-in fade-in zoom-in-95 duration-500`}
   >
     <div className="flex justify-between items-start mb-8 sm:mb-12">
@@ -53,15 +53,12 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
         <h3 className="font-black text-[10px] sm:text-xs text-black dark:text-white uppercase tracking-[0.2em] mb-1">
           Current Status
         </h3>
-        {/* <p className={`text-xl sm:text-2xl font-black ${!isAvailable ? "text-red-500" : "text-[#B2BB1E]"}`}>
-          {!isAvailable ? "มีการใช้งานอยู่" : "พร้อมสำหรับการจอง"}
-        </p> */}
       </div>
       <div
         className={`px-5 py-2.5 rounded-2xl text-[#FFFFFF] text-xs sm:text-xs font-black uppercase tracking-widest transition-all ${
           !isAvailable
-            ? "bg-red-500 shadow-lg shadow-red-200"
-            : "bg-[#B2BB1E] shadow-lg shadow-[#B2BB1E]/20"
+            ? "bg-[#EF4444] shadow-lg shadow-[#EF4444]/20"
+            : "bg-[#10B981] shadow-lg shadow-[#10B981]/20"
         }`}
       >
         {!isAvailable ? "Occupied" : "Available"}

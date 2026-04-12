@@ -24,13 +24,13 @@ const StatusCards = ({ role, roomCount, pendingCount, approvedCount }) => {
         <div className="bg-white dark:bg-gray-800 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between transition-all hover:shadow-md">
           <div>
             <p className="text-black dark:text-white text-xs font-bold mb-1">คำขอรออนุมัติ</p>
-            {/* 🚩 สีส้ม (Warning) */}
-            <h3 className="text-4xl font-black text-orange-500 dark:text-orange-400">
+            {/* 🚩 สีส้ม (Warning) #F59E0B */}
+            <h3 className="text-4xl font-black text-[#F59E0B]">
               {pendingCount || 0}
             </h3>
           </div>
-          <div className="bg-orange-50 dark:bg-orange-500/10 p-4 rounded-[20px]">
-            <Clock size={26} className="text-orange-500 dark:text-orange-400" />
+          <div className="bg-[#F59E0B]/10 p-4 rounded-[20px]">
+            <Clock size={26} className="text-[#F59E0B]" />
           </div>
         </div>
       )}
@@ -40,13 +40,13 @@ const StatusCards = ({ role, roomCount, pendingCount, approvedCount }) => {
         <div className="bg-white dark:bg-gray-800 p-5 rounded-[24px] shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between transition-all hover:shadow-md">
           <div>
             <p className="text-black dark:text-white text-xs font-bold mb-1">อนุมัติแล้ว</p>
-            {/* 🚩 สีเขียว #B2BB1E */}
-            <h3 className="text-4xl font-black text-[#B2BB1E] dark:text-[#c5cf23]">
+            {/* 🚩 สีเขียว #10B981 */}
+            <h3 className="text-4xl font-black text-[#10B981]">
               {approvedCount || 0}
             </h3>
           </div>
-          <div className="bg-[#B2BB1E]/10 p-4 rounded-[20px]">
-            <CheckCircle2 size={26} className="text-[#B2BB1E] dark:text-[#c5cf23]" />
+          <div className="bg-[#10B981]/10 p-4 rounded-[20px]">
+            <CheckCircle2 size={26} className="text-[#10B981]" />
           </div>
         </div>
       )}

@@ -23,6 +23,14 @@ export default {
         '5xl':  ['3.75rem',  { lineHeight: '1' }],          // 60px  (เดิม 48px)
         '6xl':  ['4.5rem',   { lineHeight: '1' }],          // 72px  (เดิม 60px)
       },
+      colors: {
+        status: {
+          green: '#10B981',
+          red: '#EF4444',
+          orange: '#F59E0B',
+          blue: '#0EA5E9',
+        }
+      }
     },
   },
   plugins: [],
