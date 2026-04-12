@@ -44,14 +44,10 @@ export const useDashboard = () => {
             approvedCount: getCount(approvedRes),
           });
         } catch (err) {
-          console.error("Dashboard Fetch Error:", err);
-          // จัดการกรณี Token หมดอายุ (401)
-          if (err.response?.status === 401) {
-            // ปล่อยให้ axios interceptor จัดการแจ้งเตือนและ redirect ถ้าเป็น SESSION_SUPERSEDED
-            if (err.response?.data?.code !== 'SESSION_SUPERSEDED') {
-              localStorage.removeItem("token");
-              window.location.href = "/login";
-            }
+          // 401 errors are handled globally by axios interceptor (forceLogout)
+          // Only log non-401 errors here
+          if (!err.response || err.response.status !== 401) {
+            console.error("Dashboard Fetch Error:", err);
           }
         }
       };
