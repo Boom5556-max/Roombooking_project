@@ -113,7 +113,7 @@ const Users = () => {
 
                       <div className="flex-grow min-w-0">
                         <div className="flex flex-wrap items-center gap-x-2">
-                          <span className="text-[10px] sm:text-xs font-black text-gray-400 uppercase tracking-tighter">
+                          <span className="text-[10px] sm:text-xs font-black text-black dark:text-white uppercase tracking-tighter">
                             {u.title}
                           </span>
                           <h3 className="text-lg sm:text-xl font-black text-[#302782] dark:text-white truncate">
@@ -121,7 +121,7 @@ const Users = () => {
                           </h3>
                         </div>
 
-                        <p className="text-gray-400 font-bold text-xs flex items-center gap-1.5 mt-1 truncate">
+                        <p className="text-black dark:text-white font-bold text-xs flex items-center gap-1.5 mt-1 truncate">
                           <Mail size={14} className="shrink-0 text-[#B2BB1E]" />
                           <span className="truncate">{u.email}</span>
                         </p>
@@ -137,14 +137,14 @@ const Users = () => {
                     <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50 dark:border-gray-700 mt-1 sm:mt-0">
                       <button
                         onClick={() => openModal(u)}
-                        className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-gray-400 hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:border-[#302782]/20 transition-all active:scale-[0.98] flex justify-center items-center"
+                        className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-black dark:text-white hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:border-[#302782]/20 transition-all active:scale-[0.98] flex justify-center items-center"
                         title="แก้ไข"
                       >
                         <Edit3 size={20} />
                       </button>
                       <button
                         onClick={() => handleDelete(u.user_id)}
-                        className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-gray-400 hover:text-red-500 hover:border-red-100 transition-all active:scale-[0.98] flex justify-center items-center"
+                        className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-black dark:text-white hover:text-red-500 hover:border-red-100 transition-all active:scale-[0.98] flex justify-center items-center"
                         title="ลบ"
                       >
                         <Trash2 size={20} />
@@ -154,8 +154,8 @@ const Users = () => {
                 ))
               ) : (
                 <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-[40px] border-2 border-dashed border-gray-100 dark:border-gray-700">
-                  <UserCog size={48} className="text-gray-200 mb-4" />
-                  <p className="text-gray-400 font-bold">
+                  <UserCog size={48} className="text-black dark:text-white mb-4" />
+                  <p className="text-black dark:text-white font-bold">
                     ไม่พบข้อมูลผู้ใช้งานในระบบ
                   </p>
                 </div>
@@ -188,7 +188,7 @@ const Users = () => {
                   onClick={() =>
                     setSimpleAlert((prev) => ({ ...prev, isOpen: false }))
                   }
-                  className="flex-1 py-3 text-sm bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-medium rounded-2xl hover:bg-gray-200 transition-colors active:scale-95"
+                  className="flex-1 py-3 text-sm bg-gray-100 dark:bg-gray-700 text-black dark:text-white font-medium rounded-2xl hover:bg-gray-200 transition-colors active:scale-95"
                 >
                   ยกเลิก
                 </button>

@@ -80,7 +80,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
           <button
             type="button"
             onClick={onClose}
-            className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 transition-all active:scale-[0.98]"
+            className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-black dark:text-white transition-all active:scale-[0.98]"
           >
             <X size={20} />
           </button>
@@ -113,7 +113,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
 
           {/* Location Select */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
+            <label className="text-xs font-medium text-black dark:text-white ml-1">
               สถานที่ตั้ง / อาคาร
             </label>
             <select
@@ -160,7 +160,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
             />
 
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
+              <label className="text-xs font-medium text-black dark:text-white ml-1">
                 สถานะการเปิดใช้งาน
               </label>
               <select
@@ -185,12 +185,12 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
 
           {/* Characteristics Area */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
+            <label className="text-xs font-medium text-black dark:text-white ml-1">
               ลักษณะห้องเรียน / รายละเอียดเพิ่มเติม
             </label>
             <textarea
               rows="3"
-              className="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-[24px] border-2 border-transparent focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-gray-600 outline-none font-bold text-[#302782] dark:text-white resize-none transition-all placeholder:text-gray-300"
+              className="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-[24px] border-2 border-transparent focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-gray-600 outline-none font-bold text-[#302782] dark:text-white resize-none transition-all placeholder:text-black dark:placeholder:text-white/30"
               value={formData.room_characteristics}
               onChange={(e) =>
                 setFormData({
@@ -275,7 +275,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
 // Sub-component สำหรับช่องกรอกอุปกรณ์
 const EqInput = ({ label, value, onChange }) => (
   <div className="flex flex-col gap-2 p-3 bg-white dark:bg-gray-700 rounded-2xl border border-gray-100 dark:border-gray-600 shadow-sm transition-all focus-within:border-[#B2BB1E]/30">
-    <span className="text-[10px] font-black text-gray-400 text-center uppercase tracking-tighter truncate">
+    <span className="text-[10px] font-black text-black dark:text-white text-center uppercase tracking-tighter truncate">
       {label}
     </span>
     <input

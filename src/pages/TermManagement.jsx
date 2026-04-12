@@ -192,7 +192,7 @@ const TermManagement = () => {
             <h2 className="text-lg font-black text-[#302782] dark:text-white mb-1">
               กำหนดวันที่ของแต่ละเทอม
             </h2>
-            <p className="text-sm text-gray-400 max-w-xs leading-relaxed">
+            <p className="text-sm text-black max-w-xs leading-relaxed">
               ระบุวันที่เริ่มต้นของแต่ละภาคเรียน
               เพื่อใช้ในการจัดตารางเรียนและการจองห้อง
             </p>
@@ -241,7 +241,7 @@ const TermManagement = () => {
                           </h3>
 
                           <div className="flex flex-col gap-1.5">
-                            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                            <label className="text-xs font-medium text-black dark:text-white flex items-center gap-1.5">
                               <CalendarRange size={12} />
                               วันที่
                             </label>
@@ -307,7 +307,7 @@ const TermManagement = () => {
           <p className="text-xs font-semibold text-[#302782] dark:text-[#B2BB1E] mb-2">
             หมายเหตุ
           </p>
-          <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1 font-semibold">
+          <ul className="text-xs text-black dark:text-white space-y-1 font-semibold">
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#B2BB1E] shrink-0" />
               วันที่ที่กำหนดจะถูกใช้สำหรับระบบจัดตารางเรียนอัตโนมัติ

@@ -5,7 +5,7 @@ const InputField = ({ label, icon: Icon, error, ...props }) => {
     <div className="flex flex-col gap-2 font-sans w-full group">
       {/* Label: ปรับให้ดูสะอาดตาขึ้น */}
       {label && (
-        <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1 flex items-center gap-2">
+        <label className="text-xs font-medium text-black dark:text-white ml-1 flex items-center gap-2">
           {label}
         </label>
       )}
@@ -14,7 +14,7 @@ const InputField = ({ label, icon: Icon, error, ...props }) => {
         {/* Icon: ย้ายเข้ามาด้านใน Input เพื่อความ Modern */}
         {Icon && (
           <div
-            className={`absolute left-5 transition-colors duration-300 ${error ? "text-red-400" : "text-gray-400 group-focus-within:text-[#B2BB1E]"}`}
+            className={`absolute left-5 transition-colors duration-300 ${error ? "text-red-400" : "text-black dark:text-white group-focus-within:text-[#B2BB1E]"}`}
           >
             <Icon size={20} strokeWidth={2.5} />
           </div>
@@ -27,7 +27,7 @@ const InputField = ({ label, icon: Icon, error, ...props }) => {
           font-bold rounded-[16px] sm:rounded-[20px] 
           py-4 sm:py-5 min-h-[56px] /* เพิ่ม min-h เพื่อความชัวร์บน Tablet */
           outline-none transition-all duration-300
-          placeholder:text-gray-300 placeholder:font-medium
+          placeholder:text-black placeholder:dark:text-white placeholder:font-medium
           border-2 scroll-margin-top-[120px] /* เพิ่มส่วนนี้เพื่อช่วยเรื่องคีย์บอร์ดบัง */
           ${Icon ? "pl-14 pr-6" : "px-6"}
           ${

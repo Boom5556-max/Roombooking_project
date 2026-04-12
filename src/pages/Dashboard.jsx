@@ -73,25 +73,25 @@ const Dashboard = () => {
                 <div className="text-left font-sans">
                   <p className="font-black text-xl text-[#302782] dark:text-white">ดูรายการห้องเรียน</p>
                   {/* เพิ่ม dark:text-gray-400 */}
-                  <p className="text-black dark:text-gray-400 text-sm font-medium mt-1">ตรวจสอบตารางการใช้ห้องทั้งหมด</p>
+                  <p className="text-black dark:text-white text-sm font-medium mt-1">ตรวจสอบตารางการใช้ห้องทั้งหมด</p>
                 </div>
               </div>
-              <ArrowRight className="text-gray-300 group-hover:text-[#B2BB1E] group-hover:translate-x-1 transition-all w-7 h-7" />
+              <ArrowRight className="text-black dark:text-white group-hover:text-[#B2BB1E] group-hover:translate-x-1 transition-all w-7 h-7" />
             </Button>
 
             {role === "staff" && (
               <div onClick={() => setIsModalOpen(true)} className="bg-white dark:bg-gray-800 rounded-[24px] p-6 border border-dashed border-gray-300 dark:border-gray-600 cursor-pointer hover:border-[#B2BB1E] hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-all flex justify-between items-center group shadow-sm">
                 <div className="flex items-center gap-5">
-                  <div className="bg-[#302782]/5 p-4 rounded-2xl text-[#302782] dark:text-gray-300 group-hover:bg-[#302782] group-hover:text-white transition-colors">
+                  <div className="bg-[#302782]/5 p-4 rounded-2xl text-[#302782] dark:text-white group-hover:bg-[#302782] group-hover:text-white transition-colors">
                     <FilePlus size={28} />
                   </div>
                   <div className="text-left font-sans">
                     <h3 className="font-black text-xl text-[#302782] dark:text-white">ระบบจัดการไฟล์</h3>
                     {/* เพิ่ม dark:text-gray-400 */}
-                    <p className="text-black dark:text-gray-400 text-sm font-medium mt-1">อัปโหลดตารางเรียน (.xlsx, .csv)</p>
+                    <p className="text-black dark:text-white text-sm font-medium mt-1">อัปโหลดตารางเรียน (.xlsx, .csv)</p>
                   </div>
                 </div>
-                <ArrowRight className="text-gray-300 group-hover:text-[#302782] group-hover:translate-x-1 transition-all w-7 h-7" />
+                <ArrowRight className="text-black dark:text-white group-hover:text-[#302782] group-hover:translate-x-1 transition-all w-7 h-7" />
               </div>
             )}
           </div>

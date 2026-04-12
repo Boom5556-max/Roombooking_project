@@ -252,7 +252,7 @@ const ProfileDropdown = ({ isMobile }) => {
             <div className="w-16 h-16 bg-[#302782]/10 dark:bg-[#B2BB1E]/10 rounded-full flex items-center justify-center text-[#302782] dark:text-[#B2BB1E] mb-3">
               <UserCircle size={40} />
             </div>
-            <h3 className="font-bold text-gray-800 dark:text-white text-lg text-center leading-tight">
+            <h3 className="font-bold text-black dark:text-white text-lg text-center leading-tight">
               {userData.title ? `${userData.title} ` : ""}{userData.name} {userData.surname}
             </h3>
             <span className="bg-[#B2BB1E]/20 text-[#302782] dark:text-[#B2BB1E] text-xs font-bold px-3 py-1 rounded-full mt-2 flex items-center gap-1">
@@ -263,12 +263,12 @@ const ProfileDropdown = ({ isMobile }) => {
 
           <div className="pt-4 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-300">
+              <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-black dark:text-white">
                 <Mail size={16} />
               </div>
               <div className="flex flex-col overflow-hidden">
-                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">อีเมล</span>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{userData.email}</span>
+                <span className="text-[10px] text-black dark:text-white font-bold uppercase tracking-wider">อีเมล</span>
+                <span className="text-sm font-medium text-black dark:text-white truncate">{userData.email}</span>
               </div>
             </div>
             
@@ -278,7 +278,7 @@ const ProfileDropdown = ({ isMobile }) => {
           <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-2">
             <button 
               onClick={() => { setIsOpen(false); setIsEditModalOpen(true); }} 
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-gray-500 dark:text-gray-300 hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:bg-[#302782]/5 dark:hover:bg-white/5 rounded-xl transition-all"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-black dark:text-white hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:bg-[#302782]/5 dark:hover:bg-white/5 rounded-xl transition-all"
             >
               <Edit3 size={18} />
               แก้ไขโปรไฟล์
@@ -288,13 +288,13 @@ const ProfileDropdown = ({ isMobile }) => {
                 e.stopPropagation();
                 toggleTheme();
               }}
-              className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-bold text-gray-500 dark:text-gray-300 hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:bg-[#302782]/5 dark:hover:bg-white/5 rounded-xl transition-all"
+              className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-bold text-black dark:text-white hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:bg-[#302782]/5 dark:hover:bg-white/5 rounded-xl transition-all"
             >
               <div className="flex items-center gap-3">
                 {isDark ? <Moon size={18} /> : <Sun size={18} />}
                 ธีมหน้าจอ
               </div>
-              <span className="text-[10px] font-bold bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-300 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold bg-gray-100 dark:bg-gray-700 text-black dark:text-white px-2 py-0.5 rounded-full">
                 {isDark ? 'Dark' : 'Light'}
               </span>
             </button>

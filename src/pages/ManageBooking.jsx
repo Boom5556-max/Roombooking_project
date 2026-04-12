@@ -341,7 +341,7 @@ const ManageBooking = () => {
                   <SectionTitle
                     title="ประวัติการจอง"
                     icon={History}
-                    colorClass="text-gray-400"
+                    colorClass="text-black dark:text-white"
                   />
                   <RoomGroupedList 
                     data={historyRequests} 
@@ -390,7 +390,7 @@ const ManageBooking = () => {
 };
 
 const EmptyState = () => (
-  <p className="text-gray-400 text-sm text-center py-8 bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-600">
+  <p className="text-black dark:text-white text-sm text-center py-8 bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-600">
     ไม่มีรายการในขณะนี้
   </p>
 );
@@ -426,7 +426,7 @@ const StaffSection = ({
 
         {/* จำนวนรายการ */}
         {hasData && (
-          <span className="text-xs font-bold text-gray-400 bg-gray-100 dark:bg-gray-700 dark:text-gray-400 px-2.5 py-1 rounded-full">
+          <span className="text-xs font-bold text-black bg-gray-100 dark:bg-gray-700 dark:text-white px-2.5 py-1 rounded-full">
             {data.length}
           </span>
         )}
@@ -438,7 +438,7 @@ const StaffSection = ({
           <ChevronDown 
             size={20} 
             strokeWidth={2.5}
-            className={`text-gray-300 dark:text-gray-500 transition-transform duration-300 flex-shrink-0 ${isOpen ? "rotate-180" : "rotate-0"}`} 
+            className={`text-black dark:text-white transition-transform duration-300 flex-shrink-0 ${isOpen ? "rotate-180" : "rotate-0"}`} 
           />
         )}
       </button>
@@ -488,7 +488,7 @@ const RoomGroupedList = ({ data, variant, getFullName, onSelect, isGrid }) => {
           <h4 className="text-sm sm:text-base font-black text-[#302782] dark:text-[#B2BB1E] mb-4 flex items-center gap-2 ml-1">
             <span className="w-2.5 h-2.5 rounded-full bg-[#B2BB1E] animate-pulse"></span>
             ห้อง: {room}
-            <span className="text-xs font-medium text-gray-400 dark:text-gray-500 ml-auto">
+            <span className="text-xs font-medium text-black dark:text-white ml-auto">
               {groupedData[room].length} รายการ
             </span>
           </h4>

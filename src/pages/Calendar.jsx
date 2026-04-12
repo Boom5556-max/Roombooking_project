@@ -106,7 +106,7 @@ const Calendar = () => {
               />
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 px-1 text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">
+            <div className="flex flex-wrap items-center gap-4 px-1 text-[11px] sm:text-xs text-black dark:text-white font-bold uppercase tracking-wider">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-sm"></span>
                 <span>อัปโหลดตารางเรียน</span>
@@ -176,17 +176,17 @@ const Calendar = () => {
                <Power size={48} className="text-red-500" />
             </div>
             <h3 className="text-2xl font-black text-center text-[#302782] dark:text-white mb-2">ยืนยันการงดใช้ห้อง</h3>
-            <p className="text-center text-gray-500 dark:text-gray-400 text-sm mb-6 font-medium">
+            <p className="text-center text-black dark:text-white text-sm mb-6 font-medium">
               วิชา "{showConfirmCancel.title}" จะแสดงสถานะงดการใช้ห้องเรียน
             </p>
 
             {/* ช่องกรอกเหตุผล */}
             <div className="mb-6">
-              <label className="block text-sm font-bold text-[#302782] dark:text-gray-300 mb-2">
+              <label className="block text-sm font-bold text-black dark:text-white mb-2">
                 เหตุผลการงดใช้ห้อง <span className="text-red-500 font-bold">*</span>
               </label>
               <textarea
-                className="w-full p-4 rounded-[16px] bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent text-sm text-[#302782] dark:text-white resize-none transition-all placeholder:text-gray-400"
+                className="w-full p-4 rounded-[16px] bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent text-sm text-black dark:text-white resize-none transition-all placeholder:text-black dark:placeholder:text-white/30"
                 rows="3"
                 placeholder="จำเป็นต้องระบุเหตุผล (เช่น อาจารย์ติดภารกิจ, ห้องปรับปรุง)..."
                 value={cancelReason}
@@ -200,7 +200,7 @@ const Calendar = () => {
                   setShowConfirmCancel(null);
                   setCancelReason("");
                 }}
-                className="flex-1 py-3.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-[16px] font-bold text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="flex-1 py-3.5 bg-gray-100 dark:bg-gray-700 text-black dark:text-white rounded-[16px] font-bold text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
                 ยกเลิก
               </button>
@@ -268,7 +268,7 @@ const Calendar = () => {
               </div>
             )}
             <h3 className="text-2xl font-black text-[#302782] dark:text-white mb-2">{alertConfig.title}</h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed font-medium">{alertConfig.msg}</p>
+            <p className="text-black dark:text-white text-sm mb-8 leading-relaxed font-medium">{alertConfig.msg}</p>
             <button
               onClick={() => setAlertConfig({ ...alertConfig, show: false })}
               className="w-full py-4 bg-[#302782] text-white rounded-[16px] font-bold text-base active:scale-[0.98] transition-all hover:bg-[#201a57]"

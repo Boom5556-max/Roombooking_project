@@ -25,7 +25,7 @@ export const ErrorState = ({ message, onBack }) => (
       <AlertCircle size={48} strokeWidth={2.5} />
     </div>
     <h2 className="text-3xl font-black text-[#302782] mb-3 tracking-tight">เกิดข้อผิดพลาด</h2>
-    <p className="text-base sm:text-lg font-bold text-gray-400 mb-12 max-w-sm mx-auto leading-relaxed">
+    <p className="text-base sm:text-lg font-bold text-black dark:text-white mb-12 max-w-sm mx-auto leading-relaxed">
       {message || "สเเกนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"}
     </p>
     <Button
@@ -50,7 +50,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
   >
     <div className="flex justify-between items-start mb-8 sm:mb-12">
       <div>
-        <h3 className="font-black text-[10px] sm:text-xs text-gray-400 uppercase tracking-[0.2em] mb-1">
+        <h3 className="font-black text-[10px] sm:text-xs text-black dark:text-white uppercase tracking-[0.2em] mb-1">
           Current Status
         </h3>
         {/* <p className={`text-xl sm:text-2xl font-black ${!isAvailable ? "text-red-500" : "text-[#B2BB1E]"}`}>
@@ -76,9 +76,9 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
             <Clock size={32} strokeWidth={2.5} className="sm:w-10 sm:h-10" />
           </div>
           <div>
-            <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">ช่วงเวลาที่จอง</p>
+            <p className="text-xs font-black text-black dark:text-white uppercase tracking-widest mb-1">ช่วงเวลาที่จอง</p>
             <p className="text-2xl sm:text-4xl font-black text-[#302782] tracking-tight">
-              {item.start_time} - {item.end_time} <span className="text-lg text-gray-300 ml-1 font-bold">น.</span>
+              {item.start_time} - {item.end_time} <span className="text-lg text-black dark:text-white ml-1 font-bold">น.</span>
             </p>
           </div>
         </div>
@@ -86,7 +86,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
         {/* ผู้จอง & จำนวนคน */}
         <div className="flex gap-3 sm:gap-6">
           <div className="flex-[2] min-w-0 bg-gray-50/70 dark:bg-white/5 p-5 rounded-[28px] border border-gray-100 dark:border-white/10 group transition-all">
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2.5">ผู้รับผิดชอบ</p>
+            <p className="text-[10px] font-black text-black dark:text-white uppercase tracking-widest mb-2.5">ผู้รับผิดชอบ</p>
             <div className="flex items-center gap-3">
               <div className="p-1.5 bg-white dark:bg-white/10 rounded-lg shadow-sm">
                 <User size={16} className="text-[#B2BB1E]" />
@@ -98,7 +98,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
           </div>
 
           <div className="flex-[1] min-w-0 bg-gray-50/70 dark:bg-white/5 p-5 rounded-[28px] border border-gray-100 dark:border-white/10">
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2.5">จำนวนคน</p>
+            <p className="text-[10px] font-black text-black dark:text-white uppercase tracking-widest mb-2.5">จำนวนคน</p>
             <div className="flex items-center gap-3 justify-center sm:justify-start">
               <Users size={16} className="text-[#B2BB1E]" />
               <p className="text-sm sm:text-lg font-black text-[#302782] dark:text-white">
@@ -138,7 +138,7 @@ export const ScheduleItem = ({ item, capacity }) => (
         {item.start_time}
       </span>
       <div className="h-4 w-[2px] bg-gray-100 dark:bg-white/10 my-1 rounded-full" />
-      <span className="text-sm sm:text-base font-bold text-gray-400">
+      <span className="text-sm sm:text-base font-bold text-black dark:text-white">
         {item.end_time}
       </span>
     </div>
@@ -154,7 +154,7 @@ export const ScheduleItem = ({ item, capacity }) => (
           <div className="w-7 h-7 bg-gray-50 dark:bg-white/5 rounded-lg flex items-center justify-center flex-shrink-0">
             <User size={14} className="text-[#B2BB1E]" />
           </div>
-          <p className="text-xs sm:text-sm font-bold text-gray-500 dark:text-gray-400 truncate max-w-[150px] sm:max-w-none">
+          <p className="text-xs sm:text-sm font-bold text-black dark:text-white truncate max-w-[150px] sm:max-w-none">
             {item.full_name || `${item.first_name} ${item.last_name}`}
           </p>
         </div>

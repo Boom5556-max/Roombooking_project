@@ -1,7 +1,7 @@
 import React from "react";
 
 const GuideItem = ({ num, text, color = "bg-[#B2BB1E]" }) => (
-  <div className="flex gap-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium items-start">
+  <div className="flex gap-3 text-xs sm:text-sm text-black dark:text-white font-medium items-start">
     <span className={`flex-none w-5 h-5 ${color} text-white text-[10px] font-bold rounded-full flex items-center justify-center mt-0.5`}>
       {num}
     </span>
@@ -24,7 +24,7 @@ const DashboardFooter = () => (
         </div>
       </div>
     </div>
-    <p className="text-center text-gray-400 text-[10px] mt-6 font-medium">
+    <p className="text-center text-black dark:text-white text-[10px] mt-6 font-medium">
       คณะวิทยาศาสตร์ ศรีราชา - ระบบจองห้องเรียน v1.0
     </p>
   </footer>

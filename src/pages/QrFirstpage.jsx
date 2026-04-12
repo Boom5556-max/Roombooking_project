@@ -81,7 +81,7 @@ const QrFirstpage = () => {
               <div className="w-full h-full relative flex items-center justify-center bg-black">
                 {!isCameraActive ? (
                   <div className="flex flex-col items-center justify-center h-full w-full z-10">
-                    <Camera size={48} className="text-gray-500 mb-4" />
+                    <Camera size={48} className="text-black dark:text-white mb-4" />
                     <button 
                       onClick={startCamera} 
                       className="bg-[#302782] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#251f66] transition-colors active:scale-[0.98] flex items-center gap-2"
@@ -113,7 +113,7 @@ const QrFirstpage = () => {
             {isScanningFile && <LoadingOverlay />}
           </div>
 
-          <p className="text-xs text-gray-400 font-medium mt-6 text-center">
+          <p className="text-xs text-black dark:text-white font-medium mt-6 text-center">
             {activeTab === "camera"
               ? "เล็ง QR Code ให้อยู่ในกรอบ"
               : "อัปโหลดรูปภาพที่มี QR Code"}
@@ -143,7 +143,7 @@ const QrFirstpage = () => {
         <div className="w-full max-w-sm mt-10">
           <div className="flex items-center gap-4 mb-6">
             <div className="h-px bg-gray-200 flex-1"></div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+            <span className="text-[10px] font-bold text-black dark:text-white uppercase tracking-widest">
               สำหรับบุคลากร
             </span>
             <div className="h-px bg-gray-200 flex-1"></div>
@@ -181,7 +181,7 @@ const TabButton = ({ active, onClick, icon, label }) => (
     onClick={onClick}
     className={`flex-1 py-3 rounded-xl text-xs font-bold flex justify-center items-center gap-2 transition-all duration-300 ${active
         ? "bg-white shadow-md text-[#302782] scale-100"
-        : "text-gray-400 hover:text-gray-600 hover:bg-gray-100/50 scale-95"
+        : "text-black dark:text-white hover:text-gray-600 hover:bg-gray-100/50 scale-95"
       }`}
   >
     {icon} <span>{label}</span>
@@ -194,7 +194,7 @@ const GalleryUpload = ({ onFileChange, disabled }) => (
       <ImageIcon size={48} className="text-[#302782] dark:text-white" />
     </div>
     <p className="text-[#302782] dark:text-white font-bold text-sm mb-1">แตะเพื่อเลือกรูปภาพ</p>
-    <p className="text-xs text-gray-400">รองรับ JPG, PNG</p>
+    <p className="text-xs text-black dark:text-white">รองรับ JPG, PNG</p>
     <input
       type="file"
       className="hidden"

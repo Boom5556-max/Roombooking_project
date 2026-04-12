@@ -50,7 +50,7 @@ export const CameraErrorOverlay = ({ message }) => (
     </div>
     
     <h3 className="text-white text-2xl font-black mb-3">เข้าถึงกล้องไม่ได้</h3>
-    <p className="text-gray-400 text-base font-medium mb-10 leading-relaxed max-w-[260px] mx-auto">
+    <p className="text-white text-base font-medium mb-10 leading-relaxed max-w-[260px] mx-auto">
       {message || "โปรดตรวจสอบสิทธิ์การเข้าถึงกล้องในการตั้งค่าเบราว์เซอร์ของคุณ"}
     </p>
     

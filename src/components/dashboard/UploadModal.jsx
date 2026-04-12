@@ -119,7 +119,7 @@ const UploadModal = ({ isOpen, onClose }) => {
           >
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 z-10"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-black dark:text-white z-10"
             >
               <X size={18} />
             </button>
@@ -153,7 +153,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                 >
                   <FilePlus size={20} /> เลือกไฟล์ Excel
                 </label>
-                <p className="mt-4 text-[10px] text-gray-400 text-center uppercase tracking-widest font-bold">
+                <p className="mt-4 text-[10px] text-black dark:text-white text-center uppercase tracking-widest font-bold">
                   รองรับเฉพาะ .xlsx หรือ .xls
                 </p>
               </div>
@@ -171,7 +171,7 @@ const UploadModal = ({ isOpen, onClose }) => {
 
                 <div className="space-y-3">
                   <div>
-                    <label className="text-xs font-bold text-gray-500 mb-1 block">สาขาวิชา</label>
+                    <label className="text-xs font-bold text-black dark:text-white mb-1 block">สาขาวิชา</label>
                     <input
                       type="text"
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-2 focus:ring-[#302782] outline-none text-sm transition-all"
@@ -182,7 +182,7 @@ const UploadModal = ({ isOpen, onClose }) => {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-bold text-gray-500 mb-1 block">ชั้นปี</label>
+                      <label className="text-xs font-bold text-black dark:text-white mb-1 block">ชั้นปี</label>
                       <select 
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 outline-none text-sm"
                         value={globalInfo.study_year}
@@ -192,7 +192,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-500 mb-1 block">ภาคการศึกษา</label>
+                      <label className="text-xs font-bold text-black dark:text-white mb-1 block">ภาคการศึกษา</label>
                       <select 
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 outline-none text-sm"
                         value={globalInfo.program_type}
@@ -245,7 +245,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                     </h3>
                     <div className="border border-gray-100 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
                       <table className="w-full text-xs sm:text-xs text-left border-collapse">
-                        <thead className="bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-bold border-b dark:border-gray-600">
+                        <thead className="bg-gray-50 dark:bg-gray-700 text-black dark:text-white font-bold border-b dark:border-gray-600">
                           <tr>
                             <th className="p-2 sm:p-3">วิชา/เวลา</th>
                             <th className="p-2 sm:p-3">ห้อง</th>
@@ -257,11 +257,11 @@ const UploadModal = ({ isOpen, onClose }) => {
                             <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors">
                               <td className="p-2 sm:p-3">
                                 <span className="font-bold text-[#302782] dark:text-white block truncate max-w-[120px]">{item.subject_name}</span>
-                                <span className="text-[9px] text-gray-500 block">{item.date} ({item.start_time}-{item.end_time})</span>
+                                <span className="text-[9px] text-black dark:text-white/70 block">{item.date} ({item.start_time}-{item.end_time})</span>
                               </td>
-                              <td className="p-2 sm:p-3 font-bold text-gray-600 dark:text-gray-300">{item.room_id}</td>
+                              <td className="p-2 sm:p-3 font-bold text-black dark:text-white">{item.room_id}</td>
                               <td className="p-2 sm:p-3 text-center">
-                                <button onClick={() => removeRow(idx)} className="p-1.5 text-gray-300 hover:text-red-500"><Trash2 size={16} /></button>
+                                <button onClick={() => removeRow(idx)} className="p-1.5 text-black dark:text-white hover:text-red-500"><Trash2 size={16} /></button>
                               </td>
                             </tr>
                           ))}
@@ -287,7 +287,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                             <tbody className="divide-y divide-gray-100">
                                 {invalidData.map((item, idx) => (
                                     <tr key={idx}>
-                                        <td className="p-2 text-center text-gray-400">{item.row}</td>
+                                        <td className="p-2 text-center text-black dark:text-white">{item.row}</td>
                                         <td className="p-2">
                                             <span className="font-bold text-red-600 text-[10px] block">{item.message}</span>
                                         </td>
@@ -343,7 +343,7 @@ const UploadModal = ({ isOpen, onClose }) => {
 
 const StatCard = ({ label, value, color }) => (
   <div className="bg-gray-50/50 dark:bg-gray-700/50 p-2 sm:p-4 rounded-[16px] border border-gray-100 dark:border-gray-600 text-center shadow-sm">
-    <p className="text-[7px] sm:text-[8px] uppercase tracking-wider font-bold text-gray-400 mb-1">{label}</p>
+    <p className="text-[7px] sm:text-[8px] uppercase tracking-wider font-bold text-black dark:text-white mb-1">{label}</p>
     <p className={`text-lg sm:text-2xl font-bold ${color}`}>{value}</p>
   </div>
 );

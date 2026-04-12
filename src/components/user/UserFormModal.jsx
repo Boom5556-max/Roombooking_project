@@ -72,7 +72,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
           <button
             type="button"
             onClick={onClose}
-            className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-red-50 hover:text-red-500 rounded-2xl text-gray-400 transition-all active:scale-[0.98]"
+            className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-red-50 hover:text-red-500 rounded-2xl text-black dark:text-white transition-all active:scale-[0.98]"
           >
             <X size={20} />
           </button>
@@ -84,7 +84,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
           {/* Title & Name Grid */}
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-4 flex flex-col gap-2">
-              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
+              <label className="text-xs font-medium text-black dark:text-white ml-1">
                 คำนำหน้า
               </label>
               <div className="relative">
@@ -105,13 +105,13 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
                   <option value="ผศ.ดร.">ผศ.ดร.</option>
                 </select>
                 <ChevronDown
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-black dark:text-white pointer-events-none"
                   size={18}
                 />
               </div>
             </div>
             <div className="col-span-8 flex flex-col gap-2">
-              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
+              <label className="text-xs font-medium text-black dark:text-white ml-1">
                 ชื่อจริง
               </label>
               <input
@@ -128,7 +128,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
 
           {/* Surname */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
+            <label className="text-xs font-medium text-black dark:text-white ml-1">
               นามสกุล
             </label>
             <input
@@ -144,13 +144,13 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
 
           {/* Email with Icon */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
+            <label className="text-xs font-medium text-black dark:text-white ml-1">
               อีเมลติดต่อ (KU Mail)
             </label>
             <div className="relative group">
               <Mail
                 size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#B2BB1E] transition-colors"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-white group-focus-within:text-[#B2BB1E] transition-colors"
               />
               <input
                 type="email"
@@ -168,7 +168,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
           {/* Role selection - ซ่อนเมื่ออยู่ในโหมดแก้ไข (!!user เป็น true) */}
           {!user && (
             <div className="flex flex-col gap-2 pb-2">
-              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">
+              <label className="text-xs font-medium text-black dark:text-white ml-1">
                 สิทธิ์การเข้าถึงระบบ
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -214,12 +214,12 @@ const RoleOption = ({ selected, label, onClick }) => (
       ${
         selected
           ? "border-[#B2BB1E] bg-[#B2BB1E]/5 text-[#302782] dark:text-white"
-          : "border-gray-50 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-400"
+          : "border-gray-50 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white"
       }`}
   >
     <UserCheck
       size={16}
-      className={selected ? "text-[#B2BB1E]" : "text-gray-300"}
+      className={selected ? "text-[#B2BB1E]" : "text-black dark:text-white"}
     />
     {label}
   </div>

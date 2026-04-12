@@ -44,10 +44,10 @@ const BookingRoom = () => {
         <details className="group/dropdown w-full relative" id={`dropdown-${key}`}>
           <summary className="list-none outline-none cursor-pointer">
             <div className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 flex justify-between items-center group-hover/dropdown:border-[#B2BB1E]/50 focus-within:border-[#B2BB1E] transition-all">
-              <span className={`font-semibold text-base ${formData[key] ? "text-[#302782] dark:text-white" : "text-gray-400"}`}>
+              <span className={`font-semibold text-base ${formData[key] ? "text-[#302782] dark:text-white" : "text-black dark:text-white"}`}>
                 {formData[key] ? `${formData[key]} น.` : "เลือกเวลา"}
               </span>
-              <ChevronDown className="text-gray-400 group-open/dropdown:rotate-180 transition-transform pointer-events-none" size={20} />
+              <ChevronDown className="text-black dark:text-white group-open/dropdown:rotate-180 transition-transform pointer-events-none" size={20} />
             </div>
           </summary>
 
@@ -87,14 +87,14 @@ const BookingRoom = () => {
             <h1 className="text-2xl sm:text-3xl font-bold text-[#302782] dark:text-white tracking-tight">
               จองห้องเรียน
             </h1>
-            <p className="text-xs sm:text-sm font-medium text-gray-400 mt-1">
+            <p className="text-xs sm:text-sm font-medium text-black dark:text-white mt-1">
               กรุณาระบุรายละเอียดการเข้าใช้งาน
             </p>
           </div>
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-red-50 hover:text-red-500 rounded-full text-gray-400 transition-all duration-200"
+            className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-red-50 hover:text-red-500 rounded-full text-black dark:text-white transition-all duration-200"
           >
             <X size={22} />
           </button>
@@ -115,20 +115,20 @@ const BookingRoom = () => {
                 }}
                 className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 appearance-none text-[#302782] dark:text-white font-bold transition-all cursor-pointer text-base"
               >
-                <option value="" disabled className="dark:bg-gray-800 dark:text-gray-400">
+                <option value="" disabled className="dark:bg-gray-800 dark:text-white">
                   เลือกห้องเรียน
                 </option>
                 {rooms.map((r) => (
                   <option 
                     key={r.room_id} 
                     value={r.room_id} 
-                    className="dark:bg-gray-800 dark:text-white text-gray-900" 
+                    className="dark:bg-gray-800 dark:text-white text-black" 
                   >
                     {r.room_type} — {r.room_id}
                   </option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-[#B2BB1E] transition-colors" size={20} />
+              <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-black dark:text-white group-focus-within:text-[#B2BB1E] transition-colors" size={20} />
             </div>
           </FormField>
 

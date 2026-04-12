@@ -37,7 +37,7 @@ return (
         
         {/* Header ย่อขนาดลงบนแท็บเล็ต */}
         <div className="h-16 flex items-center px-6 md:px-10 flex-shrink-0">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2.5 text-gray-400 hover:text-[#302782] dark:hover:text-[#B2BB1E] transition-all font-bold text-sm group">
+          <button onClick={() => navigate("/")} className="flex items-center gap-2.5 text-black dark:text-white hover:text-[#302782] dark:hover:text-[#B2BB1E] transition-all font-bold text-sm group">
             <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded-xl group-hover:bg-[#302782]/10 dark:group-hover:bg-[#B2BB1E]/10 transition-all">
               <ArrowLeft size={18} />
             </div>

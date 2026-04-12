@@ -270,7 +270,7 @@ const ScheduleManagement = () => {
         {/* ตารางหลัก */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden w-full">
           <div className="overflow-x-auto w-full">
-            <table className="min-w-full text-left text-sm text-gray-700 dark:text-gray-300">
+            <table className="min-w-full text-left text-sm text-black dark:text-white">
               <thead className="bg-gray-50 dark:bg-gray-700/50 text-[#302782] dark:text-[#B2BB1E] uppercase text-xs font-bold tracking-wider">
                 <tr>
                   <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">อัปโหลดไฟล์ล่าสุด</th>
@@ -284,7 +284,7 @@ const ScheduleManagement = () => {
                 {isLoading ? (
                   <tr><td colSpan="5" className="text-center py-8">กำลังโหลดข้อมูล...</td></tr>
                 ) : schedules.length === 0 ? (
-                  <tr><td colSpan="5" className="text-center py-8 text-gray-500">ไม่มีประวัติตารางเรียนในระบบ</td></tr>
+                  <tr><td colSpan="5" className="text-center py-8 text-black dark:text-white">ไม่มีประวัติตารางเรียนในระบบ</td></tr>
                 ) : (
                   schedules.map((schedule) => {
                     const id = schedule.unique_schedules;
@@ -301,7 +301,7 @@ const ScheduleManagement = () => {
                         >
                           <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
                             <div className="flex items-center gap-2">
-                              <span className={`transition-transform duration-200 text-gray-400 ${isExpanded ? 'rotate-0' : '-rotate-90'}`}>
+                              <span className={`transition-transform duration-200 text-black dark:text-white ${isExpanded ? 'rotate-0' : '-rotate-90'}`}>
                                 {isExpanded ? <ChevronDown size={16} /> : <ChevronDown size={16} />}
                               </span>
                               {formatDate(schedule.date_create)}
@@ -349,12 +349,12 @@ const ScheduleManagement = () => {
                                 </div>
 
                                 {isLoadingThis ? (
-                                  <div className="flex items-center justify-center gap-2 py-6 text-gray-400">
+                                  <div className="flex items-center justify-center gap-2 py-6 text-black dark:text-white">
                                     <Loader2 size={20} className="animate-spin" />
                                     <span className="text-sm">กำลังโหลดรายวิชา...</span>
                                   </div>
                                 ) : subjects.length === 0 ? (
-                                  <p className="text-center text-sm text-gray-400 py-4">ไม่พบรายวิชาในชุดนี้</p>
+                                  <p className="text-center text-sm text-black dark:text-white py-4">ไม่พบรายวิชาในชุดนี้</p>
                                 ) : (
                                   <div className="overflow-x-auto rounded-xl border border-indigo-200 dark:border-indigo-800 text-sm">
                                     <table className="min-w-full text-sm text-left">
@@ -371,11 +371,11 @@ const ScheduleManagement = () => {
                                       <tbody className="divide-y divide-indigo-100 dark:divide-indigo-900">
                                         {subjects.map((subj, idx) => (
                                           <tr key={idx} className="bg-white dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors">
-                                            <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap max-w-[240px] truncate" title={subj.subject_name}>{subj.subject_name}</td>
-                                            <td className="px-4 py-3 text-gray-600 dark:text-gray-400 whitespace-nowrap">{subj.sec}</td>
-                                            <td className="px-4 py-3 text-gray-600 dark:text-gray-400 whitespace-nowrap">{subj.teacher_name ? `${subj.teacher_name} ${subj.teacher_surname}` : '-'}</td>
-                                            <td className="px-4 py-3 text-gray-600 dark:text-gray-400 whitespace-nowrap">{subj.start_time} – {subj.end_time}</td>
-                                            <td className="px-4 py-3 text-gray-600 dark:text-gray-400 whitespace-nowrap">{subj.room_id || '-'}</td>
+                                            <td className="px-4 py-3 font-medium text-black dark:text-white whitespace-nowrap max-w-[240px] truncate" title={subj.subject_name}>{subj.subject_name}</td>
+                                            <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.sec}</td>
+                                            <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.teacher_name ? `${subj.teacher_name} ${subj.teacher_surname}` : '-'}</td>
+                                            <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.start_time} – {subj.end_time}</td>
+                                            <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.room_id || '-'}</td>
                                             <td className="px-4 py-3 text-center">
                                               <div className="flex items-center justify-center gap-1.5">
                                                 <button
@@ -420,19 +420,19 @@ const ScheduleManagement = () => {
               <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[#302782] dark:text-[#B2BB1E]">แก้ไขรายละเอียด</h2>
               <form onSubmit={onSaveEdit}>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">ภาควิชา</label>
-                  <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.department} onChange={(e) => setEditingSchedule({ ...editingSchedule, department: e.target.value })} />
+                  <label className="block text-sm font-medium mb-1 text-black dark:text-white">ภาควิชา</label>
+                  <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.department} onChange={(e) => setEditingSchedule({ ...editingSchedule, department: e.target.value })} />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">ชั้นปี</label>
-                  <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.study_year} onChange={(e) => setEditingSchedule({ ...editingSchedule, study_year: e.target.value })} />
+                  <label className="block text-sm font-medium mb-1 text-black dark:text-white">ชั้นปี</label>
+                  <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.study_year} onChange={(e) => setEditingSchedule({ ...editingSchedule, study_year: e.target.value })} />
                 </div>
                 <div className="mb-6 sm:mb-8">
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">ภาค</label>
-                  <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.program_type} onChange={(e) => setEditingSchedule({ ...editingSchedule, program_type: e.target.value })} />
+                  <label className="block text-sm font-medium mb-1 text-black dark:text-white">ภาค</label>
+                  <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.program_type} onChange={(e) => setEditingSchedule({ ...editingSchedule, program_type: e.target.value })} />
                 </div>
                 <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 w-full">
-                  <button type="button" onClick={() => setIsEditModalOpen(false)} className="w-full sm:w-auto px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">ยกเลิก</button>
+                  <button type="button" onClick={() => setIsEditModalOpen(false)} className="w-full sm:w-auto px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">ยกเลิก</button>
                   <button type="submit" className="w-full sm:w-auto px-5 py-2.5 bg-[#B2BB1E] text-white rounded-xl hover:bg-[#9fa719] transition-colors font-medium shadow-md">บันทึกข้อมูล</button>
                 </div>
               </form>
@@ -455,10 +455,10 @@ const ScheduleManagement = () => {
                   </div>
                 </div>
                 <div className={`p-4 sm:p-5 rounded-xl border flex items-center gap-4 ${previewErrors.length > 0 ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600'}`}>
-                  <AlertCircle className={`${previewErrors.length > 0 ? 'text-red-500' : 'text-gray-400'} w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0`} />
+                  <AlertCircle className={`${previewErrors.length > 0 ? 'text-red-500' : 'text-black'} w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0`} />
                   <div>
-                    <p className={`text-sm font-medium ${previewErrors.length > 0 ? 'text-red-800 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>พบข้อผิดพลาด (ข้ามการบันทึก)</p>
-                    <p className={`text-2xl sm:text-3xl font-bold ${previewErrors.length > 0 ? 'text-red-700 dark:text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>{previewErrors.length} <span className="text-sm sm:text-lg font-normal">รายการ</span></p>
+                    <p className={`text-sm font-medium ${previewErrors.length > 0 ? 'text-red-800 dark:text-red-400' : 'text-black dark:text-white'}`}>พบข้อผิดพลาด (ข้ามการบันทึก)</p>
+                    <p className={`text-2xl sm:text-3xl font-bold ${previewErrors.length > 0 ? 'text-red-700 dark:text-red-500' : 'text-black dark:text-white'}`}>{previewErrors.length} <span className="text-sm sm:text-lg font-normal">รายการ</span></p>
                   </div>
                 </div>
               </div>
@@ -474,7 +474,7 @@ const ScheduleManagement = () => {
                         <th className="px-4 py-3 font-semibold whitespace-nowrap">รายละเอียดข้อผิดพลาด</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-red-100 dark:divide-red-900/20 text-gray-700 dark:text-gray-300">
+                    <tbody className="divide-y divide-red-100 dark:divide-red-900/20 text-black dark:text-white">
                       {previewErrors.map((err, idx) => (
                          <tr key={idx} className="bg-white dark:bg-gray-800">
                           <td className="px-4 py-3 whitespace-nowrap">{err.row}</td>
@@ -489,11 +489,11 @@ const ScheduleManagement = () => {
               )}
 
               <div className="mt-auto pt-4 sm:pt-5 flex flex-col lg:flex-row justify-between items-center gap-4 border-t border-gray-200 dark:border-gray-700">
-                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg w-full lg:w-auto text-center lg:text-left">
+                <p className="text-xs sm:text-sm text-black dark:text-white bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg w-full lg:w-auto text-center lg:text-left">
                   ⚠️ การกดยืนยันจะ <span className="font-bold text-red-600 dark:text-red-400">ลบข้อมูลตารางเดิมทิ้งทั้งหมด</span> แล้วนำชุดใหม่นี้เข้าไปแทนที่
                 </p>
                 <div className="flex flex-col-reverse sm:flex-row gap-3 w-full lg:w-auto">
-                  <button onClick={() => setIsPreviewModalOpen(false)} disabled={isUploading} className="w-full sm:w-auto px-6 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
+                  <button onClick={() => setIsPreviewModalOpen(false)} disabled={isUploading} className="w-full sm:w-auto px-6 py-2.5 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
                     ยกเลิก
                   </button>
                   <button 
@@ -532,12 +532,12 @@ const ScheduleManagement = () => {
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-[#302782] dark:text-[#B2BB1E]">แก้ไขรายวิชา</h2>
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate max-w-[300px]">{editingSubjectData.old_subject_name} (Sec {editingSubjectData.old_sec})</p>
+                  <p className="text-xs text-black dark:text-white mt-0.5 truncate max-w-[300px]">{editingSubjectData.old_subject_name} (Sec {editingSubjectData.old_sec})</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsSubjectEditModalOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-black dark:text-white hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <X size={18} />
               </button>
@@ -549,21 +549,21 @@ const ScheduleManagement = () => {
               {/* แถว 1: ชื่อวิชา + Sec */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ชื่อวิชา</label>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">ชื่อวิชา</label>
                   <input
                     required
                     value={editingSubjectData.subject_name || ''}
                     onChange={(e) => updateSubjectField('subject_name', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sec (หมู่เรียน)</label>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">Sec (หมู่เรียน)</label>
                   <input
                     required
                     value={editingSubjectData.sec || ''}
                     onChange={(e) => updateSubjectField('sec', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
               </div>
@@ -571,21 +571,21 @@ const ScheduleManagement = () => {
               {/* แถว 2: ชื่ออาจารย์ + นามสกุล */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ชื่ออาจารย์</label>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">ชื่ออาจารย์</label>
                   <input
                     required
                     value={editingSubjectData.teacher_name || ''}
                     onChange={(e) => updateSubjectField('teacher_name', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">นามสกุลอาจารย์</label>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">นามสกุลอาจารย์</label>
                   <input
                     required
                     value={editingSubjectData.teacher_surname || ''}
                     onChange={(e) => updateSubjectField('teacher_surname', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
               </div>
@@ -593,11 +593,11 @@ const ScheduleManagement = () => {
               {/* แถว 3: ห้อง + เทอม */}
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ห้อง (room_id)</label>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">ห้อง (room_id)</label>
                   <input
                     value={editingSubjectData.room_id || ''}
                     onChange={(e) => updateSubjectField('room_id', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
               </div>
@@ -605,23 +605,23 @@ const ScheduleManagement = () => {
               {/* แถว 4: เวลาเริ่ม + สิ้นสุด */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">เวลาเริ่ม</label>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">เวลาเริ่ม</label>
                   <input
                     required
                     type="time"
                     value={editingSubjectData.start_time || ''}
                     onChange={(e) => updateSubjectField('start_time', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">เวลาสิ้นสุด</label>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">เวลาสิ้นสุด</label>
                   <input
                     required
                     type="time"
                     value={editingSubjectData.end_time || ''}
                     onChange={(e) => updateSubjectField('end_time', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
               </div>
@@ -629,24 +629,24 @@ const ScheduleManagement = () => {
               {/* แถว 5: วันที่เริ่ม + จำนวนสัปดาห์ */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">วันที่เริ่มเรียน</label>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">วันที่เริ่มเรียน</label>
                   <input
                     required
                     type="date"
                     value={editingSubjectData.date || ''}
                     onChange={(e) => updateSubjectField('date', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">จำนวนสัปดาห์ (repeat)</label>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">จำนวนสัปดาห์ (repeat)</label>
                   <input
                     required
                     type="number"
                     min="1"
                     value={editingSubjectData.repeat || 1}
                     onChange={(e) => updateSubjectField('repeat', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
               </div>
@@ -662,7 +662,7 @@ const ScheduleManagement = () => {
                   type="button"
                   onClick={() => setIsSubjectEditModalOpen(false)}
                   disabled={isSavingSubject}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium text-sm disabled:opacity-50"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium text-sm disabled:opacity-50"
                 >
                   ยกเลิก
                 </button>

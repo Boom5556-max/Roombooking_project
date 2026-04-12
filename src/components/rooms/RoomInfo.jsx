@@ -7,10 +7,10 @@ const InfoRow = ({ label, value, icon: Icon }) => (
     
     {/* Label Section: ใช้ % แทนความกว้างตายตัว เพื่อให้ยืดหยุ่นตามจอ */}
     <div className="flex items-center gap-4 w-full md:w-1/3 lg:w-1/4 shrink-0 mb-3 md:mb-0">
-      <div className="p-3 rounded-[16px] bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E] group-hover:bg-[#302782] dark:group-hover:bg-[#B2BB1E] group-hover:text-white dark:group-hover:text-gray-900 group-hover:scale-110 transition-all duration-300 shadow-sm">
+      <div className="p-3 rounded-[16px] bg-gray-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E] group-hover:bg-[#302782] dark:group-hover:bg-[#B2BB1E] group-hover:text-white dark:group-hover:text-black group-hover:scale-110 transition-all duration-300 shadow-sm">
         <Icon size={22} strokeWidth={2.5} />
       </div>
-      <span className="text-sm sm:text-base font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+      <span className="text-sm sm:text-base font-black text-black dark:text-white uppercase tracking-wider">
         {label}
       </span>
     </div>

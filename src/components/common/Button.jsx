@@ -26,16 +26,16 @@ const Button = ({
     secondary: "bg-[#302782] text-[#FFFFFF] shadow-[0_8px_20px_-8px_rgba(48,39,130,0.4)] hover:shadow-[0_12px_24px_-10px_rgba(48,39,130,0.5)]",
     
     // ปุ่มขอบขาว (Outline-like)
-    danger: "bg-[#FFFFFF] dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600 shadow-sm hover:border-[#302782] hover:text-[#302782] dark:hover:text-white",
+    danger: "bg-[#FFFFFF] dark:bg-gray-700 text-black dark:text-white border border-gray-200 dark:border-gray-600 shadow-sm hover:border-[#302782] hover:text-[#302782] dark:hover:text-white",
     
     // ปุ่มพื้นเทาอ่อน
-    dangerLight: "bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border border-transparent hover:bg-gray-100 dark:hover:bg-gray-600",
+    dangerLight: "bg-gray-50 dark:bg-gray-700 text-black dark:text-white border border-transparent hover:bg-gray-100 dark:hover:bg-gray-600",
     
     // ปุ่ม Ghost (มักใช้กับปุ่มปิดหรือเมนูย่อย)
-    ghost: "bg-transparent hover:bg-gray-50 text-gray-400 hover:text-[#302782]",
+    ghost: "bg-transparent hover:bg-gray-50 text-black dark:text-white hover:text-[#302782]",
     
     // ปุ่มสถานะ Disable/Wait
-    gray: "bg-gray-100 text-gray-400 cursor-not-allowed"
+    gray: "bg-gray-100 text-black dark:text-white cursor-not-allowed"
   };
 
   // 3. Sizes: ปรับขนาดให้เป็น Adaptive 

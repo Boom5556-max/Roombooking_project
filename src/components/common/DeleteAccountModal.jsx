@@ -24,7 +24,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
           <h2 className="text-xl font-black text-[#302782] dark:text-white">ลบบัญชีผู้ใช้</h2>
           <button
             onClick={onClose}
-            className="w-9 h-9 flex items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all"
+            className="w-9 h-9 flex items-center justify-center rounded-full text-black dark:text-white hover:bg-gray-100 hover:text-gray-600 transition-all"
           >
             <X size={20} />
           </button>
@@ -58,7 +58,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
 
         {/* Confirmation Input Section */}
         <div className="px-6 pb-6">
-          <label className="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-bold text-black dark:text-white mb-2">
             พิมพ์{" "}
             <span className="font-black text-[#302782] dark:text-[#B2BB1E] bg-[#302782]/5 dark:bg-[#B2BB1E]/10 px-2 py-0.5 rounded-lg text-xs tracking-wide select-all">
               {confirmText}
@@ -70,7 +70,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={confirmText}
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-500 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 dark:focus:ring-red-500/20 transition-all"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-black dark:text-white placeholder:text-black dark:placeholder:text-white focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 dark:focus:ring-red-500/20 transition-all"
             autoFocus
           />
 
@@ -78,7 +78,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
           <div className="flex gap-3 mt-5">
             <button
               onClick={onClose}
-              className="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all active:scale-95"
+              className="flex-1 py-3 rounded-xl font-bold text-black dark:text-white bg-gray-100 hover:bg-gray-200 transition-all active:scale-95"
             >
               ยกเลิก
             </button>
@@ -90,7 +90,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
               className={`flex-1 py-3 rounded-xl font-bold transition-all active:scale-95 ${
                 isMatch
                   ? "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-200"
-                  : "bg-gray-100 text-gray-300 cursor-not-allowed"
+                  : "bg-gray-100 text-black dark:text-white cursor-not-allowed"
               }`}
             >
               ลบบัญชี

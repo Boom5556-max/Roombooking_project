@@ -52,7 +52,7 @@ const RoomResults = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6 text-center font-sans">
       <div className="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[32px] sm:rounded-[40px] shadow-xl border border-gray-100 dark:border-gray-700 max-w-md w-full">
         <AlertCircle size={64} className="text-red-400 mx-auto mb-6" />
-        <p className="text-gray-500 mb-8 font-bold text-lg leading-relaxed">
+        <p className="text-black dark:text-white mb-8 font-bold text-lg leading-relaxed">
           ไม่พบข้อมูลการค้นหา <br className="hidden sm:block" /> กรุณาเริ่มค้นหาใหม่
         </p>
         <button
@@ -76,7 +76,7 @@ const RoomResults = () => {
           <div className="space-y-4">
             <button
               onClick={() => navigate(-1)}
-              className="group flex items-center gap-2 text-gray-400 hover:text-[#302782] dark:hover:text-[#B2BB1E] font-bold text-xs sm:text-sm transition-colors"
+              className="group flex items-center gap-2 text-black dark:text-white hover:text-[#302782] dark:hover:text-[#B2BB1E] font-bold text-xs sm:text-sm transition-colors"
             >
               <ChevronLeft size={24} className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-1.5 group-hover:bg-gray-50 dark:group-hover:bg-gray-600" />
             </button>
@@ -108,7 +108,7 @@ const RoomResults = () => {
                 
                 <h3 className="text-3xl sm:text-4xl font-black text-[#302782] dark:text-white mb-2">{room.room_id}</h3>
                 
-                <p className="text-gray-400 text-xs sm:text-sm flex items-center gap-2 mb-8 font-bold">
+                <p className="text-black dark:text-white text-xs sm:text-sm flex items-center gap-2 mb-8 font-bold">
                   <MapPin size={16} className="text-[#B2BB1E] shrink-0" />
                   <span className="truncate">{room.location || "คณะวิทยาศาสตร์ ศรีราชา"}</span>
                 </p>
@@ -142,7 +142,7 @@ const RoomResults = () => {
               </h3>
               <button
                 onClick={() => { setSelectedRoom(null); setPurpose(""); }}
-                className="p-2 text-gray-400 hover:text-red-500 font-bold text-3xl transition-colors"
+                className="p-2 text-black dark:text-white hover:text-red-500 font-bold text-3xl transition-colors"
                 aria-label="Close"
               >
                 ×
@@ -152,7 +152,7 @@ const RoomResults = () => {
             <div className="flex-grow overflow-y-auto pr-2 -mr-2 space-y-6 sm:space-y-8 custom-scrollbar">
               <div className="bg-gray-50 dark:bg-white/5 p-5 sm:p-6 rounded-3xl border border-gray-100 dark:border-white/10 grid grid-cols-2 gap-4">
                 <div className="col-span-2 border-b border-gray-200 dark:border-white/10 pb-3 mb-1">
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 font-black uppercase">ห้องที่เลือก</p>
+                  <p className="text-[10px] text-black dark:text-white font-black uppercase">ห้องที่เลือก</p>
                   <p className="text-xl sm:text-2xl font-black text-[#302782] dark:text-white">{selectedRoom.room_id}</p>
                 </div>
                 <InfoDetail label="วันที่" value={searchQuery.date} />
@@ -160,7 +160,7 @@ const RoomResults = () => {
               </div>
 
               <div className="space-y-3">
-                <label className="text-xs font-black text-gray-400 dark:text-gray-500 ml-2 uppercase tracking-widest">วัตถุประสงค์ในการเข้าใช้งาน</label>
+                <label className="text-xs font-black text-black dark:text-white ml-2 uppercase tracking-widest">วัตถุประสงค์ในการเข้าใช้งาน</label>
                 <textarea
                   rows="4"
                   className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-white/10 rounded-2xl sm:rounded-[30px] p-5 sm:p-6 outline-none transition-all font-medium text-[#302782] dark:text-white text-sm sm:text-base resize-none"
@@ -176,7 +176,7 @@ const RoomResults = () => {
                 disabled={isSubmitting || !purpose.trim()}
                 onClick={onBookingClick}
                 className={`w-full py-4 sm:py-5 rounded-2xl sm:rounded-[30px] font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all shadow-lg active:scale-[0.98] ${
-                  isSubmitting || !purpose.trim() ? "bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed" : "bg-[#B2BB1E] text-white hover:bg-[#302782] cursor-pointer"
+                  isSubmitting || !purpose.trim() ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white cursor-not-allowed" : "bg-[#B2BB1E] text-white hover:bg-[#302782] cursor-pointer"
                 }`}
               >
                 {isSubmitting ? "กำลังบันทึก..." : "ยืนยันการจอง"} <Send size={20} />
@@ -209,7 +209,7 @@ const Badge = ({ icon, text }) => (
 
 const InfoBox = ({ label, value, icon }) => (
   <div className="bg-gray-50 dark:bg-white/5 p-3 sm:p-4 rounded-2xl sm:rounded-[28px] border border-gray-100 dark:border-white/10 flex flex-col justify-center overflow-hidden" title={value}>
-    <p className="text-[9px] sm:text-[10px] text-gray-400 dark:text-gray-500 font-black mb-1 uppercase tracking-tighter truncate">{label}</p>
+    <p className="text-[9px] sm:text-[10px] text-black dark:text-white font-black mb-1 uppercase tracking-tighter truncate">{label}</p>
     <div className="text-[#302782] dark:text-white font-black text-xs sm:text-sm lg:text-base flex items-center gap-1.5 w-full overflow-hidden">
       {icon && <div className="shrink-0">{icon}</div>}
       <span className="truncate w-full leading-tight block">{value}</span>
@@ -219,16 +219,15 @@ const InfoBox = ({ label, value, icon }) => (
 
 const InfoDetail = ({ label, value }) => (
   <div>
-    <p className="text-[10px] text-gray-400 dark:text-gray-500 font-black uppercase">{label}</p>
+    <p className="text-[10px] text-black dark:text-white font-black uppercase">{label}</p>
     <p className="text-xs sm:text-sm font-black text-[#302782] dark:text-white">{value}</p>
   </div>
 );
 
 const EmptyState = () => (
   <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-[40px] sm:rounded-[60px] border-2 border-dashed border-gray-200 dark:border-gray-700 px-6 text-center">
-    <SearchX size={56} className="text-gray-200 mb-6" />
     <h2 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white mb-2">ไม่พบห้องว่างตามเงื่อนไข</h2>
-    <p className="text-gray-400 font-bold text-sm sm:text-base">ลองปรับเปลี่ยนเวลาหรือวันที่ค้นหาดูอีกครั้ง</p>
+    <p className="text-black dark:text-white font-bold text-sm sm:text-base">ลองปรับเปลี่ยนเวลาหรือวันที่ค้นหาดูอีกครั้ง</p>
   </div>
 );
 
@@ -246,14 +245,14 @@ const StatusModal = ({ isOpen, status, errorMessage, onClose }) => {
           {isSuccess ? <Check size={40} strokeWidth={3} /> : <AlertCircle size={40} strokeWidth={3} />}
         </div>
         <h3 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white mb-3">{isSuccess ? "จองสำเร็จ!" : "การจองไม่สำเร็จ"}</h3>
-        <p className="text-gray-500 dark:text-gray-400 font-bold text-sm sm:text-base mb-8">
+        <p className="text-black dark:text-white font-bold text-sm sm:text-base mb-8">
           {isSuccess 
             ? (isTeacher ? "คำขอจองถูกส่งแล้ว กรุณารอการอนุมัติ" : "การจองของคุณเสร็จสมบูรณ์") 
             : (errorMessage || "ขออภัย ห้องนี้อาจถูกจองไปแล้วในช่วงเวลานี้")}
         </p>
         <button
           onClick={onClose}
-          className={`w-full py-4 rounded-2xl font-black text-lg shadow-lg active:scale-[0.98] transition-all ${isSuccess ? 'bg-[#302782] text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}
+          className={`w-full py-4 rounded-2xl font-black text-lg shadow-lg active:scale-[0.98] transition-all ${isSuccess ? 'bg-[#302782] text-white' : 'bg-gray-100 dark:bg-gray-700 text-black dark:text-white'}`}
         >
           {isSuccess ? "ตกลง" : "ลองใหม่อีกครั้ง"}
         </button>

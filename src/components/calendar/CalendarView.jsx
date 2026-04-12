@@ -57,7 +57,7 @@ const CalendarView = ({
     } else if (shouldRestore) {
         timeClasses = "bg-[#9CA3AF] text-white";
     } else if (isClosed) {
-        timeClasses = "bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-100 shadow-inner";
+        timeClasses = "bg-gray-200 text-black dark:bg-gray-600 dark:text-white shadow-inner";
     } else {
         // ✨ ใช้พื้นหลังเวลาสีดำโปร่งแสง และตัวหนังสือสีขาว
         timeClasses = "bg-black/20 !text-white font-medium";
@@ -68,9 +68,9 @@ const CalendarView = ({
     if (shouldElevate) {
         titleClasses = "text-[#302782] font-bold"; 
     } else if (shouldRestore) {
-        titleClasses = "text-gray-500 font-bold"; 
+        titleClasses = "text-black dark:text-white font-bold"; 
     } else if (isClosed) {
-        titleClasses = "text-gray-900 dark:text-gray-100";
+        titleClasses = "text-black dark:text-white";
     } else {
         // ✨ บังคับใช้ตัวหนังสือสีขาวเสมอ เพื่อให้อ่านง่ายบนพื้นสีสด
         titleClasses = "!text-white font-bold drop-shadow-sm"; 
@@ -205,16 +205,16 @@ const CalendarView = ({
 
         .fc .fc-toolbar-title { font-weight: 700; color: #302782; }
         .dark .fc .fc-toolbar-title { color: #FFFFFF; }
-        .fc .fc-button-primary { background-color: #FFFFFF !important; color: #6B7280 !important; border: 1px solid #E5E7EB !important; border-radius: 10px !important; font-weight: 600 !important; }
-        .dark .fc .fc-button-primary { background-color: #374151 !important; color: #D1D5DB !important; border: 1px solid #4B5563 !important; }
+        .fc .fc-button-primary { background-color: #FFFFFF !important; color: #000000 !important; border: 1px solid #E5E7EB !important; border-radius: 10px !important; font-weight: 600 !important; }
+        .dark .fc .fc-button-primary { background-color: #374151 !important; color: #FFFFFF !important; border: 1px solid #4B5563 !important; }
         .fc .fc-next-button, .fc .fc-timeGridWeek-button { margin-left: 8px !important; }
         .fc .fc-button-primary.fc-button-active { background-color: #302782 !important; color: #FFFFFF !important; border-color: #302782 !important; }
         .dark .fc .fc-button-primary.fc-button-active { background-color: #B2BB1E !important; color: #FFFFFF !important; border-color: #B2BB1E !important; }
         .fc .fc-today-button { background-color: #B2BB1E !important; color: #FFFFFF !important; border: none !important; margin-left: 12px !important; }
         .fc-theme-standard td, .fc-theme-standard th { border-color: #F1F5F9 !important; }
         .dark .fc-theme-standard td, .dark .fc-theme-standard th { border-color: #374151 !important; }
-        .fc-daygrid-day-number { color: #475569 !important; font-weight: 700 !important; }
-        .dark .fc-daygrid-day-number { color: #D1D5DB !important; }
+        .fc-daygrid-day-number { color: #000000 !important; font-weight: 700 !important; }
+        .dark .fc-daygrid-day-number { color: #FFFFFF !important; }
         .fc-daygrid-event-dot { display: none !important; }
 
         .dark {
@@ -247,7 +247,7 @@ const CalendarView = ({
         }
         .dark .fc-timegrid-axis-cushion, 
         .dark .fc-timegrid-slot-label-cushion {
-          color: #D1D5DB !important;
+          color: #FFFFFF !important;
         }
 
         .dark .fc-scroller::-webkit-scrollbar {

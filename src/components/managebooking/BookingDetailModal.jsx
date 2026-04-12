@@ -61,14 +61,14 @@ const BookingDetailModal = ({
 
     return (
       <div className="flex flex-col gap-2 w-full font-sans group relative">
-        <label className="text-xs font-medium text-gray-400 ml-1">{label}</label>
+        <label className="text-xs font-medium text-black dark:text-white ml-1">{label}</label>
         <details className="group/dropdown w-full" id={`dropdown-${key}`}>
           <summary className="list-none outline-none cursor-pointer">
             <div className="relative flex items-center">
-              <ClockIcon size={18} className="absolute left-4 text-gray-400 group-focus-within/dropdown:text-[#B2BB1E] transition-colors z-10" />
+              <ClockIcon size={18} className="absolute left-4 text-black dark:text-white group-focus-within/dropdown:text-[#B2BB1E] transition-colors z-10" />
               <div className="w-full pl-11 pr-10 py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 text-base font-bold text-[#302782] dark:text-white flex justify-between items-center group-hover:border-[#B2BB1E]/50 transition-all">
                 <span>{editForm[key] ? `${editForm[key]} น.` : "เลือกเวลา"}</span>
-                <ChevronRight size={18} className="text-gray-400 rotate-90 group-open/dropdown:-rotate-90 transition-transform" />
+                <ChevronRight size={18} className="text-black dark:text-white rotate-90 group-open/dropdown:-rotate-90 transition-transform" />
               </div>
             </div>
           </summary>
@@ -102,7 +102,7 @@ const BookingDetailModal = ({
           <h3 className="text-2xl font-black text-[#302782] dark:text-white">
             {isEditing ? "แก้ไขข้อมูลจอง" : `ห้อง ${booking.room_id}`}
           </h3>
-          <button onClick={onClose} className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 transition-all active:scale-90">
+          <button onClick={onClose} className="p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-black dark:text-white transition-all active:scale-90">
             <X size={20}/>
           </button>
         </div>
@@ -191,7 +191,7 @@ const ActionButtons = ({ userRole, booking, onUpdateStatus, onCancel, onBan, onE
     return (
       <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
         <div>
-          <label className="block text-sm font-bold text-[#302782] dark:text-gray-300 mb-2 ml-1">
+          <label className="block text-sm font-bold text-[#302782] dark:text-white mb-2 ml-1">
             {config.title} <span className="text-red-500">*</span>
           </label>
           <TextAreaField 

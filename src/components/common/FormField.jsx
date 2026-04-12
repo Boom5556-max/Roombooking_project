@@ -12,14 +12,14 @@ export const FormField = ({
     <div className={`flex flex-col gap-1.5 sm:gap-2 font-sans w-full ${className}`}>
       {/* Label Section */}
       <div className="flex items-center justify-between px-1">
-        <label className="text-[13px] sm:text-sm font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
+        <label className="text-[13px] sm:text-sm font-bold text-black dark:text-white flex items-center gap-1">
           {label}
           {required && <span className="text-red-500 font-black text-lg leading-none">*</span>}
         </label>
         
         {/* Optional Description (Small hint) */}
         {description && !error && (
-          <span className="text-[10px] sm:text-xs text-gray-400 font-medium">
+          <span className="text-[10px] sm:text-xs text-black dark:text-white font-medium">
             {description}
           </span>
         )}

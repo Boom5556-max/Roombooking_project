@@ -23,15 +23,15 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
       <div className="relative flex-1 min-w-0">
         <details className="group" id={`time-dropdown-${key}`}>
           <summary className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-5 flex items-center justify-between text-[#302782] dark:text-white outline-none text-sm font-bold cursor-pointer list-none focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 transition-all">
-            <Clock className="absolute left-4 text-black dark:text-gray-400" size={20} />
+            <Clock className="absolute left-4 text-black dark:text-white" size={20} />
             <span className="truncate">{searchQuery[key] || label}</span>
-            <ArrowRight size={16} className="rotate-90 text-black dark:text-gray-400 group-open:-rotate-90 transition-transform flex-shrink-0" />
+            <ArrowRight size={16} className="rotate-90 text-black dark:text-white group-open:-rotate-90 transition-transform flex-shrink-0" />
           </summary>
           <ul className="absolute left-0 top-[calc(100%+8px)] w-full max-h-[220px] overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl z-50 py-2 border border-gray-200 dark:border-gray-700">
             {availableTimes.map((t) => (
               <li 
                 key={t} 
-                className="px-5 py-3 text-[#302782] dark:text-gray-200 text-sm font-bold hover:bg-[#B2BB1E] hover:text-white cursor-pointer transition-colors"
+                className="px-5 py-3 text-[#302782] dark:text-white text-sm font-bold hover:bg-[#B2BB1E] hover:text-white cursor-pointer transition-colors"
                 onClick={() => {
                   setSearchQuery({ ...searchQuery, [key]: t });
                   document.getElementById(`time-dropdown-${key}`).removeAttribute("open");
@@ -58,7 +58,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
           <div>
             <h3 className="text-xl font-black text-[#302782] dark:text-white leading-tight">ค้นหาห้องว่าง</h3>
             {/* แก้ไขคลาสที่พิมพ์ตกหล่น และปรับสี dark mode ให้อ่านง่าย */}
-            <p className="text-black dark:text-gray-300 text-xs font-medium mt-1">ระบุเวลาและจำนวนคนเพื่อกรองห้อง</p>
+            <p className="text-black dark:text-white text-xs font-medium mt-1">ระบุเวลาและจำนวนคนเพื่อกรองห้อง</p>
           </div>
         </div>
         
@@ -67,9 +67,9 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
           {/* แถวที่ 1: วันที่ & จำนวนนิสิต */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-black dark:text-gray-300 ml-2 uppercase tracking-wide">วันที่เข้าใช้งาน</label>
+              <label className="text-[11px] font-black text-black dark:text-white ml-2 uppercase tracking-wide">วันที่เข้าใช้งาน</label>
               <div className="relative">
-                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-gray-400" size={20} />
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-white" size={20} />
                 <input 
                   type="date" 
                   required 
@@ -81,15 +81,15 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-black dark:text-gray-300 ml-2 uppercase tracking-wide">จำนวนนิสิต</label>
+              <label className="text-[11px] font-black text-black dark:text-white ml-2 uppercase tracking-wide">จำนวนนิสิต</label>
               <div className="relative">
-                <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-gray-400" size={18} />
+                <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-white" size={18} />
                 <input 
                   type="number" 
                   min="1" 
                   max="200" 
                   placeholder="เช่น 50" 
-                  className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-4 text-[#302782] dark:text-white outline-none font-bold transition-all placeholder:text-black/50 dark:placeholder:text-gray-400"
+                  className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-4 text-[#302782] dark:text-white outline-none font-bold transition-all placeholder:text-black dark:placeholder:text-white/30"
                   onKeyDown={(e) => {
                     if (["-", "+", "e", "E", "."].includes(e.key)) {
                       e.preventDefault();
@@ -110,11 +110,11 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
 
           {/* แถวที่ 2: ช่วงเวลา */}
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-black dark:text-gray-300 ml-2 uppercase tracking-wide">ช่วงเวลา (เวลาเริ่ม - สิ้นสุด)</label>
+            <label className="text-[11px] font-black text-black dark:text-white ml-2 uppercase tracking-wide">ช่วงเวลา (เวลาเริ่ม - สิ้นสุด)</label>
             <div className="flex flex-col sm:flex-row gap-3">
               {renderTimeDropdown("start_time")}
               {/* ขีดกลางคั่นเวลา */}
-              <div className="hidden sm:flex items-center justify-center text-black dark:text-gray-400 font-black">
+              <div className="hidden sm:flex items-center justify-center text-black dark:text-white font-black">
                 -
               </div>
               {renderTimeDropdown("end_time")}

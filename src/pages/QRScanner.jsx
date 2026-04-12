@@ -49,7 +49,7 @@ const QRScanner = () => {
                 <div className="w-full h-full relative">
                   {!isCameraActive ? (
                     <div className="flex flex-col items-center justify-center h-full w-full bg-black z-10 absolute inset-0">
-                      <Camera size={48} className="text-gray-500 mb-4" />
+                      <Camera size={48} className="text-black dark:text-white mb-4" />
                       <button 
                         onClick={startCamera} 
                         className="bg-[#302782] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#251f66] transition-colors active:scale-[0.98] flex items-center gap-2"
@@ -72,7 +72,7 @@ const QRScanner = () => {
               {isScanningFile && <LoadingOverlay />}
             </div>
             
-            <p className="text-center mt-6 text-gray-400 text-xs sm:text-sm font-medium animate-pulse">
+            <p className="text-center mt-6 text-black dark:text-white text-xs sm:text-sm font-medium animate-pulse">
               {activeTab === "camera" ? "วาง QR Code ให้อยู่ในกรอบ" : "เลือกรูปภาพที่มี QR Code"}
             </p>
           </div>
@@ -104,7 +104,7 @@ const TabButton = ({ active, onClick, icon, label }) => (
     size="none"
     onClick={onClick}
     className={`flex-1 flex justify-center items-center py-3 sm:py-3.5 rounded-xl text-xs font-bold gap-2 transition-all duration-200 ${
-      active ? "bg-[#302782] shadow-md text-white scale-100" : "text-gray-500 hover:bg-gray-50 scale-95"
+      active ? "bg-[#302782] shadow-md text-white scale-100" : "text-black dark:text-white hover:bg-gray-50 scale-95"
     }`}
   >
     {icon}
@@ -119,7 +119,7 @@ const GalleryUpload = ({ onFileChange, disabled }) => (
     </div>
     <div className="text-center px-4">
       <p className="text-[#302782] dark:text-white font-bold text-sm sm:text-base">อัปโหลดรูปภาพ</p>
-      <p className="text-gray-400 text-[10px] sm:text-xs mt-1">รองรับ JPG, PNG</p>
+      <p className="text-black dark:text-white text-[10px] sm:text-xs mt-1">รองรับ JPG, PNG</p>
     </div>
     <input 
       type="file" 

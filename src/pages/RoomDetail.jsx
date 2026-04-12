@@ -20,7 +20,7 @@ const RoomDetail = () => {
     <div className="min-h-screen bg-[#FFFFFF] dark:bg-gray-900 flex flex-col items-center justify-center p-6 text-center font-sans">
       <div className="bg-red-50 p-8 rounded-[40px] max-w-md mx-auto">
         <AlertTriangle className="text-red-500 mx-auto mb-4" size={64} />
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-700 dark:text-gray-200 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-black dark:text-white mb-6">
           {error || "ไม่พบข้อมูลห้องเรียนนี้"}
         </h2>
         <Button 
@@ -59,8 +59,8 @@ const RoomDetail = () => {
           {/* Room Card */}
           <div className="bg-gray-50 dark:bg-gray-700 rounded-[30px] sm:rounded-[40px] p-6 sm:p-10 lg:p-12 mt-2 flex flex-col items-center min-h-[450px] sm:min-h-[500px] border border-gray-100 dark:border-gray-600 shadow-sm">
             
-            <h2 className="text-gray-600 dark:text-gray-300 text-xl sm:text-3xl font-black mb-8 sm:mb-12 text-center leading-tight">
-              {room.name || "ไม่ระบุชื่อห้อง"} <span className="text-gray-200 dark:text-gray-500 hidden sm:inline mx-2">|</span> <br className="sm:hidden" /> <span className="text-[#302782] dark:text-[#B2BB1E]">{room.id || id}</span>
+            <h2 className="text-black dark:text-white text-xl sm:text-3xl font-black mb-8 sm:mb-12 text-center leading-tight">
+              {room.name || "ไม่ระบุชื่อห้อง"} <span className="text-black dark:text-white hidden sm:inline mx-2">|</span> <br className="sm:hidden" /> <span className="text-[#302782] dark:text-[#B2BB1E]">{room.id || id}</span>
             </h2>
 
             {/* ส่วนข้อมูลห้อง */}
@@ -78,13 +78,13 @@ const RoomDetail = () => {
               <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {room.facilities && room.facilities.length > 0 ? (
                   room.facilities.map((item, index) => (
-                    <div key={index} className="flex items-center gap-3 text-gray-600 dark:text-gray-300 font-bold text-sm sm:text-base bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                    <div key={index} className="flex items-center gap-3 text-black dark:text-white font-bold text-sm sm:text-base bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
                       <CheckCircle2 size={20} className="text-[#B2BB1E] shrink-0" />
                       <span className="truncate">{item}</span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-400 text-sm">ไม่มีข้อมูลสิ่งอำนวยความสะดวก</p>
+                  <p className="text-black dark:text-white text-sm">ไม่มีข้อมูลสิ่งอำนวยความสะดวก</p>
                 )}
               </div>
             </div>
@@ -111,7 +111,7 @@ const RoomDetail = () => {
                   <Button 
                     variant="secondary" 
                     onClick={() => navigate(`/calendar/${room.id || id}`)} 
-                    className="w-full text-base sm:text-lg font-bold py-4 rounded-[20px] shadow-sm hover:shadow-md active:scale-95 transition-all bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-gray-600 dark:text-gray-300"
+                    className="w-full text-base sm:text-lg font-bold py-4 rounded-[20px] shadow-sm hover:shadow-md active:scale-95 transition-all bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-black dark:text-white"
                   >
                     ตรวจสอบตาราง
                   </Button>

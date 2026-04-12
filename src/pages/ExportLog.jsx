@@ -325,7 +325,7 @@ const ExportLog = () => {
                 <h2 className="text-base font-black text-[#302782] dark:text-white">
                   ส่งออกรายงาน Excel
                 </h2>
-                <p className="text-xs text-gray-400 leading-relaxed mt-0.5">
+                <p className="text-xs text-black leading-relaxed mt-0.5">
                   เลือกช่วงวันที่เพื่อสร้างรายงานสรุปการจอง
                 </p>
               </div>
@@ -344,7 +344,7 @@ const ExportLog = () => {
             {/* Date Inputs — side by side */}
             <div className="grid grid-cols-2 gap-3 mb-5">
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                <label className="text-xs font-medium text-black dark:text-white flex items-center gap-1">
                   <CalendarRange size={12} />
                   วันที่เริ่มต้น
                 </label>
@@ -358,7 +358,7 @@ const ExportLog = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                <label className="text-xs font-medium text-black dark:text-white flex items-center gap-1">
                   <CalendarRange size={12} />
                   วันที่สิ้นสุด
                 </label>
@@ -413,7 +413,7 @@ const ExportLog = () => {
               <p className="text-xs font-semibold text-[#302782] dark:text-[#B2BB1E] mb-1.5">
                 ไฟล์ที่สร้างจะประกอบด้วย
               </p>
-              <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1 font-semibold">
+              <ul className="text-xs text-black dark:text-white space-y-1 font-semibold">
                 <li className="flex items-center gap-2">
                   <span className="w-1 h-1 rounded-full bg-[#B2BB1E] shrink-0" />
                   Sheet 1: สรุปข้อมูล Dashboard
@@ -443,7 +443,7 @@ const ExportLog = () => {
                 <h2 className="text-base font-black text-[#302782] dark:text-white">
                   กำหนดวันที่ของแต่ละเทอม
                 </h2>
-                <p className="text-xs text-gray-400 leading-relaxed mt-0.5">
+                <p className="text-xs text-black leading-relaxed mt-0.5">
                   ระบุวันที่เริ่มต้นของแต่ละภาคเรียน
                 </p>
               </div>
@@ -548,7 +548,7 @@ const ExportLog = () => {
                   <p className="text-xs font-semibold text-[#302782] dark:text-[#B2BB1E] mb-1.5">
                     หมายเหตุ
                   </p>
-                  <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1 font-semibold">
+                  <ul className="text-xs text-black dark:text-white space-y-1 font-semibold">
                     <li className="flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full bg-[#B2BB1E] shrink-0" />
                       วันที่จะถูกใช้สำหรับระบบจัดตารางเรียนอัตโนมัติ

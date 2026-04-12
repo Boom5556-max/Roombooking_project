@@ -17,7 +17,7 @@ const LoadingSpinner = ({ text = "กำลังโหลด...", fullPage = fa
         style={{ animation: "mascot-spin 1.2s linear infinite" }}
       />
       {text && (
-        <p className="text-sm sm:text-base font-medium text-gray-400 dark:text-gray-500">
+        <p className="text-sm sm:text-base font-medium text-black dark:text-white">
           {text}
         </p>
       )}

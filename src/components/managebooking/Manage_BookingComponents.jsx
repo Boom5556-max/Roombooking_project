@@ -27,7 +27,7 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
     },
     cancelled: {
       borderColor: "border-gray-100 dark:border-gray-600",
-      statusColor: "text-gray-400 dark:text-gray-400",
+      statusColor: "text-black dark:text-white",
       bgColor: "bg-gray-100 dark:bg-gray-700/50",
       Icon: XCircle,
       label: "ยกเลิกแล้ว"
@@ -57,7 +57,7 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
       <div className="flex-grow min-w-0">
         <div className="flex items-center justify-between mb-0.5 sm:mb-1">
           <h3 className="font-black text-base sm:text-lg text-[#302782] dark:text-white truncate flex items-center gap-2">
-            <span className="text-gray-300"></span>{req.room_id || "---"}
+            <span className="text-black dark:text-white"></span>{req.room_id || "---"}
           </h3>
           
           {/* Badge */}
@@ -67,18 +67,18 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
         </div>
         
         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-          <p className="text-xs sm:text-sm font-bold text-gray-500 truncate">
+          <p className="text-xs sm:text-sm font-bold text-black dark:text-white truncate">
             {getFullName(req)}
           </p>
-          <span className="hidden sm:inline text-gray-200">•</span>
-          <p className="text-[10px] sm:text-xs font-medium text-gray-400">
+          <span className="hidden sm:inline text-black dark:text-white">•</span>
+          <p className="text-[10px] sm:text-xs font-medium text-black dark:text-white">
             {req.date ? new Date(req.date).toLocaleDateString('th-TH') : "ไม่ระบุวันที่"}
           </p>
         </div>
       </div>
       
       {/* Arrow Icon */}
-      <div className="hidden sm:flex w-10 h-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-600 text-gray-300 group-hover:text-[#302782] dark:group-hover:text-[#B2BB1E] group-hover:bg-gray-100 dark:group-hover:bg-gray-500 transition-all">
+      <div className="hidden sm:flex w-10 h-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-600 text-black dark:text-white group-hover:text-[#302782] dark:group-hover:text-[#B2BB1E] group-hover:bg-gray-100 dark:group-hover:bg-gray-500 transition-all">
         <ChevronRight size={20} strokeWidth={3} />
       </div>
     </div>
@@ -107,7 +107,7 @@ export const DetailItem = ({ icon: Icon, label, value }) => (
       <Icon size={20} strokeWidth={2.5} />
     </div>
     <div className="min-w-0">
-      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">
+      <p className="text-[10px] font-black text-black dark:text-white uppercase tracking-widest mb-0.5">
         {label}
       </p>
       <p className="text-sm sm:text-base font-bold text-[#302782] dark:text-white leading-tight truncate">
@@ -120,16 +120,16 @@ export const DetailItem = ({ icon: Icon, label, value }) => (
 // 4. EditField: ฟิลด์กรอกข้อมูล (ใช้ร่วมกับ Input หลัก)
 export const EditField = ({ label, value, onChange, type = "text", icon: Icon, ...props }) => (
   <div className="flex flex-col gap-2 w-full font-sans group">
-    <label className="text-xs font-medium text-gray-400 ml-1">
+    <label className="text-xs font-medium text-black dark:text-white ml-1">
       {label}
     </label>
     <div className="relative flex items-center">
-      {Icon && <Icon size={18} className="absolute left-4 text-gray-400 group-focus-within:text-[#B2BB1E] transition-colors" />}
+      {Icon && <Icon size={18} className="absolute left-4 text-black dark:text-white group-focus-within:text-[#B2BB1E] transition-colors" />}
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 text-base font-bold text-[#302782] dark:text-white transition-all placeholder:text-gray-300`}
+        className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 text-base font-bold text-[#302782] dark:text-white transition-all placeholder:text-black dark:placeholder:text-white/30`}
         {...props}
       />
     </div>
@@ -140,19 +140,19 @@ export const EditField = ({ label, value, onChange, type = "text", icon: Icon, .
 export const TextAreaField = ({ label, value, onChange, placeholder, icon: Icon, ...props }) => (
   <div className="flex flex-col gap-2 w-full font-sans group">
     {label && (
-      <label className="text-xs font-medium text-gray-400 ml-1">
+      <label className="text-xs font-medium text-black dark:text-white ml-1">
         {label}
       </label>
     )}
     <div className="relative flex">
       {/* ปรับตำแหน่งไอคอนให้อยู่ด้านบนซ้ายของกล่องข้อความ */}
-      {Icon && <Icon size={18} className="absolute left-4 top-[18px] text-gray-400 group-focus-within:text-[#B2BB1E] transition-colors" />}
+      {Icon && <Icon size={18} className="absolute left-4 top-[18px] text-black dark:text-white group-focus-within:text-[#B2BB1E] transition-colors" />}
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         // เพิ่ม resize-none ไม่ให้ดึงยืดได้, กำหนดความสูงเริ่มต้น (min-h-[100px]) และการจัดการ Scrollbar
-        className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 text-base font-bold text-[#302782] dark:text-white transition-all placeholder:text-gray-300 resize-none min-h-[110px] custom-scrollbar`}
+        className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 text-base font-bold text-[#302782] dark:text-white transition-all placeholder:text-black dark:placeholder:text-white/30 resize-none min-h-[110px] custom-scrollbar`}
         {...props}
       />
     </div>

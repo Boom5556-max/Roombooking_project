@@ -112,10 +112,10 @@ const RoomStatus = () => {
               </div>
               
               <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-1 bg-gray-50 sm:bg-transparent px-4 py-2 sm:p-0 rounded-2xl w-full sm:w-auto border border-gray-100 sm:border-0">
-                <p className="text-[10px] sm:text-xs font-black text-gray-400 uppercase tracking-widest">
+                <p className="text-[10px] sm:text-xs font-black text-black dark:text-white uppercase tracking-widest">
                   Update
                 </p>
-                <span className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">
+                <span className="text-xs sm:text-sm font-bold text-black dark:text-white">
                   {formatDate(roomData.date)}
                 </span>
               </div>
@@ -136,7 +136,7 @@ const RoomStatus = () => {
             <section className="space-y-6">
               <div className="flex items-center gap-4 px-2">
                 <div className="h-0.5 flex-grow bg-gray-100 rounded-full" />
-                <h4 className="text-[10px] sm:text-xs font-black text-gray-400 whitespace-nowrap uppercase tracking-[0.2em]">
+                <h4 className="text-[10px] sm:text-xs font-black text-black dark:text-white whitespace-nowrap uppercase tracking-[0.2em]">
                   {isAvailable ? "ตารางการใช้ห้องวันนี้" : "รายการจองถัดไป"}
                 </h4>
                 <div className="h-0.5 flex-grow bg-gray-100 rounded-full" />
@@ -169,9 +169,9 @@ const RoomStatus = () => {
 const EmptyScheduleState = ({ isAvailable }) => (
   <div className="py-16 text-center bg-gray-50 dark:bg-gray-700/50 rounded-[40px] border-2 border-dashed border-gray-100 dark:border-gray-600 flex flex-col items-center justify-center group">
     <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm transition-transform group-hover:rotate-12">
-       <CalendarIcon size={32} className="text-gray-300" />
+       <CalendarIcon size={32} className="text-black dark:text-white" />
     </div>
-    <p className="text-gray-400 font-bold text-sm sm:text-base px-6">
+    <p className="text-black dark:text-white font-bold text-sm sm:text-base px-6">
       {isAvailable ? "วันนี้ไม่มีรายการจองเพิ่มเติม" : "ไม่มีรายการจองถัดไปต่อจากนี้"}
     </p>
     

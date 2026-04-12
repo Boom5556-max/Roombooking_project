@@ -57,7 +57,7 @@ const EventModal = ({ event, onClose }) => {
             </div>
             รายละเอียด
           </h3>
-          <button onClick={onClose} className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-gray-400 transition-colors active:scale-90">
+          <button onClick={onClose} className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full text-black dark:text-white transition-colors active:scale-90">
             <X size={20} />
           </button>
         </div>
@@ -65,7 +65,7 @@ const EventModal = ({ event, onClose }) => {
         {/* Content Section */}
         <div className="p-6 sm:p-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
           <div className="mb-8">
-            <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+            <p className="text-[10px] sm:text-xs font-bold text-black dark:text-white uppercase tracking-widest mb-2">
               {props.booking_id ? "รายการจองห้อง" : "วิชา / วัตถุประสงค์"}
             </p>
             <h4 className="text-[#302782] dark:text-white font-extrabold text-xl sm:text-2xl leading-tight">
@@ -92,7 +92,7 @@ const EventModal = ({ event, onClose }) => {
                 <Clock size={20} />
               </div>
               <div className="pt-0.5">
-                <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-1">วันและเวลา</p>
+                <p className="text-[10px] sm:text-xs font-bold text-black dark:text-white uppercase mb-1">วันและเวลา</p>
                 <p className="text-sm sm:text-base font-bold text-[#302782] dark:text-white">
                   {formattedDate}
                 </p>
@@ -138,7 +138,7 @@ const InfoRow = ({ icon, label, value, color = "text-[#302782]" }) => {
         {icon}
       </div>
       <div className="pt-0.5">
-        <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase mb-1">{label}</p>
+        <p className="text-[10px] sm:text-xs font-bold text-black dark:text-white uppercase mb-1">{label}</p>
         <p className={`text-sm sm:text-base font-bold ${isSpecialColor ? 'text-[#302782] dark:text-white' : defaultSyncedColor}`}>
           {value}
         </p>

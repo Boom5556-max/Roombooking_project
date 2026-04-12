@@ -172,7 +172,7 @@ const Rooms = () => {
               <Button
                 variant="ghost"
                 onClick={() => navigate(-1)}
-                className="flex items-center gap-2 text-gray-500 hover:text-[#302782] dark:text-gray-400 dark:hover:text-white transition-colors p-0 font-bold"
+                className="flex items-center gap-2 text-black dark:text-white hover:text-[#302782] transition-colors p-0 font-bold"
               >
                 <div className="bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                   <ChevronLeft size={32} />
@@ -258,7 +258,7 @@ const Rooms = () => {
                             <h2 className="text-xl font-black text-[#302782] dark:text-white">
                               {building}
                             </h2>
-                            <p className="text-sm text-gray-400 font-medium">
+                            <p className="text-sm text-black dark:text-white font-medium">
                               {buildingRooms.length} รายการห้องเรียน
                             </p>
                           </div>
@@ -281,9 +281,9 @@ const Rooms = () => {
                   <div className="bg-white dark:bg-gray-800 rounded-[40px] p-20 text-center border-2 border-dashed border-gray-100">
                     <LayoutGrid
                       size={64}
-                      className="mx-auto text-gray-200 mb-4"
+                      className="mx-auto text-black dark:text-white mb-4"
                     />
-                    <p className="text-gray-400 font-bold">
+                    <p className="text-black dark:text-white font-bold">
                       ไม่พบข้อมูลห้องเรียนในระบบ
                     </p>
                   </div>
