@@ -82,7 +82,15 @@ const BookingRoom = () => {
       <div className="bg-white dark:bg-gray-800 w-full max-w-xl min-h-screen sm:min-h-0 rounded-[32px] sm:rounded-[40px] shadow-2xl overflow-hidden relative border border-gray-100 dark:border-gray-700 transition-all">
         
         {/* Header Section */}
-        <div className="px-6 py-8 sm:px-10 sm:pt-10 sm:pb-6 flex justify-between items-center border-b border-gray-50 dark:border-gray-700 bg-white dark:bg-gray-800 sticky top-0 z-10">
+        <div className="px-6 py-8 sm:px-10 sm:pt-10 sm:pb-6 flex items-center gap-6 bg-white dark:bg-gray-800 sticky top-0 z-10 border-b border-gray-50 dark:border-gray-700">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm flex items-center justify-center group"
+            title="ย้อนกลับ"
+          >
+            <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+          </button>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#302782] dark:text-white tracking-tight">
               จองห้องเรียน
@@ -91,13 +99,6 @@ const BookingRoom = () => {
               กรุณาระบุรายละเอียดการเข้าใช้งาน
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-red-50 hover:text-red-500 rounded-full text-black dark:text-white transition-all duration-200"
-          >
-            <X size={22} />
-          </button>
         </div>
 
         {/* Form Section */}

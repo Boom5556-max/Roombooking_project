@@ -91,12 +91,12 @@ const CalendarView = ({
         ></span>
         
         {/* 🟢 ปรับเวลาให้ใหญ่ขึ้น: ใช้ text-[11px] สำหรับจอมือถือ และ sm:text-[0.9rem] สำหรับจอคอม */}
-        <span className={`fc-event-time-bold text-[11px] sm:text-[0.9rem] rounded px-1.5 py-0.5 ${timeClasses}`}>
+        <span className={`fc-event-time-bold text-[11px] sm:text-[0.9rem] flex-shrink-0 rounded px-1.5 py-0.5 ${timeClasses}`}>
           {eventInfo.timeText}
         </span>
         
         {/* 🟢 ปรับชื่อวิชาให้ใหญ่ขึ้น: ใช้ text-[13px] สำหรับจอมือถือ และ sm:text-[1rem] สำหรับจอคอม */}
-        <span className={`fc-event-title-light text-[13px] sm:text-[1rem] overflow-hidden text-ellipsis whitespace-nowrap ${titleClasses}`}>
+        <span className={`fc-event-title-light text-[13px] sm:text-[1rem] w-full flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap ${titleClasses}`}>
           {isClosed ? ` ${eventInfo.event.title}` : eventInfo.event.title}
         </span>
       </div>

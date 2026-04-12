@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react"; 
+import { ChevronLeft } from "lucide-react"; 
 import { useAuth } from "../hooks/useAuth";
 import LoginForm from "../components/auth/LoginForm";
 import Loginpic from "../components/auth/Loginpic.jsx";
@@ -37,9 +37,13 @@ return (
         
         {/* Header ย่อขนาดลงบนแท็บเล็ต */}
         <div className="h-16 flex items-center px-6 md:px-10 flex-shrink-0">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2.5 text-black dark:text-white hover:text-[#302782] dark:hover:text-[#B2BB1E] transition-all font-bold text-sm group">
-            <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded-xl group-hover:bg-[#302782]/10 dark:group-hover:bg-[#B2BB1E]/10 transition-all">
-              <ArrowLeft size={18} />
+          <button 
+            onClick={() => navigate("/")} 
+            className="flex items-center gap-2.5 text-black dark:text-white hover:text-[#302782] dark:hover:text-[#B2BB1E] transition-all font-bold text-sm group"
+            title="กลับไปหน้าหลัก"
+          >
+            <div className="p-2.5 bg-gray-50 dark:bg-gray-800 rounded-xl group-hover:bg-[#302782]/10 dark:group-hover:bg-[#B2BB1E]/10 transition-all active:scale-90 shadow-sm flex items-center justify-center">
+              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
             </div>
             <span>กลับไปหน้าสแกน</span>
           </button>

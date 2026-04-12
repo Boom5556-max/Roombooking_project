@@ -72,21 +72,22 @@ const RoomResults = () => {
       <div className="p-4 sm:p-6 md:p-10 flex-grow max-w-7xl mx-auto w-full">
         
         {/* Header Section */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8 sm:mb-12">
-          <div className="space-y-4">
-            <button
-              onClick={() => navigate(-1)}
-              className="group flex items-center gap-2 text-black dark:text-white hover:text-[#302782] dark:hover:text-[#B2BB1E] font-bold text-xs sm:text-sm transition-colors"
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 sm:mb-12">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => navigate(-1)} 
+              className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
+              title="ย้อนกลับ"
             >
-              <ChevronLeft size={24} className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-1.5 group-hover:bg-gray-50 dark:group-hover:bg-gray-600" />
+              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
             </button>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#302782] dark:text-white leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#302782] dark:text-white leading-tight">
               ห้องที่ว่าง <span className="text-[#B2BB1E]">ในเวลานี้</span>
             </h1>
           </div>
           
           {/* Query Badges - Responsive Flex */}
-          <div className="flex flex-wrap gap-2 sm:gap-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md p-2 sm:p-3 rounded-2xl sm:rounded-3xl border border-white dark:border-gray-700 shadow-sm self-start lg:self-end">
+          <div className="flex flex-wrap gap-2 sm:gap-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md p-2 sm:p-3 rounded-2xl sm:rounded-3xl border border-white dark:border-gray-700 shadow-sm">
             <Badge icon={<Calendar size={14} />} text={searchQuery.date} />
             <Badge icon={<Clock size={14} />} text={`${searchQuery.start_time} - ${searchQuery.end_time} น.`} />
           </div>

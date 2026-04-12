@@ -27,7 +27,7 @@ const InputField = ({ label, icon: Icon, error, ...props }) => {
           font-bold rounded-[16px] sm:rounded-[20px] 
           py-4 sm:py-5 min-h-[56px] /* เพิ่ม min-h เพื่อความชัวร์บน Tablet */
           outline-none transition-all duration-300
-          placeholder:text-black placeholder:dark:text-white placeholder:font-medium
+          placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:font-medium
           border-2 scroll-margin-top-[120px] /* เพิ่มส่วนนี้เพื่อช่วยเรื่องคีย์บอร์ดบัง */
           ${Icon ? "pl-14 pr-6" : "px-6"}
           ${

@@ -37,7 +37,7 @@ const LoginForm = ({
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="student.n@ku.th"
+          placeholder="example.e@ku.th"
         />
 
         {/* ปุ่มขอ OTP */}

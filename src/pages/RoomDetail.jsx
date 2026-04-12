@@ -38,23 +38,24 @@ const RoomDetail = () => {
     <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
       <Navbar />
       
-      {/* Header Section */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-4 sm:py-6 flex flex-none items-center gap-2 sm:gap-4">
-        <Button 
-          variant="ghost" 
-          size="none" 
-          onClick={() => navigate(-1)} 
-          className="text-[#B2BB1E] bg-transparent p-1 hover:scale-110 transition-transform"
-        >
-          <ChevronLeft size={32} className="sm:w-10 sm:h-10" />
-        </Button>
-        <h1 className="text-[#B2BB1E] text-2xl sm:text-4xl font-black truncate">รายละเอียดห้อง</h1>
-      </div>
+
 
       {/* Main Content Area */}
       <div className="flex-grow bg-[#FFFFFF] dark:bg-gray-800 rounded-t-[40px] sm:rounded-t-[60px] p-4 sm:p-6 lg:p-10 xl:p-12 relative shadow-2xl overflow-y-auto">
-        {/* 🟢 แก้ตรงนี้: เปลี่ยนจาก max-w-4xl เป็น max-w-6xl ให้รับกับจอโน้ตบุ๊ก และเพิ่ม w-full */}
         <div className="w-full max-w-6xl mx-auto">
+          {/* Back Button Moved Here */}
+          <div className="flex items-center gap-4 mb-6">
+            <button 
+              onClick={() => navigate(-1)} 
+              className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm flex items-center justify-center group"
+              title="ย้อนกลับ"
+            >
+              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+            </button>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white">
+              รายละเอียดห้อง
+            </h1>
+          </div>
           
           {/* Room Card */}
           <div className="bg-gray-50 dark:bg-gray-700 rounded-[30px] sm:rounded-[40px] p-6 sm:p-10 lg:p-12 mt-2 flex flex-col items-center min-h-[450px] sm:min-h-[500px] border border-gray-100 dark:border-gray-600 shadow-sm">

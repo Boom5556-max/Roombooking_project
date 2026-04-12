@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useCalendarData } from "../hooks/useCalendarData";
 import {
   Check,
@@ -9,6 +9,7 @@ import {
   RotateCcw,
   AlertCircle,
   Settings2,
+  ChevronLeft,
 } from "lucide-react";
 import Navbar from "../components/layout/Navbar.jsx";
 import RoomSelector from "../components/calendar/RoomSelector";
@@ -19,6 +20,7 @@ import LoadingSpinner from "../components/common/LoadingSpinner";
 import { jwtDecode } from "jwt-decode";
 
 const Calendar = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const {
     rooms,
@@ -97,6 +99,15 @@ const Calendar = () => {
         
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 flex-shrink-0">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full lg:w-auto flex-grow">
+            {/* Back Button */}
+            <button 
+              onClick={() => navigate(-1)} 
+              className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
+              title="ย้อนกลับ"
+            >
+              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+            </button>
+
             <div className="w-full md:w-80">
               <RoomSelector
                 rooms={rooms}

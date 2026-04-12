@@ -166,21 +166,20 @@ const TermManagement = () => {
       <Navbar />
 
       <div className="p-4 sm:p-6 md:p-10 pb-28 flex-grow max-w-2xl mx-auto w-full">
-        {/* Header */}
-        <div className="flex items-center gap-2 mb-8">
-          <button
-            onClick={() => navigate(-1)}
-            className="text-[#B2BB1E] hover:scale-110 transition-transform p-1"
-          >
-            <ChevronLeft size={32} />
-          </button>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white">
-            จัดการวันที่เทอม
-          </h1>
-        </div>
-
         {/* Main Card */}
         <div className="bg-white dark:bg-gray-800 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
+          <div className="flex items-center gap-4 mb-8">
+            <button 
+              onClick={() => navigate(-1)} 
+              className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm flex items-center justify-center group"
+              title="ย้อนกลับ"
+            >
+              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+            </button>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white">
+              จัดการวันที่เทอม
+            </h1>
+          </div>
           {/* Icon + Description */}
           <div className="flex flex-col items-center text-center mb-8">
             <div className="w-20 h-20 bg-[#302782]/8 dark:bg-[#302782]/30 rounded-3xl flex items-center justify-center mb-4">

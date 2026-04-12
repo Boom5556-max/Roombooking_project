@@ -70,16 +70,15 @@ const Users = () => {
       <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-[1600px] mx-auto w-full">
         
         {/* Header Section */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="none"
-              onClick={() => navigate(-1)}
-              className="text-[#B2BB1E] bg-transparent p-1 hover:scale-110 transition-transform"
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => navigate(-1)} 
+              className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
+              title="ย้อนกลับ"
             >
-              <ChevronLeft size={32} />
-            </Button>
+              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+            </button>
             <h1 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white">
               จัดการผู้ใช้งาน
             </h1>

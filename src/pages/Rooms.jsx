@@ -167,29 +167,25 @@ const Rooms = () => {
           {/* 🚩 SIDEBAR (ด้านข้างที่เคยโล่ง) */}
           {/* 🚩 SIDEBAR (ด้านข้างที่เคยโล่ง) */}
           <aside className="w-full lg:w-80 flex flex-col gap-6">
-            {/* 🚩 ปุ่มย้อนกลับ (ย้ายออกมาข้างนอกแล้ว) */}
-            <div className="px-2">
-              <Button
-                variant="ghost"
-                onClick={() => navigate(-1)}
-                className="flex items-center gap-2 text-black dark:text-white hover:text-[#302782] transition-colors p-0 font-bold"
-              >
-                <div className="bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                  <ChevronLeft size={32} />
-                </div>
-              </Button>
-            </div>
-
             {/* Header Mini (Card สีขาว) */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-700">
-              <h1 className="text-2xl font-black text-[#302782] dark:text-white leading-tight">
-                จัดการห้องเรียน
-              </h1>
+              <div className="flex items-center gap-4 mb-6">
+                <button 
+                  onClick={() => navigate(-1)} 
+                  className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm flex items-center justify-center group"
+                  title="ย้อนกลับ"
+                >
+                  <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+                </button>
+                <h1 className="text-xl font-black text-[#302782] dark:text-white leading-tight">
+                  จัดการห้องเรียน
+                </h1>
+              </div>
 
               {userRole === "staff" && (
                 <Button
                   onClick={() => openModal()}
-                  className="w-full mt-6 bg-[#B2BB1E] text-white rounded-2xl py-4 flex items-center justify-center gap-2 font-bold shadow-lg shadow-[#B2BB1E]/20 hover:bg-[#302782] transition-all"
+                  className="w-full bg-[#B2BB1E] text-white rounded-2xl py-4 flex items-center justify-center gap-2 font-bold shadow-lg shadow-[#B2BB1E]/20 hover:bg-[#302782] transition-all"
                 >
                   <Plus size={20} /> เพิ่มห้องเรียน
                 </Button>

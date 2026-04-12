@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar'; 
 import { useSchedule } from '../hooks/useSchedule'; 
-import { Edit2, Trash2, UploadCloud, AlertCircle, CheckCircle, X, ChevronDown, ChevronUp, BookOpen, Loader2 } from 'lucide-react'; 
+import { Edit2, Trash2, UploadCloud, AlertCircle, CheckCircle, X, ChevronDown, ChevronUp, BookOpen, Loader2, ChevronLeft } from 'lucide-react'; 
 import ActionModal from '../components/common/ActionModal'; 
 
 const ScheduleManagement = () => {
+  const navigate = useNavigate();
   const {
     schedules, isLoading, 
     isEditModalOpen, setIsEditModalOpen, 
@@ -260,9 +262,18 @@ const ScheduleManagement = () => {
 
       <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pb-24 md:pb-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#302782] dark:text-[#B2BB1E]">
-            จัดการประวัติตารางเรียน
-          </h1>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => navigate(-1)} 
+              className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
+              title="ย้อนกลับ"
+            >
+              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+            </button>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#302782] dark:text-[#B2BB1E]">
+              จัดการประวัติตารางเรียน
+            </h1>
+          </div>
         </div>
 
         <input type="file" accept=".xlsx, .xls" ref={fileInputRef} className="hidden" onChange={onFileChangeWrapper} />

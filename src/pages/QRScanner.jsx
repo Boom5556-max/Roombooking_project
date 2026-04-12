@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Camera, Image as ImageIcon, XCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Camera, Image as ImageIcon, XCircle, ChevronLeft } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Button from "../components/common/Button.jsx";
 import { useQRScanner } from "../hooks/useQRScanner.js";
@@ -7,6 +8,7 @@ import { SuccessOverlay, LoadingOverlay, CameraErrorOverlay } from "../component
 import ActionModal from "../components/common/ActionModal";
 
 const QRScanner = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("camera");
   const [alertConfig, setAlertConfig] = useState({ isOpen: false, title: "" });
 
@@ -25,6 +27,15 @@ const QRScanner = () => {
       <Navbar />
       
       <div className="flex-grow bg-[#FFFFFF] dark:bg-gray-800 rounded-t-[40px] sm:rounded-t-[50px] p-4 sm:p-8 flex flex-col items-center shadow-2xl relative transition-all duration-500">
+        <div className="w-full flex justify-start mb-4">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm flex items-center justify-center group"
+            title="ย้อนกลับ"
+          >
+            <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+          </button>
+        </div>
         
         <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-2xl mb-6 sm:mb-10 w-full max-w-[300px] shadow-sm">
           <TabButton 

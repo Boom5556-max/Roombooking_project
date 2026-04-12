@@ -82,19 +82,20 @@ const RoomStatus = () => {
   return (
     // ใช้ fixed inset-0 เพื่อล็อกหน้าจอให้ไม่เลื่อนไปมาบน Mobile Browser
     <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
-      
       {/* --- Adaptive Header --- */}
       <header className="px-4 sm:px-8 py-4 sm:py-6 text-white flex items-center justify-between z-20">
         <button 
           onClick={handleBack}
-          className="p-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-full backdrop-blur-md transition-all shadow-lg"
+          className="p-2.5 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl backdrop-blur-md transition-all shadow-lg flex items-center justify-center group"
           aria-label="Back"
         >
-          <ChevronLeft size={24} className="sm:w-7 sm:h-7 text-white" />
+          <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
         </button>
         <h1 className="text-base sm:text-xl font-black tracking-widest uppercase">Room Status</h1>
         <div className="w-12"></div> {/* Spacer balance */}
       </header>
+      
+
 
       {/* --- Content Area --- */}
       <div className="flex-grow bg-[#FFFFFF] dark:bg-gray-800 rounded-t-[40px] sm:rounded-t-[60px] relative shadow-[0_-10px_50px_rgba(0,0,0,0.3)] border-t-[6px] border-[#B2BB1E] overflow-hidden">
