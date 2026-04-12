@@ -27,29 +27,31 @@ const QRScanner = () => {
       <Navbar />
       
       <div className="flex-grow bg-[#FFFFFF] dark:bg-gray-800 rounded-t-[40px] sm:rounded-t-[50px] p-4 sm:p-8 flex flex-col items-center shadow-2xl relative transition-all duration-500">
-        <div className="w-full flex justify-start mb-4">
+        <div className="flex items-center justify-center gap-3 mb-6 sm:mb-10 w-full">
+          {/* Back Button */}
           <button 
             onClick={() => navigate(-1)} 
-            className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm flex items-center justify-center group"
+            className="p-2.5 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-2xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group flex-shrink-0"
             title="ย้อนกลับ"
           >
             <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
           </button>
-        </div>
-        
-        <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-2xl mb-6 sm:mb-10 w-full max-w-[300px] shadow-sm">
-          <TabButton 
-            active={activeTab === "camera"} 
-            onClick={() => { setActiveTab("camera"); setScanResult(""); }}
-            icon={<Camera size={16} />}
-            label="กล้องถ่ายรูป"
-          />
-          <TabButton 
-            active={activeTab === "file"} 
-            onClick={() => { setActiveTab("file"); setScanResult(""); setErrorMsg(""); stopCamera(); }}
-            icon={<ImageIcon size={16} />}
-            label="คลังภาพ"
-          />
+
+          {/* Tab Selection */}
+          <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-2xl w-full max-w-[300px] shadow-sm">
+            <TabButton 
+              active={activeTab === "camera"} 
+              onClick={() => { setActiveTab("camera"); setScanResult(""); }}
+              icon={<Camera size={16} />}
+              label="กล้องถ่ายรูป"
+            />
+            <TabButton 
+              active={activeTab === "file"} 
+              onClick={() => { setActiveTab("file"); setScanResult(""); setErrorMsg(""); stopCamera(); }}
+              icon={<ImageIcon size={16} />}
+              label="คลังภาพ"
+            />
+          </div>
         </div>
 
         <div className="w-full flex flex-col items-center justify-center flex-grow">

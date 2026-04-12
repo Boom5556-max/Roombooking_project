@@ -1,16 +1,11 @@
 import React from "react";
-import { ChevronDown, DoorOpen } from "lucide-react";
+import { } from "lucide-react";
 
 const RoomSelector = ({ rooms, selectedRoom, onSelect, disabled }) => {
   return (
-    <div className="flex flex-col flex-none font-sans w-full md:w-auto">
-      {/* Label: ปรับขนาดฟอนต์ให้เข้ากับอุปกรณ์ */}
-      <label className="text-[10px] sm:text-xs font-bold text-black dark:text-white mb-2 ml-1 flex items-center gap-2 uppercase tracking-wider">
-        <DoorOpen size={14} className={`transition-colors ${disabled ? 'text-black dark:text-white' : 'text-[#B2BB1E]'}`} />
-        เลือกห้องเรียน
-      </label>
+    <div className="flex flex-none font-sans w-full md:w-auto self-center">
 
-      <div className="relative w-full md:max-w-[280px]">
+      <div className="relative w-full">
         <select
           value={selectedRoom || ""}
           onChange={(e) => onSelect(e.target.value)}
@@ -42,10 +37,7 @@ const RoomSelector = ({ rooms, selectedRoom, onSelect, disabled }) => {
               ))}
         </select>
 
-        {/* Custom Arrow: ปรับตำแหน่งให้เหมาะสม */}
-        <div className={`absolute inset-y-0 right-4 flex items-center pointer-events-none transition-colors ${disabled ? 'text-black dark:text-white' : 'text-[#302782]/40 dark:text-[#B2BB1E]'}`}>
-          <ChevronDown size={18} strokeWidth={3} />
-        </div>
+
       </div>
 
       {/* Helper Text สำหรับมือถือ */}

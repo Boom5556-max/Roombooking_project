@@ -98,17 +98,17 @@ const Calendar = () => {
       <main className="flex-grow flex flex-col overflow-hidden p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1800px] mx-auto w-full">
         
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 flex-shrink-0">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full lg:w-auto flex-grow">
+          <div className="flex flex-row items-center gap-3 w-full lg:w-auto flex-grow">
             {/* Back Button */}
             <button 
               onClick={() => navigate(-1)} 
-              className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
+              className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group flex-shrink-0"
               title="ย้อนกลับ"
             >
               <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
             </button>
 
-            <div className="w-full md:w-80">
+            <div className="flex-grow md:flex-grow-0 md:w-96 flex items-center">
               <RoomSelector
                 rooms={rooms}
                 selectedRoom={selectedRoom}
