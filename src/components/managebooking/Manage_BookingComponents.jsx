@@ -146,13 +146,13 @@ export const TextAreaField = ({ label, value, onChange, placeholder, icon: Icon,
     )}
     <div className="relative flex">
       {/* ปรับตำแหน่งไอคอนให้อยู่ด้านบนซ้ายของกล่องข้อความ */}
-      {Icon && <Icon size={18} className="absolute left-4 top-[18px] text-black dark:text-white group-focus-within:text-[#B2BB1E] transition-colors" />}
+      {Icon && <Icon size={18} className="absolute left-4 top-[18px] text-black dark:text-white group-focus-within:text-red-500 transition-colors" />}
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         // เพิ่ม resize-none ไม่ให้ดึงยืดได้, กำหนดความสูงเริ่มต้น (min-h-[100px]) และการจัดการ Scrollbar
-        className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-50 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-700 outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 text-base font-bold text-[#302782] dark:text-white transition-all placeholder:text-black dark:placeholder:text-white/30 resize-none min-h-[110px] custom-scrollbar`}
+        className={`w-full ${Icon ? 'pl-11' : 'px-5'} py-4 rounded-[16px] border-2 border-gray-100 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 text-base font-bold text-red-600 dark:text-red-400 transition-all placeholder:text-gray-400 dark:placeholder:text-white/30 resize-none min-h-[110px] custom-scrollbar`}
         {...props}
       />
     </div>

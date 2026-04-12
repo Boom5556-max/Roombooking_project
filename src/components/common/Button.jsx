@@ -25,8 +25,11 @@ const Button = ({
     // ปุ่มน้ำเงิน (Deep Navy)
     secondary: "bg-[#302782] text-[#FFFFFF] shadow-[0_8px_20px_-8px_rgba(48,39,130,0.4)] hover:shadow-[0_12px_24px_-10px_rgba(48,39,130,0.5)]",
     
-    // ปุ่มขอบขาว (Outline-like)
-    danger: "bg-[#FFFFFF] dark:bg-gray-700 text-black dark:text-white border border-gray-200 dark:border-gray-600 shadow-sm hover:border-[#302782] hover:text-[#302782] dark:hover:text-white",
+    // ปุ่มอันตราย (KU Red)
+    danger: "bg-[#EF4444] text-[#FFFFFF] shadow-[0_8px_20px_-8px_rgba(239,68,68,0.4)] hover:bg-[#DC2626] hover:text-[#FFFFFF] hover:shadow-[0_12px_24px_-10px_rgba(239,68,68,0.5)]",
+    
+    // ปุ่มขอบขาว (เดิมคือ danger)
+    dangerOutline: "bg-[#FFFFFF] dark:bg-gray-700 text-black dark:text-white border border-gray-200 dark:border-gray-600 shadow-sm hover:border-[#302782] hover:text-[#302782] dark:hover:text-white",
     
     // ปุ่มพื้นเทาอ่อน
     dangerLight: "bg-gray-50 dark:bg-gray-700 text-black dark:text-white border border-transparent hover:bg-gray-100 dark:hover:bg-gray-600",

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutGrid, ArrowRight, FilePlus, AlertCircle } from "lucide-react";
+import { LayoutGrid, FilePlus, AlertCircle } from "lucide-react";
 import { useDashboard } from "../hooks/useDashboard";
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
@@ -76,7 +76,7 @@ const Dashboard = () => {
                   <p className="text-black dark:text-white text-sm font-medium mt-1">ตรวจสอบตารางการใช้ห้องทั้งหมด</p>
                 </div>
               </div>
-              <ArrowRight className="text-black dark:text-white group-hover:text-[#B2BB1E] group-hover:translate-x-1 transition-all w-7 h-7" />
+
             </Button>
 
             {role === "staff" && (
@@ -91,7 +91,7 @@ const Dashboard = () => {
                     <p className="text-black dark:text-white text-sm font-medium mt-1">อัปโหลดตารางเรียน (.xlsx, .csv)</p>
                   </div>
                 </div>
-                <ArrowRight className="text-black dark:text-white group-hover:text-[#302782] group-hover:translate-x-1 transition-all w-7 h-7" />
+
               </div>
             )}
           </div>

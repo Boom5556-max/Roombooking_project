@@ -149,7 +149,7 @@ const BookingDetailModal = ({
             {isEditing ? (
               <div className="flex gap-3">
                 <Button variant="secondary" className="flex-[2] py-4" onClick={onSaveEdit}><Save size={18} /> บันทึกการแก้ไข</Button>
-                <Button variant="danger" className="flex-1 py-4" onClick={() => setIsEditing(false)}>ยกเลิก</Button>
+                <Button variant="dangerOutline" className="flex-1 py-4" onClick={() => setIsEditing(false)}>ยกเลิก</Button>
               </div>
             ) : (
               <ActionButtons userRole={userRole} booking={booking} onUpdateStatus={onUpdateStatus} onCancel={onCancel} onBan={onBan} onEdit={startEditing} />
@@ -204,9 +204,8 @@ const ActionButtons = ({ userRole, booking, onUpdateStatus, onCancel, onBan, onE
         <div className="flex gap-3 mt-2">
           <Button 
             disabled={!reason.trim()} 
-            className={`flex-[2] py-4.5 border-none transition-all duration-300 flex justify-center items-center gap-2 ${
-              reason.trim() ? "bg-red-600 !text-white hover:bg-red-700 shadow-lg shadow-red-500/40" : "bg-red-300 !text-white/90 cursor-not-allowed" 
-            }`} 
+            variant="danger"
+            className="flex-[2] py-4.5 border-none transition-all duration-300 flex justify-center items-center gap-2"
             onClick={handleConfirmWithReason}
           >
             {config.icon} {config.btnText}
@@ -223,8 +222,8 @@ const ActionButtons = ({ userRole, booking, onUpdateStatus, onCancel, onBan, onE
       {/* CASE 1: STAFF - อยู่ในสถานะรออนุมัติ */}
       {userRole === "staff" && isPending && (
         <div className="flex gap-4">
-          <Button variant="primary" className="flex-1 py-4.5 shadow-lime-200" onClick={() => onUpdateStatus(bId)}>อนุมัติคำขอ</Button>
-          <Button variant="danger" className="flex-1 py-4.5 bg-red-500 text-white border-none hover:bg-red-600" onClick={() => setActionType("reject")}>
+          <Button variant="primary" className="flex-1 py-4.5" onClick={() => onUpdateStatus(bId)}>อนุมัติคำขอ</Button>
+          <Button variant="danger" className="flex-1 py-4.5" onClick={() => setActionType("reject")}>
             ไม่อนุมัติ
           </Button>
         </div>
@@ -232,7 +231,7 @@ const ActionButtons = ({ userRole, booking, onUpdateStatus, onCancel, onBan, onE
       
       {/* CASE 2: งดใช้ห้อง (Staff หรือ Teacher ก็ได้ ถ้าอนุมัติไปแล้ว) */}
       {isApproved && (
-        <Button variant="danger" className="w-full py-4.5 bg-red-500 text-white border-none hover:bg-red-600 shadow-red-100" onClick={() => setActionType("ban")}>
+        <Button variant="danger" className="w-full py-4.5" onClick={() => setActionType("ban")}>
           <Ban size={18} /> แจ้งงดใช้ห้องเรียนนี้
         </Button>
       )}

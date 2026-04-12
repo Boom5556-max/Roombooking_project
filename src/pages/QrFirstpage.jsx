@@ -141,13 +141,7 @@ const QrFirstpage = () => {
         {/* Footer / Login Buttons - ปรับให้จัดกึ่งกลางและมีระยะห่างสวยงาม */}
         {/* ส่วนปุ่มสำหรับบุคลากร (ปุ่มเดียวแบบเรียบง่าย) */}
         <div className="w-full max-w-sm mt-10">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="h-px bg-gray-200 flex-1"></div>
-            <span className="text-[10px] font-bold text-black dark:text-white uppercase tracking-widest">
-              สำหรับบุคลากร
-            </span>
-            <div className="h-px bg-gray-200 flex-1"></div>
-          </div>
+
 
           <button
             onClick={() => navigate("/login")} // กดแล้วเด้งไปหน้า login ทันที
