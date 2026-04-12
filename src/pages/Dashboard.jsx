@@ -13,6 +13,7 @@ import SmartSearchForm from "../components/dashboard/SmartSearchForm";
 import DashboardFooter from "../components/dashboard/DashboardFooter";
 import { useReport } from "../hooks/useReport";
 import RoomReportSection from "../components/rooms/RoomReportSection";
+import StaffReportSection from "../components/rooms/StaffReportSection";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -62,10 +63,21 @@ const Dashboard = () => {
         {/* 🚩 2. ปรับ Layout ส่วนล่างให้เป็น Grid บน Desktop (lg:grid-cols-12) เพื่อกระจาย Component */}
         <div className={`grid grid-cols-1 ${role === "staff" || role === "teacher" ? "lg:grid-cols-12" : ""} gap-6 lg:gap-8 items-start`}>
           
-          {/* เลย์เอาต์ส่วนซ้าย: รายงาน (แสดงเฉพาะ Staff/Teacher) */}
-          {(role === "staff" || role === "teacher") && (
+          {/* เลย์เอาต์ส่วนซ้าย: รายงาน (Teacher) */}
+          {(role === "teacher") && (
             <div className="lg:col-span-5 space-y-6">
               <RoomReportSection 
+                reportData={reportData} 
+                isLoading={isReportLoading} 
+                error={reportError} 
+              />
+            </div>
+          )}
+
+          {/* เลย์เอาต์ส่วนซ้าย: รายงาน (Staff) */}
+          {(role === "staff") && (
+            <div className="lg:col-span-5 space-y-6">
+              <StaffReportSection 
                 reportData={reportData} 
                 isLoading={isReportLoading} 
                 error={reportError} 

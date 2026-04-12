@@ -12,10 +12,11 @@ export const useReport = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
+    let userRole = "";
     try {
       const decoded = jwtDecode(token);
-      const role = decoded?.role?.toLowerCase().trim();
-      if (role !== "staff" && role !== "teacher") {
+      userRole = decoded?.role?.toLowerCase().trim();
+      if (userRole !== "staff" && userRole !== "teacher") {
         return; // ไม่ใช่ staff หรือ teacher ไม่ต้องดึงข้อมูล
       }
     } catch (e) {
@@ -23,12 +24,16 @@ export const useReport = () => {
       return;
     }
 
-
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api.get("/schedules/showReport");
-      setReportData(response.data);
+      if (userRole === "staff") {
+        const response = await api.get("/schedules/showReportForStaff");
+        setReportData(response.data);
+      } else if (userRole === "teacher") {
+        const response = await api.get("/schedules/showReport");
+        setReportData(response.data);
+      }
     } catch (err) {
       console.error("Error fetching report:", err.response?.data || err.message);
       setError(err.response?.data?.message || "เกิดข้อผิดพลาดในการดึงข้อมูลรายงาน");
