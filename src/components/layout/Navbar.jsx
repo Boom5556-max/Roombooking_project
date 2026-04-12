@@ -13,21 +13,43 @@ const Navbar = () => {
   const location = useLocation();
   const [userRole, setUserRole] = useState("");
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
 
   const [alertConfig, setAlertConfig] = useState({
     isOpen: false, title: "", icon: null, onConfirm: null, showConfirm: true,
   });
 
+  const fetchPendingCount = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const decoded = jwtDecode(token);
+      const role = decoded?.role?.toLowerCase().trim() || "";
+      setUserRole(role);
+
+      if (role === "staff") {
+        const res = await api.get("/bookings/pending");
+        setPendingCount(res.data?.length || 0);
+      } else {
+        // สำหรับบทบาทอื่นๆ (เช่น teacher) นับเฉพาะการจองที่รออนุมัติของตัวเอง
+        const res = await api.get("/bookings/my-bookings/active");
+        const pending = (res.data || []).filter(i => i.status === 'pending');
+        setPendingCount(pending.length);
+      }
+    } catch (err) {
+      console.error("Error fetching pending count:", err);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setUserRole(decoded?.role?.toLowerCase().trim() || "");
-      } catch (err) {
-        console.error("Token Decode Error in Navbar:", err);
-      }
+      fetchPendingCount();
     }
+
+    // ฟัง Event เมื่อมีการอัปเดตสถานะการจองในหน้าอื่นๆ จะได้อัปเดตตัวเลขทันที
+    window.addEventListener('bookingUpdated', fetchPendingCount);
+    return () => window.removeEventListener('bookingUpdated', fetchPendingCount);
   }, []);
 
   const showAlert = (title, icon, onConfirm = null, showConfirm = true) => {
@@ -65,7 +87,7 @@ const Navbar = () => {
       // 6. กลับไปหน้า Login 
       // 🚩 คำแนะนำเพิ่มเติมเรื่อง Ghost Page ที่เราเคยคุยกัน: 
       // ถ้าใช้ navigate("/", { replace: true }) แล้วยังมีอาการกดย้อนกลับแล้วเจอหน้าเดิม
-      // ให้เปลี่ยนไปใช้คำสั่งข้างล่างนี้แทนครับ จะล้าง State ของ React ทิ้งแบบ 100%
+      // ให้เปลี่ยนไปใช้คำสั่งข้างล่างนี้แทนครับ จะ lล้าง State ของ React ทิ้งแบบ 100%
       window.location.href = '/'; 
     }
   );
@@ -113,7 +135,7 @@ const Navbar = () => {
 
         {/* Menu Section - Desktop (md ขึ้นไปจะแสดงแบบเดิม) */}
         <div className="hidden md:flex gap-2 lg:gap-4 items-center">
-          <NavItemsGroup navigate={navigate} getNavStyle={getNavStyle} userRole={userRole} />
+          <NavItemsGroup navigate={navigate} getNavStyle={getNavStyle} userRole={userRole} pendingCount={pendingCount} />
           
           <div className="ml-2 flex items-center gap-2">
             <ProfileDropdown isMobile={false} />
@@ -155,6 +177,7 @@ const Navbar = () => {
             style={getNavStyle("/manage-booking")} 
             icon={<Contact size={24} />} 
             title="จัดการการจอง" 
+            badge={pendingCount}
           />
           <NavItem 
             onClick={() => { navigate("/scanner"); setIsMoreMenuOpen(false); }} 
@@ -230,7 +253,7 @@ const Navbar = () => {
 };
 
 // แยกกลุ่มเมนูออกมาเพื่อให้เรียกใช้ได้ทั้งบนและล่าง
-const NavItemsGroup = ({ navigate, getNavStyle, userRole, isMobile = false }) => (
+const NavItemsGroup = ({ navigate, getNavStyle, userRole, pendingCount, isMobile = false }) => (
   <>
     <NavItem 
       onClick={() => navigate("/dashboard")} 
@@ -276,6 +299,7 @@ const NavItemsGroup = ({ navigate, getNavStyle, userRole, isMobile = false }) =>
       style={getNavStyle("/manage-booking")} 
       icon={<Contact size={isMobile ? 24 : 22} />} 
       title="จัดการการจอง" 
+      badge={pendingCount}
     />
     <NavItem 
       onClick={() => navigate("/scanner")} 
@@ -286,9 +310,16 @@ const NavItemsGroup = ({ navigate, getNavStyle, userRole, isMobile = false }) =>
   </>
 );
 
-const NavItem = ({ onClick, style, icon, title }) => (
+const NavItem = ({ onClick, style, icon, title, badge }) => (
   <button onClick={onClick} className={style.container} title={title}>
-    {icon}
+    <div className="relative">
+      {icon}
+      {badge > 0 && (
+        <span className="absolute -top-2 -right-2.5 bg-red-500 text-white text-[10px] font-black min-w-[20px] h-[20px] flex items-center justify-center rounded-full px-1 border-2 border-[#302782] dark:border-gray-950 shadow-sm animate-in zoom-in duration-300">
+          {badge > 99 ? '99+' : badge}
+        </span>
+      )}
+    </div>
     <div className={style.indicator} />
   </button>
 );

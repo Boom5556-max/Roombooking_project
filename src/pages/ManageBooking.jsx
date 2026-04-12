@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   CheckCircle,
   XCircle,
@@ -6,6 +6,7 @@ import {
   Ban,
   History,
   Trash2,
+  ChevronDown,
 } from "lucide-react";
 import { useManageBooking } from "../hooks/useManage_Booking.js"; // อัปเดตชื่อ Hook ตามที่คุณเพิ่งเปลี่ยน
 import {
@@ -41,6 +42,7 @@ const ManageBooking = () => {
   } = useManageBooking(); // ✅ เรียกใช้ชื่อ Hook ใหม่
 
   const [activeTab, setActiveTab] = useState("current");
+  const [selectedRoom, setSelectedRoom] = useState(null); // null = ทั้งหมด
   const [alertConfig, setAlertConfig] = useState({
     isOpen: false,
     title: "",
@@ -49,6 +51,23 @@ const ManageBooking = () => {
     showConfirm: true,
     variant: "primary",
   });
+
+  // ดึงรายชื่อห้องทั้งหมดที่ไม่ซ้ำ จาก booking ทุกสถานะ (เฉพาะ staff)
+  const uniqueRooms = useMemo(() => {
+    const allBookings = [...pendingRequests, ...approvedRequests, ...historyRequests];
+    const roomSet = new Set(allBookings.map((b) => b.room_id).filter(Boolean));
+    return [...roomSet].sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true }));
+  }, [pendingRequests, approvedRequests, historyRequests]);
+
+  // กรองข้อมูลตามห้องที่เลือก
+  const filterByRoom = (data) => {
+    if (!selectedRoom) return data;
+    return data.filter((b) => b.room_id === selectedRoom);
+  };
+
+  const filteredPending = filterByRoom(pendingRequests);
+  const filteredApproved = filterByRoom(approvedRequests);
+  const filteredHistory = filterByRoom(historyRequests);
 
   const showAlert = (
     title,
@@ -215,6 +234,40 @@ const handleBanClick = (bookingId, reason) => {
         </div>
       )}
 
+      {/* ตัวกรองห้อง: สำหรับ Staff เท่านั้น */}
+      {userRole === "staff" && uniqueRooms.length > 0 && (
+        <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-4 pb-1 bg-[#302782] dark:bg-gray-950">
+          <div className="w-full max-w-3xl mx-auto">
+            <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
+              {/* ปุ่ม "ทั้งหมด" */}
+              <button
+                onClick={() => setSelectedRoom(null)}
+                className={`flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
+                  selectedRoom === null
+                    ? "bg-white text-[#302782]"
+                    : "bg-white/15 text-white/80 hover:bg-white/25 active:scale-95"
+                }`}
+              >
+                ทั้งหมด
+              </button>
+              {uniqueRooms.map((room) => (
+                <button
+                  key={room}
+                  onClick={() => setSelectedRoom(room)}
+                  className={`flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
+                    selectedRoom === room
+                      ? "bg-[#B2BB1E] text-white"
+                      : "bg-white/15 text-white/80 hover:bg-white/25 active:scale-95"
+                  }`}
+                >
+                  {room}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content Area */}
       <div
         className={`flex-grow overflow-y-auto bg-white dark:bg-gray-800 p-4 sm:p-8 lg:px-12 xl:px-16 transition-all duration-500 
@@ -226,7 +279,7 @@ const handleBanClick = (bookingId, reason) => {
               <StaffSection
                 title="รออนุมัติ"
                 icon={ClockIcon}
-                data={pendingRequests}
+                data={filteredPending}
                 color="text-[#302782] dark:text-white"
                 getFullName={getFullName}
                 onSelect={setSelectedBooking}
@@ -235,7 +288,7 @@ const handleBanClick = (bookingId, reason) => {
               <StaffSection
                 title="อนุมัติแล้ว"
                 icon={CheckCircle}
-                data={approvedRequests}
+                data={filteredApproved}
                 color="text-[#B2BB1E]"
                 getFullName={getFullName}
                 onSelect={(b) =>
@@ -249,7 +302,7 @@ const handleBanClick = (bookingId, reason) => {
               <StaffSection
                 title="ไม่อนุมัติ"
                 icon={XCircle}
-                data={historyRequests}
+                data={filteredHistory}
                 color="text-red-400"
                 getFullName={getFullName}
                 onSelect={(b) => setSelectedBooking({ ...b, isHistory: true })}
@@ -381,14 +434,52 @@ const StaffSection = ({
   getFullName,
   onSelect,
   variant,
-}) => (
-  <section className="animate-in slide-in-from-bottom-2 duration-500">
-    <div className="mb-4">
-      <SectionTitle title={title} icon={icon} colorClass={color} />
-    </div>
-    <div className="grid grid-cols-1 gap-4">
-      {data.length > 0 ? (
-        data.map((req) => (
+}) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const Icon = icon;
+  const hasData = data.length > 0;
+
+  return (
+    <section className="animate-in slide-in-from-bottom-2 duration-500">
+      {/* หัวข้อ: กดเพื่อพับ/กาง */}
+      <button
+        onClick={() => hasData && setIsOpen((prev) => !prev)}
+        className={`flex items-center gap-3 mt-10 mb-4 px-1 w-full text-left group ${hasData ? "cursor-pointer" : "cursor-default"}`}
+      >
+        {Icon && (
+          <div className={`p-2 rounded-xl bg-white dark:bg-gray-700 shadow-sm border border-gray-50 dark:border-gray-600 ${color || "text-[#302782]"}`}>
+            <Icon size={20} strokeWidth={2.5} />
+          </div>
+        )}
+        <h2 className={`text-xl font-black tracking-tight ${color || "text-[#302782]"}`}>
+          {title}
+        </h2>
+
+        {/* จำนวนรายการ */}
+        {hasData && (
+          <span className="text-xs font-bold text-gray-400 bg-gray-100 dark:bg-gray-700 dark:text-gray-400 px-2.5 py-1 rounded-full">
+            {data.length}
+          </span>
+        )}
+
+        <div className="flex-grow h-[1px] bg-gradient-to-r from-gray-100 dark:from-gray-600 to-transparent ml-2" />
+
+        {/* ลูกศร Chevron */}
+        {hasData && (
+          <ChevronDown 
+            size={20} 
+            strokeWidth={2.5}
+            className={`text-gray-300 dark:text-gray-500 transition-transform duration-300 flex-shrink-0 ${isOpen ? "rotate-180" : "rotate-0"}`} 
+          />
+        )}
+      </button>
+
+      {/* รายการ Booking */}
+      <div className={`grid grid-cols-1 gap-4 overflow-hidden transition-all duration-300 ${
+        !hasData || isOpen ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"
+      }`}>
+        {hasData ? (
+          data.map((req) => (
             <BookingCard
               key={req.booking_id || req.id}
               req={req}
@@ -399,13 +490,14 @@ const StaffSection = ({
               getFullName={getFullName}
               onClick={onSelect}
             />
-        ))
-      ) : (
-        <EmptyState />
-      )}
-    </div>
-  </section>
-);
+          ))
+        ) : (
+          <EmptyState />
+        )}
+      </div>
+    </section>
+  );
+};
 
 // ✅ อัปเดตการ Export ให้ตรงกับชื่อ Component ใหม่
 export default ManageBooking;

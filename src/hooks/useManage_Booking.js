@@ -57,6 +57,7 @@ export const useManageBooking = () => {
         cancel_reason: reason // ส่งไปเผื่อกรณีที่ status เป็น 'rejected'
       });
       fetchBookings(); 
+      window.dispatchEvent(new CustomEvent('bookingUpdated'));
       return { success: true };
     } catch (error) {
       return { success: false, message: error.response?.data?.message || "อัปเดตไม่สำเร็จ" };
@@ -97,6 +98,7 @@ export const useManageBooking = () => {
     try {
       const response = await api.put(`/bookings/${bookingId}/cancel`, { cancel_reason: reason });
       fetchBookings(); 
+      window.dispatchEvent(new CustomEvent('bookingUpdated'));
       return { success: true, message: response.data.message }; 
     } catch (error) {
       return { success: false, message: error.response?.data?.message || "ยกเลิกไม่สำเร็จ" };
