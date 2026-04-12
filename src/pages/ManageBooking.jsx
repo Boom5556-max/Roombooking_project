@@ -9,6 +9,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useManageBooking } from "../hooks/useManage_Booking.js"; // อัปเดตชื่อ Hook ตามที่คุณเพิ่งเปลี่ยน
+import { getRoomColor } from "../utils/roomColors.js";
 import {
   BookingCard,
   SectionTitle,
@@ -250,19 +251,29 @@ const handleBanClick = (bookingId, reason) => {
               >
                 ทั้งหมด
               </button>
-              {uniqueRooms.map((room) => (
-                <button
-                  key={room}
-                  onClick={() => setSelectedRoom(room)}
-                  className={`flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
-                    selectedRoom === room
-                      ? "bg-[#B2BB1E] text-white"
-                      : "bg-white/15 text-white/80 hover:bg-white/25 active:scale-95"
-                  }`}
-                >
-                  {room}
-                </button>
-              ))}
+              {uniqueRooms.map((room) => {
+                const roomColor = getRoomColor(room);
+                return (
+                  <button
+                    key={room}
+                    onClick={() => setSelectedRoom(room)}
+                    className={`flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
+                      selectedRoom === room
+                        ? "text-white"
+                        : "bg-white/15 text-white/80 hover:bg-white/25 active:scale-95"
+                    }`}
+                    style={selectedRoom === room ? { backgroundColor: roomColor.bg } : {}}
+                  >
+                    {selectedRoom !== room && (
+                      <span
+                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: roomColor.bg }}
+                      />
+                    )}
+                    {room}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
