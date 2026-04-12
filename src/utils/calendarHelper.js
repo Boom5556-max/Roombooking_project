@@ -1,27 +1,7 @@
+import { getRoomColor } from './roomColors.js';
+
 // 🚩 พารามิเตอร์เหมือนเดิม defaultRoomId/defaultRoomName รับมาจาก useCalendarData
 export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId = null, defaultRoomName = "") => {
-  
-  const getRoomColor = (roomId) => {
-    if (!roomId || roomId === "ไม่ระบุเลขห้อง")
-      return { bg: "#475569", border: "#334155" };
-
-    // 🎨 สามารถเพิ่มสีใน Array นี้ได้อีกเรื่อยๆ ถ้าระบบมีห้องเยอะมาก
-    const colorPalette = [
-      { bg: "#3b82f6", border: "#2563eb" }, { bg: "#8b5cf6", border: "#7c3aed" },
-      { bg: "#ec4899", border: "#db2777" }, { bg: "#f97316", border: "#ea580c" },
-      { bg: "#14b8a6", border: "#0d9488" }, { bg: "#ef4444", border: "#dc2626" },
-      { bg: "#0ea5e9", border: "#0284c7" },
-    ];
-
-    // ระบบ Hash จะสุ่มสีให้แต่ละห้องอัตโนมัติ และได้สีเดิมเสมอสำหรับห้องเดิม
-    let hash = 0;
-    const str = String(roomId);
-    for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const index = Math.abs(hash) % colorPalette.length;
-    return colorPalette[index];
-  };
 
   const processItem = (item, type) => {
     

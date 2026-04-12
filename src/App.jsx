@@ -18,6 +18,7 @@ import Users from './pages/Users';
 
 import ScheduleManagement from './pages/ScheduleManagement'; 
 import ExportLog from './pages/ExportLog';
+import TermManagement from './pages/TermManagement';
 
 // 🔴 1. ด่านตรวจสำหรับ "คนที่ต้อง Login แล้วเท่านั้น"
 const ProtectedRoute = ({ children }) => {
@@ -78,6 +79,7 @@ function App() {
         <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
         <Route path="/schedules" element={<ProtectedRoute><ScheduleManagement /></ProtectedRoute>} />
         <Route path="/export-log" element={<ProtectedRoute><ExportLog /></ProtectedRoute>} />
+        <Route path="/term-management" element={<ProtectedRoute><TermManagement /></ProtectedRoute>} />
         <Route path="/bookingRoom/:id" element={<ProtectedRoute><BookingRoom /></ProtectedRoute>} />
         <Route path="/calendar/" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
         <Route path="/calendar/:id" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
