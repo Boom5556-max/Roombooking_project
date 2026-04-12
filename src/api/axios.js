@@ -8,19 +8,19 @@ const api = axios.create({
     "Content-Type": "application/json",
     "ngrok-skip-browser-warning": "true",
   },
-  withCredentials: true,
+  withCredentials: true // 🚨 จำเป็นมากสำหรับให้อ่าน Refresh Token ใน Cookie ได้
 });
 
 // ==========================================
-// ตัวแปรจัดการการ Refresh Token
+// ตัวแปรสำหรับระบบคิว (กันยิง Refresh Token ซ้ำซ้อน)
 // ==========================================
-let isRefreshing = false;         // กำลังขอ Token ใหม่อยู่หรือเปล่า
-let failedQueue = [];             // คิวเก็บ Request ที่ค้างระหว่างรอ Token ใหม่
-let isRedirecting = false;        // ป้องกัน SweetAlert popup ซ้อนกัน
+let isRedirecting = false;
+let isRefreshing = false; // ตัวล็อก: บอกว่ากำลังไปขอกุญแจใหม่ขลุกขลักอยู่หรือเปล่า
+let failedQueue = []; // คิว: เก็บ API เส้นอื่นๆ ที่รอเอากุญแจใหม่ไปใช้
 
-// ฟังก์ชัน: ปล่อย Request ที่ค้างอยู่ในคิวทั้งหมด
+// ฟังก์ชันสำหรับปล่อยคิว: ถ้าได้ token ใหม่ก็ให้ยิงต่อ ถ้าไม่ได้ก็ให้ยกเลิก
 const processQueue = (error, token = null) => {
-  failedQueue.forEach((prom) => {
+  failedQueue.forEach(prom => {
     if (error) {
       prom.reject(error);
     } else {
@@ -28,33 +28,6 @@ const processQueue = (error, token = null) => {
     }
   });
   failedQueue = [];
-};
-
-// ==========================================
-// ฟังก์ชัน: ล้างข้อมูลผู้ใช้และเด้งไปหน้า Login
-// ==========================================
-const forceLogout = (title, text, icon = 'info') => {
-  if (isRedirecting) return;
-  isRedirecting = true;
-
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-
-  Swal.fire({
-    icon,
-    title,
-    text,
-    confirmButtonText: 'เข้าสู่ระบบ',
-    confirmButtonColor: '#302782',
-    customClass: {
-      popup: 'rounded-3xl',
-      confirmButton: 'rounded-lg'
-    },
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-  }).then(() => {
-    window.location.href = '/login';
-  });
 };
 
 // ==========================================
@@ -69,97 +42,119 @@ api.interceptors.request.use((config) => {
 });
 
 // ==========================================
-// 2. Response Interceptor (Global Error Handler)
-//    ดักจับ 401 → พยายาม Silent Refresh ก่อน
-//    ถ้า Refresh ไม่สำเร็จ → เตะกลับหน้า Login
+// 2. Response Interceptor: ดักจับ 401 และจัดการปัญหา
 // ==========================================
 api.interceptors.response.use(
-  (response) => response, // ✅ ถ้าสำเร็จ ปล่อยผ่านตามปกติ
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // ถ้าไม่ใช่ 401 → โยนกลับไปตามปกติ
-    if (!error.response || error.response.status !== 401) {
+    // 🚨 1. ป้องกัน Loop: ถ้าเส้นที่พังคือเส้น refresh-token เอง ให้ยอมแพ้ ห้ามวนลูป!
+    if (originalRequest.url.includes('/refresh-token')) {
       return Promise.reject(error);
     }
 
-    // 🚨 กรณีพิเศษ: โดนเตะเพราะล็อกอินซ้อน (SESSION_SUPERSEDED)
-    //    → ไม่ต้อง Refresh, เตะออกเลย
-    if (error.response.data && error.response.data.code === 'SESSION_SUPERSEDED') {
-      forceLogout(
-        'ถูกออกจากระบบ',
-        'บัญชีของคุณถูกเข้าสู่ระบบจากอุปกรณ์อื่น คุณได้ถูกออกจากระบบ',
-        'warning'
-      );
-      return Promise.reject(error);
-    }
+    // ถ้าพบ Error 401 (Unauthorized / Token มีปัญหา)
+    if (error.response && error.response.status === 401) {
+      
+      // 🚨 กรณีที่ 1: โดนเตะออกเพราะล็อกอินซ้อน (SESSION_SUPERSEDED)
+      if (error.response.data && error.response.data.code === 'SESSION_SUPERSEDED') {
+        
+        // ถ้าคิวอื่นรออยู่ ให้บอกว่าพังแล้ว ไม่ต้องรอ
+        processQueue(error, null); 
 
-    // ป้องกันไม่ให้ Request เดิมถูก Retry ซ้ำมากกว่า 1 ครั้ง
-    if (originalRequest._retry) {
-      return Promise.reject(error);
-    }
+        if (!isRedirecting) {
+          isRedirecting = true;
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
 
-    // ------------------------------------------
-    // 🔄 Silent Refresh Logic
-    // ------------------------------------------
-
-    // ถ้ากำลัง Refresh อยู่ ให้ Request นี้เข้าคิวรอก่อน
-    if (isRefreshing) {
-      return new Promise((resolve, reject) => {
-        failedQueue.push({ resolve, reject });
-      })
-        .then((token) => {
-          originalRequest.headers.Authorization = `Bearer ${token}`;
-          return api(originalRequest);
-        })
-        .catch((err) => Promise.reject(err));
-    }
-
-    // เริ่มกระบวนการ Refresh
-    originalRequest._retry = true;
-    isRefreshing = true;
-
-    try {
-      // ยิง API ขอ Access Token ใหม่
-      // Refresh Token ถูกส่งไปอัตโนมัติผ่าน HttpOnly Cookie (withCredentials: true)
-      const { data } = await axios.post(
-        `${API_BASE_URL}/auth/refresh`,
-        {},
-        { withCredentials: true }
-      );
-
-      const newToken = data.accessToken || data.token;
-
-      if (!newToken) {
-        throw new Error("No token in refresh response");
+          Swal.fire({
+            icon: 'warning',
+            title: 'ถูกออกจากระบบ',
+            text: 'บัญชีของคุณถูกเข้าสู่ระบบจากอุปกรณ์อื่น คุณได้ถูกออกจากระบบ',
+            confirmButtonText: 'ตกลง',
+            confirmButtonColor: '#302782',
+            customClass: {
+              popup: 'rounded-3xl',
+              confirmButton: 'rounded-lg'
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+          }).then(() => {
+            window.location.href = '/login';
+          });
+        }
+        return Promise.reject(error);
       }
 
-      // เซฟ Access Token ตัวใหม่ทับตัวเก่า
-      localStorage.setItem("token", newToken);
+      // 🔄 กรณีที่ 2: Access Token หมดอายุธรรมดา (Silent Refresh)
+      if (!originalRequest._retry) {
+        
+        // 🛑 ถ้าระบบ "กำลังขอ" Token ใหม่อยู่ (มีคนไปขอแล้ว) -> ให้เส้นนี้เข้าคิวรอ
+        if (isRefreshing) {
+          return new Promise(function(resolve, reject) {
+            failedQueue.push({ resolve, reject });
+          }).then(token => {
+            // พอได้กุญแจใหม่ปุ๊บ ก็เอามาสวมให้ API เส้นนี้ แล้วยิงออกไป
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          }).catch(err => {
+            return Promise.reject(err);
+          });
+        }
 
-      // อัปเดต Header ของ api instance ด้วย
-      api.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+        // 🟢 ถ้ายังไม่มีใครไปขอ Token -> ให้เส้นนี้เป็นตัวแทนไปขอ (ล็อกประตู)
+        originalRequest._retry = true; 
+        isRefreshing = true;
 
-      // ปล่อย Request ที่ค้างอยู่ในคิวทั้งหมด
-      processQueue(null, newToken);
+        try {
+          // วิ่งไปขอ Access Token ดอกใหม่แบบเงียบๆ
+          const res = await api.post('/auth/refresh-token');
+          const newAccessToken = res.data.token;
+          
+          // อัปเดตกุญแจดอกใหม่ลง LocalStorage
+          localStorage.setItem('token', newAccessToken);
 
-      // ยิง Request ตัวเดิมที่ค้างไว้อีกรอบ ด้วย Token ใหม่
-      originalRequest.headers.Authorization = `Bearer ${newToken}`;
-      return api(originalRequest);
+          // เอากุญแจดอกใหม่ใส่กลับเข้าไปใน Request ของตัวมันเอง
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-    } catch (refreshError) {
-      // ❌ Refresh ไม่สำเร็จ (Refresh Token หมดอายุด้วย)
-      //    → ล้างข้อมูลและเตะกลับหน้า Login
-      processQueue(refreshError, null);
-      forceLogout(
-        'เซสชันหมดอายุ',
-        'กรุณาเข้าสู่ระบบใหม่อีกครั้ง',
-      );
-      return Promise.reject(refreshError);
+          // 🔓 ปลดล็อกประตู และปลุก API เส้นอื่นๆ ที่รอในคิวให้ทำงานต่อ
+          processQueue(null, newAccessToken);
+          isRefreshing = false;
 
-    } finally {
-      isRefreshing = false;
+          // ยิง Request เดิมที่เพิ่งพังไป ใหม่อีกรอบ!
+          return api(originalRequest); 
+
+        } catch (refreshError) {
+          // ❌ กรณีที่ 3: ต่อเวลาไม่สำเร็จ (Refresh Token หมดอายุ 7 วัน หรือโดนแบน)
+          
+          // สั่งให้คิวที่รออยู่พังไปด้วย จะได้ไม่ค้าง
+          processQueue(refreshError, null);
+          isRefreshing = false;
+
+          if (!isRedirecting) {
+            isRedirecting = true;
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            
+            // แจ้งเตือนเนียนๆ ก่อนเด้งไปหน้า Login
+            Swal.fire({
+              icon: 'info',
+              title: 'เซสชันหมดอายุ',
+              text: 'กรุณาเข้าสู่ระบบใหม่อีกครั้งเพื่อความปลอดภัย',
+              confirmButtonText: 'เข้าสู่ระบบ',
+              confirmButtonColor: '#302782',
+            }).then(() => {
+              window.location.href = '/login';
+            });
+          }
+          return Promise.reject(refreshError);
+        }
+      }
     }
+
+    // ถ้าเป็น Error อื่นๆ ที่ไม่ใช่ 401 ก็โยนกลับไปตามปกติ
+    return Promise.reject(error);
   }
 );
 
