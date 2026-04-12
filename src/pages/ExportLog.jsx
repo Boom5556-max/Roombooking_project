@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Navbar from "../components/layout/Navbar.jsx";
 import { API_BASE_URL } from "../api/config.js";
+import api from "../api/axios.js";
 
 // ข้อมูลเทอมแบบ Static ทั้ง 3 ชนิด
 const TERM_CONFIG = [
@@ -77,28 +78,67 @@ const ExportLog = () => {
   const [isFetchingTerms, setIsFetchingTerms] = useState(true);
   const [termFeedback, setTermFeedback] = useState(null);
 
-  // คำนวณช่วงวันของเทอมปัจจุบัน ตาม logic เดียวกับ backend cron
-  const fillCurrentTerm = () => {
-    const now = new Date();
-    const month = now.getMonth() + 1;
-    const year = now.getFullYear();
+  // คำนวณช่วงวันของเทอมปัจจุบัน โดยดึงข้อมูลอ้างอิงจาก Database
+  const fillCurrentTerm = async () => {
+    try {
+      // 1. ดึงข้อมูลจาก Backend (เปลี่ยน api.get เป็นตัวแปรที่คุณใช้เรียก axios ได้เลย)
+      const response = await api.get(`${API_BASE_URL}/terms/showTerm`);
+      const termData = response.data.data;
 
-    let termStart, termEnd;
+      if (!termData || termData.length === 0) {
+        showFeedback('error', 'ไม่พบข้อมูลเทอมในระบบ กรุณาตั้งค่าปีการศึกษาก่อน');
+        return;
+      }
 
-    if (month >= 5 && month <= 10) {
-      termStart = `${year}-05-01`;
-      termEnd   = `${year}-10-31`;
-    } else if (month >= 11) {
-      termStart = `${year}-11-01`;
-      termEnd   = `${year + 1}-04-30`;
-    } else {
-      termStart = `${year - 1}-11-01`;
-      termEnd   = `${year}-04-30`;
+      // 2. เรียงลำดับวันที่จากอดีต -> อนาคต 
+      const sortedTerms = termData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      // 3. เตรียมวันที่ปัจจุบันสำหรับเปรียบเทียบ
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // ตัดเวลาทิ้งเพื่อเทียบแค่วันที่
+
+      let currentTermIndex = -1;
+
+      // 4. หา "เทอมปัจจุบัน" (เทอมที่วันที่เริ่ม <= วันนี้ โดยดึงอันที่ใกล้ปัจจุบันที่สุด)
+      for (let i = sortedTerms.length - 1; i >= 0; i--) {
+        const termDate = new Date(sortedTerms[i].date);
+        if (termDate <= today) {
+          currentTermIndex = i;
+          break;
+        }
+      }
+
+      // กรณีที่เพิ่งเริ่มใช้ระบบ และวันนี้ยังไม่ถึงวันเริ่มเทอมแรกสุดเลย ให้ถือว่าเทอมแรกสุดคือเทอมปัจจุบัน
+      if (currentTermIndex === -1) {
+        currentTermIndex = 0;
+      }
+
+      const currentTerm = sortedTerms[currentTermIndex];
+      const termStart = currentTerm.date; // รูปแบบ YYYY-MM-DD จาก API
+      let termEnd = '';
+
+      // 5. คำนวณวันสิ้นสุด (termEnd)
+      if (currentTermIndex + 1 < sortedTerms.length) {
+        // ถ้ามีเทอมถัดไป ให้เอาวันที่ของเทอมถัดไป ลบออก 1 วัน
+        const nextTermDate = new Date(sortedTerms[currentTermIndex + 1].date);
+        nextTermDate.setDate(nextTermDate.getDate() - 1);
+        termEnd = nextTermDate.toISOString().split('T')[0];
+      } else {
+        // ถ้าไม่มีเทอมถัดไป (เป็นเทอมสุดท้ายของปีการศึกษานั้น) ให้บวกไป 4 เดือนแบบคร่าวๆ
+        const fallbackEndDate = new Date(currentTerm.date);
+        fallbackEndDate.setMonth(fallbackEndDate.getMonth() + 4);
+        termEnd = fallbackEndDate.toISOString().split('T')[0];
+      }
+
+      // 6. อัปเดต State ให้หน้าเว็บ
+      setStartDate(termStart);
+      setEndDate(termEnd);
+      setFeedback(null);
+
+    } catch (error) {
+      console.error('Error fetching terms for current term calculation:', error);
+      showFeedback('error', 'เกิดข้อผิดพลาดในการดึงข้อมูลเทอมจากระบบ');
     }
-
-    setStartDate(termStart);
-    setEndDate(termEnd);
-    setFeedback(null);
   };
 
   const showFeedback = (type, message) => {
@@ -335,11 +375,10 @@ const ExportLog = () => {
             {/* Feedback */}
             {feedback && (
               <div
-                className={`flex items-start gap-3 rounded-xl p-3 mb-4 text-sm font-bold transition-all ${
-                  feedback.type === "error"
-                    ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800"
-                    : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-800"
-                }`}
+                className={`flex items-start gap-3 rounded-xl p-3 mb-4 text-sm font-bold transition-all ${feedback.type === "error"
+                  ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800"
+                  : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-800"
+                  }`}
               >
                 {feedback.type === "error" ? (
                   <AlertCircle size={16} className="shrink-0 mt-0.5" />
@@ -471,11 +510,10 @@ const ExportLog = () => {
                 {/* Term Feedback */}
                 {termFeedback && (
                   <div
-                    className={`flex items-start gap-3 rounded-xl p-3 mb-4 text-sm font-bold transition-all ${
-                      termFeedback.type === "error"
-                        ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800"
-                        : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-800"
-                    }`}
+                    className={`flex items-start gap-3 rounded-xl p-3 mb-4 text-sm font-bold transition-all ${termFeedback.type === "error"
+                      ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800"
+                      : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-800"
+                      }`}
                   >
                     {termFeedback.type === "error" ? (
                       <AlertCircle size={16} className="shrink-0 mt-0.5" />
