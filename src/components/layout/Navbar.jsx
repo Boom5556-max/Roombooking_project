@@ -30,8 +30,32 @@ const Navbar = () => {
       if (role === "staff") {
         const res = await api.get("/bookings/pending");
         setPendingCount(res.data?.length || 0);
+      } else if (role === "teacher") {
+        // 🚩 กิมมิกสำหรับ Teacher: ดึงแค่ history มาเช็ค approved และ cancelled (เพื่อหลีกเลี่ยงรายการซ้ำ)
+        const historyRes = await api.get("/bookings/my-bookings/history");
+        const history = historyRes.data || [];
+        
+        // กรองเฉพาะ approved หรือ cancelled
+        const alerts = history.filter(i => 
+          i.status === 'approved' || i.status === 'cancelled'
+        );
+        
+        // สร้าง unique key สำหรับแต่ละการจองและสถานะ (หากเปลี่ยนสถานะ จะกลายเป็นคีย์ใหม่)
+        const alertKeys = alerts.map(i => `${i.booking_id}_${i.status}`);
+        const storageKey = `seenBookingAlerts_${decoded.id || 'teacher'}`;
+
+        if (location.pathname === '/manage-booking') {
+          // หากผู้ใช้อยู่หน้าจัดการจอง ให้ถือว่ากดดูแล้ว -> บันทึกทับทันที และเซ็ตการแจ้งเตือนเป็น 0
+          localStorage.setItem(storageKey, JSON.stringify(alertKeys));
+          setPendingCount(0);
+        } else {
+          // หากอยู่หน้าอื่น ให้เช็คว่ามีอันไหนที่ยังไม่เคยเห็น (กดดู) บ้างไหม
+          const seenKeys = JSON.parse(localStorage.getItem(storageKey) || "[]");
+          const unseen = alertKeys.filter(k => !seenKeys.includes(k));
+          setPendingCount(unseen.length);
+        }
       } else {
-        // สำหรับบทบาทอื่นๆ (เช่น teacher) นับเฉพาะการจองที่รออนุมัติของตัวเอง
+        // สำหรับ role อื่นๆ ที่เหลือ (นศ.) 
         const res = await api.get("/bookings/my-bookings/active");
         const pending = (res.data || []).filter(i => i.status === 'pending');
         setPendingCount(pending.length);
@@ -50,7 +74,7 @@ const Navbar = () => {
     // ฟัง Event เมื่อมีการอัปเดตสถานะการจองในหน้าอื่นๆ จะได้อัปเดตตัวเลขทันที
     window.addEventListener('bookingUpdated', fetchPendingCount);
     return () => window.removeEventListener('bookingUpdated', fetchPendingCount);
-  }, []);
+  }, [location.pathname]); // ← เพิ่ม location.pathname เผื่ออัปเดตตอนเปลี่ยนหน้า
 
   const showAlert = (title, icon, onConfirm = null, showConfirm = true) => {
     setAlertConfig({

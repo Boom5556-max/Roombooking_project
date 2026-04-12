@@ -23,7 +23,7 @@ import api from "../api/axios.js";
 const TERM_CONFIG = [
   {
     key: "first",
-    label: "ภาคเรียนที่ 1 (First Term)",
+    label: "เทอมต้น",
     icon: BookOpen,
     gradient: "from-blue-500 to-indigo-600",
     bgLight: "bg-blue-50",
@@ -35,7 +35,7 @@ const TERM_CONFIG = [
   },
   {
     key: "end",
-    label: "ภาคเรียนที่ 2 (End Term)",
+    label: "เทอมปลาย",
     icon: BookMarked,
     gradient: "from-emerald-500 to-teal-600",
     bgLight: "bg-emerald-50",
@@ -47,7 +47,7 @@ const TERM_CONFIG = [
   },
   {
     key: "summer",
-    label: "ภาคฤดูร้อน (Summer Term)",
+    label: "เทอมฤดูร้อน",
     icon: Sun,
     gradient: "from-amber-500 to-orange-600",
     bgLight: "bg-amber-50",
@@ -326,7 +326,7 @@ const ExportLog = () => {
                 <h2 className="text-base font-black text-[#302782] dark:text-white">
                   ส่งออกรายงาน Excel
                 </h2>
-                <p className="text-xs text-black leading-relaxed mt-0.5">
+                <p className="text-xs text-black dark:text-white leading-relaxed mt-0.5">
                   เลือกช่วงวันที่เพื่อสร้างรายงานสรุปการจอง
                 </p>
               </div>
@@ -444,7 +444,7 @@ const ExportLog = () => {
                 <h2 className="text-base font-black text-[#302782] dark:text-white">
                   กำหนดวันที่ของแต่ละเทอม
                 </h2>
-                <p className="text-xs text-black leading-relaxed mt-0.5">
+                <p className="text-xs text-black dark:text-white leading-relaxed mt-0.5">
                   ระบุวันที่เริ่มต้นของแต่ละภาคเรียน
                 </p>
               </div>

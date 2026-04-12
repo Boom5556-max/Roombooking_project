@@ -11,11 +11,15 @@ import ActionModal from "../components/common/ActionModal";
 // Import ส่วนที่แบ่งไป
 import SmartSearchForm from "../components/dashboard/SmartSearchForm";
 import DashboardFooter from "../components/dashboard/DashboardFooter";
+import { useReport } from "../hooks/useReport";
+import RoomReportSection from "../components/rooms/RoomReportSection";
+import StaffReportSection from "../components/rooms/StaffReportSection";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { role, roomCount, pendingCount, approvedCount } = useDashboard();
+  const { reportData, isLoading: isReportLoading, error: reportError } = useReport();
   const [alertModal, setAlertModal] = useState({ isOpen: false, title: "" });
   const [searchQuery, setSearchQuery] = useState({ date: "", start_time: "", end_time: "", capacity: "" });
 
@@ -59,9 +63,42 @@ const Dashboard = () => {
         {/* 🚩 2. ปรับ Layout ส่วนล่างให้เป็น Grid บน Desktop (lg:grid-cols-12) เพื่อกระจาย Component */}
         <div className={`grid grid-cols-1 ${role === "staff" || role === "teacher" ? "lg:grid-cols-12" : ""} gap-6 lg:gap-8 items-start`}>
           
-          {/* ส่วนปุ่ม Action และจัดการไฟล์ (lg:col-span-5) */}
-          <div className={`${role === "staff" || role === "teacher" ? "lg:col-span-5" : ""} space-y-6`}>
+          {/* เลย์เอาต์ส่วนซ้าย: รายงาน (Teacher) */}
+          {(role === "teacher") && (
+            <div className="lg:col-span-5 space-y-6">
+              <RoomReportSection 
+                reportData={reportData} 
+                isLoading={isReportLoading} 
+                error={reportError} 
+              />
+            </div>
+          )}
+
+          {/* เลย์เอาต์ส่วนซ้าย: รายงาน (Staff) */}
+          {(role === "staff") && (
+            <div className="lg:col-span-5 space-y-6">
+              <StaffReportSection 
+                reportData={reportData} 
+                isLoading={isReportLoading} 
+                error={reportError} 
+              />
+            </div>
+          )}
+
+          {/* เลย์เอาต์ส่วนขวา: Smart Search และเมนูจัดการต่างๆ */}
+          <div className={`${role === "staff" || role === "teacher" ? "lg:col-span-7" : ""} space-y-6`}>
             
+            {/* Smart Search */}
+            {(role === "staff" || role === "teacher") && (
+              <SmartSearchForm 
+                searchQuery={searchQuery} 
+                setSearchQuery={setSearchQuery} 
+                onSubmit={handleSmartSearch}
+                isDesktopView={true} 
+              />
+            )}
+            
+            {/* Action Buttons */}
             <Button
               variant="secondary" size="none" onClick={() => navigate("/Rooms")}
               className="w-full p-6 rounded-[24px] justify-between flex border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-[#B2BB1E]/50 transition-all shadow-sm group"
@@ -72,11 +109,9 @@ const Dashboard = () => {
                 </div>
                 <div className="text-left font-sans">
                   <p className="font-black text-xl text-[#302782] dark:text-white">ดูรายการห้องเรียน</p>
-                  {/* เพิ่ม dark:text-gray-400 */}
                   <p className="text-black dark:text-white text-sm font-medium mt-1">ตรวจสอบตารางการใช้ห้องทั้งหมด</p>
                 </div>
               </div>
-
             </Button>
 
             {role === "staff" && (
@@ -87,27 +122,13 @@ const Dashboard = () => {
                   </div>
                   <div className="text-left font-sans">
                     <h3 className="font-black text-xl text-[#302782] dark:text-white">ระบบจัดการไฟล์</h3>
-                    {/* เพิ่ม dark:text-gray-400 */}
                     <p className="text-black dark:text-white text-sm font-medium mt-1">อัปโหลดตารางเรียน (.xlsx, .csv)</p>
                   </div>
                 </div>
-
               </div>
             )}
-          </div>
 
-          {/* 🚩 3. ปรับ Smart Search Form ให้ใช้พื้นที่ที่เหลือบน Desktop (lg:col-span-7) */}
-          {(role === "staff" || role === "teacher") && (
-            <div className="lg:col-span-7">
-              {/* ส่ง prop ไปบอก SmartSearchForm ว่าเป็นโหมด Desktop จะได้จัด Layout ภายในใหม่ */}
-              <SmartSearchForm 
-                searchQuery={searchQuery} 
-                setSearchQuery={setSearchQuery} 
-                onSubmit={handleSmartSearch}
-                isDesktopView={true} 
-              />
-            </div>
-          )}
+          </div>
         </div>
 
       </div>
