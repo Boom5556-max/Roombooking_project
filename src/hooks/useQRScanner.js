@@ -162,6 +162,7 @@ export const useQRScanner = (activeTab, showAlert) => {
     setErrorMsg,
     isCameraActive,
     startCamera,
-    stopCamera
+    stopCamera,
+    handleProcessScan
   };
 };
