@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'; // 🚩 เพิ่ม useEffect, useState
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { verifyAndRefreshToken } from './api/auth';
 
 import LoginPage from './pages/Login';
