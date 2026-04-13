@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'; // 🚩 เพิ่ม useEffect, useState
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { verifyAndRefreshToken } from './api/auth';
 
 import LoginPage from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -41,15 +42,29 @@ const ThemeController = () => {
 
 // 🔴 1. ด่านตรวจสำหรับ "คนที่ต้อง Login แล้วเท่านั้น"
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
+  const [isVerifying, setIsVerifying] = useState(true);
+  const [isValid, setIsValid] = useState(false);
 
-  // 🚩 ตัวดักจับ Bfcache
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!localStorage.getItem("token")) {
-        window.location.replace("/"); 
+    const checkToken = async () => {
+      const result = await verifyAndRefreshToken();
+      setIsValid(result);
+      setIsVerifying(false);
+      
+      if (!result && window.location.pathname !== '/login' && window.location.pathname !== '/') {
+        window.location.replace("/");
       }
     };
+    
+    checkToken();
+
+    // 🚩 ตัวดักจับ Bfcache: ป้องกัน Browser เอาหน้าเก่าจากหน่วยความจำมาแสดงตอนกดย้อนกลับ
+    const handleVisibilityChange = () => {
+      if (!localStorage.getItem("token") && window.location.pathname !== '/login' && window.location.pathname !== '/') {
+        window.location.replace("/");
+      }
+    };
+    
     window.addEventListener("focus", handleVisibilityChange);
     window.addEventListener("pageshow", handleVisibilityChange); 
     
@@ -59,9 +74,20 @@ const ProtectedRoute = ({ children }) => {
     };
   }, []);
 
-  if (!token) {
+  if (isVerifying) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+         <div className="text-[#302782] dark:text-[#B2BB1E] animate-spin">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+         </div>
+      </div>
+    ); 
+  }
+
+  if (!isValid) {
     return <Navigate to="/" replace />; 
   }
+  
   return children;
 };
 

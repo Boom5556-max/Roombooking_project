@@ -22,3 +22,10 @@
     transform: rotate(360deg);
   }
 }
+
+/* Custom SweetAlert Backdrop Blur */
+.swal-backdrop-blur {
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}
