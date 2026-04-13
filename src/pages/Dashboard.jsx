@@ -13,7 +13,7 @@ import SmartSearchForm from "../components/dashboard/SmartSearchForm";
 import DashboardFooter from "../components/dashboard/DashboardFooter";
 import { useReport } from "../hooks/useReport";
 import RoomReportSection from "../components/rooms/RoomReportSection";
-import StaffReportSection from "../components/rooms/StaffReportSection";
+import StaffReportSection from "../components/rooms/StaffReportSection.jsx";
 
 const Dashboard = () => {
   const navigate = useNavigate();

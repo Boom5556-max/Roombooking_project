@@ -24,9 +24,7 @@ const DashboardFooter = () => (
         </div>
       </div>
     </div>
-    <p className="text-center text-black dark:text-white text-[10px] mt-6 font-medium">
-      คณะวิทยาศาสตร์ ศรีราชา - ระบบจองห้องเรียน v1.0
-    </p>
+    
   </footer>
 );
 

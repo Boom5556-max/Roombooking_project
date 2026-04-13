@@ -7,7 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Rooms from './pages/Rooms';
 
 import QrFirstpage from './pages/QrFirstpage'; 
-import QRScanner from './pages/QRScanner';     
+import QRScanner from './pages/QRScanner';     
 
 import ManageBooking from './pages/ManageBooking';
 import RoomStatus from './pages/RoomStatus';
@@ -20,6 +20,25 @@ import Users from './pages/Users';
 import ScheduleManagement from './pages/ScheduleManagement'; 
 import ExportLog from './pages/ExportLog';
 import TermManagement from './pages/TermManagement';
+
+// 🎨 Theme Controller: คอยจัดการสีของหน้าเว็บ (เวอร์ชันจำสีตลอดเวลา)
+const ThemeController = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // ❌ ไม่ต้องเช็ค Token แล้ว
+    const savedTheme = localStorage.getItem("theme") || "light"; 
+
+    // ✅ เช็คแค่ว่าเคยตั้งสีอะไรไว้ ก็ใช้สีนั้นเลยไม่ว่าจะอยู่หน้าไหน
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [location.pathname]); 
+
+  return null; 
+};
 
 // 🔴 1. ด่านตรวจสำหรับ "คนที่ต้อง Login แล้วเท่านั้น"
 const ProtectedRoute = ({ children }) => {
@@ -72,11 +91,10 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// 🟢 2. ด่านตรวจสำหรับ "คนที่ยังไม่ได้ Login เท่านั้น" (เพิ่มเข้ามาใหม่ 🚩)
+// 🟢 2. ด่านตรวจสำหรับ "คนที่ยังไม่ได้ Login เท่านั้น"
 const GuestRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   if (token) {
-    // ถ้ามี Token อยู่แล้ว แปลว่าล็อกอินแล้ว ให้เตะกลับไปหน้า dashboard ทันที ไม่ให้เห็นหน้า Login
     return <Navigate to="/dashboard" replace />;
   }
   return children;
@@ -85,8 +103,10 @@ const GuestRoute = ({ children }) => {
 function App() {
   return (
     <BrowserRouter>
+      {/* 🚩 ThemeController ทำงานเบื้องหลัง */}
+      <ThemeController />
+      
       <Routes>
-        {/* 🟢 หน้า Public ใช้ <GuestRoute> ครอบ เพื่อไม่ให้คนล็อกอินแล้วย้อนกลับมาได้ */}
         <Route path="/" element={
           <GuestRoute><QrFirstpage /></GuestRoute>
         } />
@@ -94,10 +114,8 @@ function App() {
           <GuestRoute><LoginPage /></GuestRoute>
         } />
         
-        {/* หน้า Status หลังสแกน QR (เข้าได้ทุกคน) */}
         <Route path="/room-status/:id" element={<RoomStatus />} />
 
-        {/* 🔴 หน้า Private (ต้อง Login และมี Token เท่านั้นถึงจะเข้าได้) */}
         <Route path="/scanner" element={<ProtectedRoute><QRScanner /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/rooms" element={<ProtectedRoute><Rooms /></ProtectedRoute>} />
