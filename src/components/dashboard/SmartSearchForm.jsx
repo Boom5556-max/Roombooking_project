@@ -89,7 +89,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
                   min="1" 
                   max="200" 
                   placeholder="เช่น 50" 
-                  className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-4 text-[#302782] dark:text-white outline-none font-bold transition-all placeholder:text-black dark:placeholder:text-white/30"
+                  className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-4 text-[#302782] dark:text-white outline-none font-bold transition-all placeholder:text-gray-400 dark:placeholder:text-white/30"
                   onKeyDown={(e) => {
                     if (["-", "+", "e", "E", "."].includes(e.key)) {
                       e.preventDefault();

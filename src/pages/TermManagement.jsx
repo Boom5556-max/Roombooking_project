@@ -19,7 +19,7 @@ import { API_BASE_URL } from "../api/config.js";
 const TERM_CONFIG = [
   {
     key: "first",
-    label: "ภาคเรียนที่ 1 (First Term)",
+    label: "เทอมต้น",
     icon: BookOpen,
     gradient: "from-blue-500 to-indigo-600",
     bgLight: "bg-blue-50",
@@ -31,7 +31,7 @@ const TERM_CONFIG = [
   },
   {
     key: "end",
-    label: "ภาคเรียนที่ 2 (End Term)",
+    label: "เทอมปลาย",
     icon: BookMarked,
     gradient: "from-emerald-500 to-teal-600",
     bgLight: "bg-emerald-50",
@@ -43,7 +43,7 @@ const TERM_CONFIG = [
   },
   {
     key: "summer",
-    label: "ภาคฤดูร้อน (Summer Term)",
+    label: "เทอมฤดูร้อน",
     icon: Sun,
     gradient: "from-amber-500 to-orange-600",
     bgLight: "bg-amber-50",
@@ -169,8 +169,8 @@ const TermManagement = () => {
         {/* Main Card */}
         <div className="bg-white dark:bg-gray-800 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
           <div className="flex items-center gap-4 mb-8">
-            <button 
-              onClick={() => navigate(-1)} 
+            <button
+              onClick={() => navigate(-1)}
               className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm flex items-center justify-center group"
               title="ย้อนกลับ"
             >
@@ -264,11 +264,10 @@ const TermManagement = () => {
               {/* Feedback Alert */}
               {feedback && (
                 <div
-                  className={`flex items-start gap-3 rounded-2xl p-4 mb-5 text-sm font-bold transition-all ${
-                    feedback.type === "error"
+                  className={`flex items-start gap-3 rounded-2xl p-4 mb-5 text-sm font-bold transition-all ${feedback.type === "error"
                       ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800"
                       : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-800"
-                  }`}
+                    }`}
                 >
                   {feedback.type === "error" ? (
                     <AlertCircle size={18} className="shrink-0 mt-0.5" />
