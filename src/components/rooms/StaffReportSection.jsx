@@ -41,9 +41,9 @@ const StaffReportSection = ({ reportData, isLoading, error, className = "" }) =>
 
   const getTermLabel = (term) => {
     switch (term?.toLowerCase()) {
-      case 'first': return '1';
-      case 'end': return '2';
-      case 'summer': return 'ฤดูร้อน';
+      case 'first': return 'เทอมต้น';
+      case 'end': return 'เทอมปลาย';
+      case 'summer': return 'เทอมฤดูร้อน';
       default: return term;
     }
   };
@@ -56,10 +56,10 @@ const StaffReportSection = ({ reportData, isLoading, error, className = "" }) =>
           <span className="w-2.5 h-7 bg-[#B2BB1E] rounded-full inline-block"></span>
           รายงานสรุปการใช้งานตลอดภาคการศึกษา
         </h2>
-        
+
         <p className="text-gray-500 dark:text-gray-400 text-sm font-medium flex items-center gap-2 ml-5 -mt-2">
-          <BookOpen size={16} /> 
-          ภาคเรียน {getTermLabel(term_info.term_name)} 
+          <BookOpen size={16} />
+          ภาคเรียน {getTermLabel(term_info.term_name)}
           <span className="mx-2">•</span>
           <CalendarDays size={16} />
           {formatDate(term_info.start_date)} - {formatDate(term_info.end_date)}
@@ -87,10 +87,10 @@ const StaffReportSection = ({ reportData, isLoading, error, className = "" }) =>
         {/* Room Rankings */}
         <div className="flex flex-col">
           <h3 className="text-lg font-black text-gray-800 dark:text-gray-200 mb-6 flex items-center gap-2">
-            <TrendingUp size={20} className="text-[#302782] dark:text-[#B2BB1E]" /> 
+            <TrendingUp size={20} className="text-[#302782] dark:text-[#B2BB1E]" />
             สรุปการใช้งานรายห้อง
           </h3>
-          
+
           {room_ranking.length > 0 ? (
             <div className="space-y-4">
               {room_ranking.map((room) => (
@@ -102,7 +102,7 @@ const StaffReportSection = ({ reportData, isLoading, error, className = "" }) =>
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden shadow-inner">
-                    <div 
+                    <div
                       className="bg-gradient-to-r from-[#B2BB1E] to-[#8c9415] h-full rounded-full transition-all duration-1000 ease-out"
                       style={{ width: `${(room.total_hours / maxRoomHours) * 100}%` }}
                     ></div>
@@ -120,10 +120,10 @@ const StaffReportSection = ({ reportData, isLoading, error, className = "" }) =>
         {/* Teacher Rankings */}
         <div className="flex flex-col">
           <h3 className="text-lg font-black text-gray-800 dark:text-gray-200 mb-6 flex items-center gap-2">
-            <Users size={20} className="text-[#302782] dark:text-[#B2BB1E]" /> 
+            <Users size={20} className="text-[#302782] dark:text-[#B2BB1E]" />
             สรุปผู้ใช้งานสูงสุด
           </h3>
-          
+
           {teacher_ranking.length > 0 ? (
             <div className="space-y-4">
               {teacher_ranking.map((teacher, idx) => (
@@ -137,7 +137,7 @@ const StaffReportSection = ({ reportData, isLoading, error, className = "" }) =>
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden shadow-inner">
-                    <div 
+                    <div
                       className="bg-gradient-to-r from-[#302782] to-[#453a99] h-full rounded-full transition-all duration-1000 ease-out"
                       style={{ width: `${(teacher.total_hours / maxTeacherHours) * 100}%` }}
                     ></div>

@@ -27,11 +27,48 @@ export const useReport = () => {
     setIsLoading(true);
     setError(null);
     try {
+      // 1. ดึงข้อมูลเทอมปัจจุบันเพื่อเอา start_date, end_date
+      const termRes = await api.get("/terms/showTerm");
+      const termData = termRes.data?.data;
+      
+      let queryParams = "";
+      
+      if (termData && termData.length > 0) {
+        // เรียงลำดับจากอดีต -> อนาคต
+        const sortedTerms = termData.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let currentTermIndex = -1;
+        
+        // หา "เทอมปัจจุบัน"
+        for (let i = sortedTerms.length - 1; i >= 0; i--) {
+          const termDate = new Date(sortedTerms[i].start_date);
+          if (termDate <= today) {
+            currentTermIndex = i;
+            break;
+          }
+        }
+        
+        if (currentTermIndex === -1) {
+          currentTermIndex = 0;
+        }
+        
+        const currentTerm = sortedTerms[currentTermIndex];
+        const startDate = currentTerm.start_date;
+        const endDate = currentTerm.end_date || ''; 
+        
+        // แนบ params ถ้ามีครบ
+        if (startDate && endDate) {
+          queryParams = `?startDate=${startDate}&endDate=${endDate}`;
+        }
+      }
+
+      // ดึงรายงานโดยส่ง startDate, endDate ไปถ้ามี
       if (userRole === "staff") {
-        const response = await api.get("/schedules/showReportForStaff");
+        const response = await api.get(`/schedules/showReportForStaff${queryParams}`);
         setReportData(response.data);
       } else if (userRole === "teacher") {
-        const response = await api.get("/schedules/showReport");
+        const response = await api.get(`/schedules/showReport${queryParams}`);
         setReportData(response.data);
       }
     } catch (err) {

@@ -70,9 +70,9 @@ const ExportLog = () => {
 
   // ===== Term Management State =====
   const [termDates, setTermDates] = useState({
-    first: "",
-    end: "",
-    summer: "",
+    first: { start_date: "", end_date: "" },
+    end: { start_date: "", end_date: "" },
+    summer: { start_date: "", end_date: "" },
   });
   const [isTermLoading, setIsTermLoading] = useState(false);
   const [isFetchingTerms, setIsFetchingTerms] = useState(true);
@@ -91,7 +91,7 @@ const ExportLog = () => {
       }
 
       // 2. เรียงลำดับวันที่จากอดีต -> อนาคต 
-      const sortedTerms = termData.sort((a, b) => new Date(a.date) - new Date(b.date));
+      const sortedTerms = termData.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
 
       // 3. เตรียมวันที่ปัจจุบันสำหรับเปรียบเทียบ
       const today = new Date();
@@ -101,7 +101,7 @@ const ExportLog = () => {
 
       // 4. หา "เทอมปัจจุบัน" (เทอมที่วันที่เริ่ม <= วันนี้ โดยดึงอันที่ใกล้ปัจจุบันที่สุด)
       for (let i = sortedTerms.length - 1; i >= 0; i--) {
-        const termDate = new Date(sortedTerms[i].date);
+        const termDate = new Date(sortedTerms[i].start_date);
         if (termDate <= today) {
           currentTermIndex = i;
           break;
@@ -114,21 +114,9 @@ const ExportLog = () => {
       }
 
       const currentTerm = sortedTerms[currentTermIndex];
-      const termStart = currentTerm.date; // รูปแบบ YYYY-MM-DD จาก API
-      let termEnd = '';
-
-      // 5. คำนวณวันสิ้นสุด (termEnd)
-      if (currentTermIndex + 1 < sortedTerms.length) {
-        // ถ้ามีเทอมถัดไป ให้เอาวันที่ของเทอมถัดไป ลบออก 1 วัน
-        const nextTermDate = new Date(sortedTerms[currentTermIndex + 1].date);
-        nextTermDate.setDate(nextTermDate.getDate() - 1);
-        termEnd = nextTermDate.toISOString().split('T')[0];
-      } else {
-        // ถ้าไม่มีเทอมถัดไป (เป็นเทอมสุดท้ายของปีการศึกษานั้น) ให้บวกไป 4 เดือนแบบคร่าวๆ
-        const fallbackEndDate = new Date(currentTerm.date);
-        fallbackEndDate.setMonth(fallbackEndDate.getMonth() + 4);
-        termEnd = fallbackEndDate.toISOString().split('T')[0];
-      }
+      const termStart = currentTerm.start_date; // รูปแบบ YYYY-MM-DD จาก API
+      // 5. ดึงวันสิ้นสุด (termEnd) จาก Backend ที่เตรียมไว้ให้แล้ว
+      const termEnd = currentTerm.end_date || '';
 
       // 6. อัปเดต State ให้หน้าเว็บ
       setStartDate(termStart);
@@ -170,11 +158,18 @@ const ExportLog = () => {
 
         if (response.ok) {
           const result = await response.json();
-          const dates = { first: "", end: "", summer: "" };
+          const dates = {
+            first: { start_date: "", end_date: "" },
+            end: { start_date: "", end_date: "" },
+            summer: { start_date: "", end_date: "" },
+          };
           if (result.data && Array.isArray(result.data)) {
             result.data.forEach((item) => {
               if (dates.hasOwnProperty(item.term)) {
-                dates[item.term] = item.date || "";
+                dates[item.term] = {
+                  start_date: item.start_date || "",
+                  end_date: item.end_date || "",
+                };
               }
             });
           }
@@ -245,23 +240,37 @@ const ExportLog = () => {
   };
 
   // ===== Term Handlers =====
-  const handleTermDateChange = (termKey, value) => {
-    setTermDates((prev) => ({ ...prev, [termKey]: value }));
+  const handleTermDateChange = (termKey, field, value) => {
+    setTermDates((prev) => ({
+      ...prev,
+      [termKey]: {
+        ...prev[termKey],
+        [field]: value
+      }
+    }));
     setTermFeedback(null);
   };
 
   const handleSaveTerms = async () => {
     setTermFeedback(null);
 
-    const filledTerms = TERM_CONFIG.filter((t) => termDates[t.key]);
+    const filledTerms = TERM_CONFIG.filter((t) => termDates[t.key].start_date || termDates[t.key].end_date);
     if (filledTerms.length === 0) {
       showTermFeedback("error", "กรุณาระบุวันที่อย่างน้อย 1 เทอม");
       return;
     }
 
+    // Verify all filled terms have both start and end date
+    const incompleteTerm = filledTerms.find(t => !termDates[t.key].start_date || !termDates[t.key].end_date);
+    if (incompleteTerm) {
+      showTermFeedback("error", `กรุณาระบุวันที่ให้ครบทั้งเริ่มต้นและสิ้นสุดสำหรับ ${incompleteTerm.label}`);
+      return;
+    }
+
     const terms = filledTerms.map((t) => ({
       term: t.key,
-      date: termDates[t.key],
+      start_date: termDates[t.key].start_date,
+      end_date: termDates[t.key].end_date,
     }));
 
     setIsTermLoading(true);
@@ -445,7 +454,7 @@ const ExportLog = () => {
                   กำหนดวันที่ของแต่ละเทอม
                 </h2>
                 <p className="text-xs text-black dark:text-white leading-relaxed mt-0.5">
-                  ระบุวันที่เริ่มต้นของแต่ละภาคเรียน
+                  ระบุวันที่เริ่มต้นและสิ้นสุดของแต่ละภาคเรียน
                 </p>
               </div>
             </div>
@@ -476,32 +485,47 @@ const ExportLog = () => {
                           className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${term.gradient}`}
                         />
 
-                        {/* Single horizontal row: icon + label + date picker */}
-                        <div className="flex items-center gap-3">
-                          {/* Icon */}
-                          <div
-                            className={`w-10 h-10 ${term.iconBg} rounded-xl flex items-center justify-center shrink-0`}
-                          >
-                            <IconComponent size={18} className={term.textColor} />
+                        {/* Container: Stack on small, row on large */}
+                        <div className="flex flex-col 2xl:flex-row 2xl:items-center gap-3 sm:gap-4">
+                          
+                          {/* Icon and Label Group */}
+                          <div className="flex items-center gap-3 shrink-0">
+                            <div
+                              className={`w-10 h-10 ${term.iconBg} rounded-xl flex items-center justify-center shrink-0`}
+                            >
+                              <IconComponent size={18} className={term.textColor} />
+                            </div>
+                            <h3
+                              className={`text-sm font-black ${term.textColor} whitespace-nowrap shrink-0`}
+                            >
+                              {term.label}
+                            </h3>
                           </div>
 
-                          {/* Label */}
-                          <h3
-                            className={`text-sm font-black ${term.textColor} whitespace-nowrap shrink-0`}
-                          >
-                            {term.label}
-                          </h3>
-
-                          {/* Date picker — pushed to the right */}
-                          <input
-                            type="date"
-                            value={termDates[term.key]}
-                            onChange={(e) =>
-                              handleTermDateChange(term.key, e.target.value)
-                            }
-                            disabled={isTermLoading}
-                            className="ml-auto w-auto min-w-[160px] bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#302782]/30 dark:focus:ring-[#B2BB1E]/30 focus:border-[#302782] dark:focus:border-[#B2BB1E] transition-all disabled:opacity-50"
-                          />
+                          {/* Date picker Group */}
+                          <div className="2xl:ml-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full 2xl:w-auto">
+                            <input
+                              type="date"
+                              value={termDates[term.key].start_date}
+                              onChange={(e) =>
+                                handleTermDateChange(term.key, 'start_date', e.target.value)
+                              }
+                              disabled={isTermLoading}
+                              className="w-full sm:flex-1 2xl:w-auto min-w-[130px] bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#302782]/30 dark:focus:ring-[#B2BB1E]/30 focus:border-[#302782] dark:focus:border-[#B2BB1E] transition-all disabled:opacity-50"
+                              title="วันที่เริ่มต้น"
+                            />
+                            <span className="text-gray-400 dark:text-gray-500 font-bold hidden sm:block text-center shrink-0">-</span>
+                            <input
+                              type="date"
+                              value={termDates[term.key].end_date}
+                              onChange={(e) =>
+                                handleTermDateChange(term.key, 'end_date', e.target.value)
+                              }
+                              disabled={isTermLoading}
+                              className="w-full sm:flex-1 2xl:w-auto min-w-[130px] bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#302782]/30 dark:focus:ring-[#B2BB1E]/30 focus:border-[#302782] dark:focus:border-[#B2BB1E] transition-all disabled:opacity-50"
+                              title="วันที่สิ้นสุด"
+                            />
+                          </div>
                         </div>
                       </div>
                     );
