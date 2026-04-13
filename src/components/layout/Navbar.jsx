@@ -84,38 +84,31 @@ const Navbar = () => {
   };
 
   const handleLogoutClick = () => {
-  showAlert(
-    "คุณแน่ใจหรือไม่ที่จะออกจากระบบ?",
-    <LogOut size={50} className="text-red-500" />,
-    async () => { // 👈 1. เปลี่ยนตรงนี้เป็น async
-      
-      try {
-        // 👈 2. ยิง API ไปบอก Backend ให้ลบ HttpOnly Cookie (Refresh Token) ทิ้ง
-        // (เช็ค path ของ API ให้ตรงกับ Backend ของคุณพงศ์ภัคนะครับ เช่น /auth/logout หรือ /logout)
-        await api.post('/auth/logout'); 
-      } catch (error) {
-        console.error("Logout API Error:", error);
-        // ถึง API จะพัง เราก็จะยังให้ทำงานข้อ 3-4 ต่อไป เพื่อบังคับเตะผู้ใช้ออกครับ
-      }
+    showAlert(
+      "คุณแน่ใจหรือไม่ที่จะออกจากระบบ?",
+      <LogOut size={50} className="text-red-500" />,
+      async () => { 
+        
+        try {
+          // ยิง API ไปบอก Backend ให้ลบ HttpOnly Cookie (Refresh Token) ทิ้ง
+          await api.post('/auth/logout'); 
+        } catch (error) {
+          console.error("Logout API Error:", error);
+        }
 
-      // 3. บังคับเปลี่ยนค่าใน localStorage กลับเป็นโหมดสว่าง
-      localStorage.setItem('theme', 'light');
-      
-      // 4. ลบคลาส dark ออกจากหน้าเว็บทันที
-      document.documentElement.classList.remove('dark');
-      
-      // 5. ลบ Access Token และข้อมูล User ออกจากระบบ
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      
-      // 6. กลับไปหน้า Login 
-      // 🚩 คำแนะนำเพิ่มเติมเรื่อง Ghost Page ที่เราเคยคุยกัน: 
-      // ถ้าใช้ navigate("/", { replace: true }) แล้วยังมีอาการกดย้อนกลับแล้วเจอหน้าเดิม
-      // ให้เปลี่ยนไปใช้คำสั่งข้างล่างนี้แทนครับ จะ lล้าง State ของ React ทิ้งแบบ 100%
-      window.location.href = '/'; 
-    }
-  );
-};
+        // ❌ เอาการบังคับเซ็ตค่า Theme เป็น light ออก เพื่อให้ระบบจำสีเดิมไว้ใช้ตอนล็อกอินครั้งหน้า
+        // localStorage.setItem('theme', 'light');
+        // document.documentElement.classList.remove('dark');
+        
+        // ✅ ลบแค่ Access Token และข้อมูล User ออกจากระบบ
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        
+        // กลับไปหน้า Login (ThemeController จะจัดการถอดคลาส dark ให้เองเพราะไม่มี token แล้ว)
+        window.location.href = '/'; 
+      }
+    );
+  };
 
   const getNavStyle = (path) => {
     const active = location.pathname === path;
