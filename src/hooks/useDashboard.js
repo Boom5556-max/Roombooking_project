@@ -9,10 +9,14 @@ export const useDashboard = () => {
     approvedCount: 0,
   });
   const [user, setUser] = useState({ name: "", role: "student" });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
 
     try {
       // 1. ถอดรหัส Token
@@ -24,6 +28,7 @@ export const useDashboard = () => {
 
       // 2. ฟังก์ชันดึงข้อมูลแบบ Axios
       const fetchData = async () => {
+        setIsLoading(true);
         try {
           // ใช้ Promise.all ยิงพร้อมกัน 3 API เพื่อความเร็ว
           const [roomRes, pendingRes, approvedRes] = await Promise.all([
@@ -44,19 +49,20 @@ export const useDashboard = () => {
             approvedCount: getCount(approvedRes),
           });
         } catch (err) {
-          // 401 errors are handled globally by axios interceptor (forceLogout)
-          // Only log non-401 errors here
           if (!err.response || err.response.status !== 401) {
             console.error("Dashboard Fetch Error:", err);
           }
+        } finally {
+          setIsLoading(false);
         }
       };
 
       fetchData();
     } catch (err) {
       console.error("Token/Logic Error:", err);
+      setIsLoading(false);
     }
   }, []);
 
-  return { ...data, ...user };
+  return { ...data, ...user, isLoading };
 };

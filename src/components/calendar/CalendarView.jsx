@@ -125,17 +125,19 @@ const CalendarView = ({
     );
   };
 
-  const processedEvents = events?.map(event => {
-    const isClosed = event.extendedProps?.temporarily_closed;
+  const processedEvents = React.useMemo(() => {
+    return events?.map(event => {
+      const isClosed = event.extendedProps?.temporarily_closed;
 
-    return {
-      ...event,
-      display: 'block',
-      backgroundColor: isClosed ? "#f1f5f9" : event.backgroundColor,
-      borderColor: isClosed ? "#ef4444" : (event.borderColor || "transparent"),
-      textColor: ""
-    };
-  });
+      return {
+        ...event,
+        display: 'block',
+        backgroundColor: isClosed ? "#f1f5f9" : event.backgroundColor,
+        borderColor: isClosed ? "#ef4444" : (event.borderColor || "transparent"),
+        textColor: ""
+      };
+    });
+  }, [events]);
 
   return (
     <div className="flex-grow w-full h-full bg-[#FFFFFF] dark:bg-gray-800 p-2 sm:p-4 md:p-6 flex flex-col relative font-sans overflow-hidden">

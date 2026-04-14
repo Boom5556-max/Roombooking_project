@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LayoutGrid, FilePlus, AlertCircle } from "lucide-react";
 import { useDashboard } from "../hooks/useDashboard";
@@ -7,6 +7,7 @@ import Button from "../components/common/Button.jsx";
 import StatusCards from "../components/dashboard/StatusCards";
 import UploadModal from "../components/dashboard/UploadModal";
 import ActionModal from "../components/common/ActionModal";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 // Import ส่วนที่แบ่งไป
 import SmartSearchForm from "../components/dashboard/SmartSearchForm";
@@ -18,10 +19,35 @@ import StaffReportSection from "../components/rooms/StaffReportSection.jsx";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { role, roomCount, pendingCount, approvedCount } = useDashboard();
+  
+  // ✨ Synchronized Loadingstates
+  const { role, roomCount, pendingCount, approvedCount, isLoading: isDashboardLoading } = useDashboard();
   const { reportData, isLoading: isReportLoading, error: reportError } = useReport();
+  const [isFullyReady, setIsFullyReady] = useState(false);
+
   const [alertModal, setAlertModal] = useState({ isOpen: false, title: "" });
   const [searchQuery, setSearchQuery] = useState({ date: "", start_time: "", end_time: "", capacity: "" });
+
+  // ✨ Double-Lock Logic for Dashboard
+  useEffect(() => {
+    let timeout;
+    // Condition: Wait for both Stats and Reports to be ready
+    if (!isDashboardLoading && !isReportLoading) {
+      // 🛡️ Paint-Guard: Waiting for charts and cards to finish rendering
+      timeout = setTimeout(() => {
+        setIsFullyReady(true);
+      }, 800); 
+    }
+    return () => clearTimeout(timeout);
+  }, [isDashboardLoading, isReportLoading]);
+
+  // Safety Watchdog
+  useEffect(() => {
+    const watchdog = setTimeout(() => {
+      if (!isFullyReady) setIsFullyReady(true);
+    }, 5000);
+    return () => clearTimeout(watchdog);
+  }, [isFullyReady]);
 
   const handleSmartSearch = (e) => {
     e.preventDefault();
@@ -43,94 +69,99 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 dark:bg-gray-900 flex flex-col pb-20 md:pb-0 font-sans transition-colors duration-200">
-      <Navbar />
-      
-      {/* 🚩 1. ปรับ max-w-7xl (1280px) เพื่อให้กว้างขึ้นบน Desktop และเพิ่ม spacing (lg:space-y-8) */}
-      <div className="p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto w-full flex-grow space-y-6 lg:space-y-8">
+    <div className="min-h-screen bg-gray-50/50 dark:bg-gray-900 flex flex-col pb-20 md:pb-0 font-sans transition-colors duration-200 relative overflow-x-hidden">
+      {/* ✨ Sync Loading Overlay */}
+      {!isFullyReady && (
+        <LoadingSpinner 
+          fullPage 
+          text={isDashboardLoading ? "กำลังวิเคราะห์ข้อมูลระบบ..." : "กำลังจัดทำรายงานสรุป..."} 
+        />
+      )}
+
+      {/* Main Content Wrapper - Controlled transition */}
+      <div className={`flex flex-col h-full min-h-screen transition-all duration-700 ease-out ${!isFullyReady ? "opacity-0 scale-[0.98] blur-sm" : "opacity-100 scale-100 blur-0"}`}>
+        <Navbar />
         
-        {/* Header Section */}
-        <div className="flex justify-between items-center pb-3 border-b-2 border-gray-100 dark:border-gray-800">
-          <h2 className="text-xl lg:text-2xl font-black text-[#302782] dark:text-white flex items-center gap-3">
-            <div className="w-2.5 h-7 bg-[#B2BB1E] rounded-full"></div>
-            ภาพรวมระบบ
-          </h2>
-        </div>
-
-        {/* Status Cards (สีตัวเลขจะอยู่ในไฟล์ StatusCards) */}
-        <StatusCards role={role} roomCount={roomCount} pendingCount={pendingCount} approvedCount={approvedCount} />
-
-        {/* 🚩 2. ปรับ Layout ส่วนล่างให้เป็น Grid บน Desktop (lg:grid-cols-12) เพื่อกระจาย Component */}
-        <div className={`grid grid-cols-1 ${role === "staff" || role === "teacher" ? "lg:grid-cols-12" : ""} gap-6 lg:gap-8 items-start`}>
+        <div className="p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto w-full flex-grow space-y-6 lg:space-y-8">
           
-          {/* เลย์เอาต์ส่วนซ้าย: รายงาน (Teacher) */}
-          {(role === "teacher") && (
-            <div className="lg:col-span-5 space-y-6">
-              <RoomReportSection 
-                reportData={reportData} 
-                isLoading={isReportLoading} 
-                error={reportError} 
-              />
-            </div>
-          )}
+          {/* Header Section */}
+          <div className="flex justify-between items-center pb-3 border-b-2 border-gray-100 dark:border-gray-800">
+            <h2 className="text-xl lg:text-2xl font-black text-[#302782] dark:text-white flex items-center gap-3">
+              <div className="w-2.5 h-7 bg-[#B2BB1E] rounded-full"></div>
+              ภาพรวมระบบ
+            </h2>
+          </div>
 
-          {/* เลย์เอาต์ส่วนซ้าย: รายงาน (Staff) */}
-          {(role === "staff") && (
-            <div className="lg:col-span-5 space-y-6">
-              <StaffReportSection 
-                reportData={reportData} 
-                isLoading={isReportLoading} 
-                error={reportError} 
-              />
-            </div>
-          )}
+          <StatusCards role={role} roomCount={roomCount} pendingCount={pendingCount} approvedCount={approvedCount} />
 
-          {/* เลย์เอาต์ส่วนขวา: Smart Search และเมนูจัดการต่างๆ */}
-          <div className={`${role === "staff" || role === "teacher" ? "lg:col-span-7" : ""} space-y-6`}>
+          <div className={`grid grid-cols-1 ${role === "staff" || role === "teacher" ? "lg:grid-cols-12" : ""} gap-6 lg:gap-8 items-start`}>
             
-            {/* Smart Search */}
-            {(role === "staff" || role === "teacher") && (
-              <SmartSearchForm 
-                searchQuery={searchQuery} 
-                setSearchQuery={setSearchQuery} 
-                onSubmit={handleSmartSearch}
-                isDesktopView={true} 
-              />
-            )}
-            
-            {/* Action Buttons */}
-            <Button
-              variant="secondary" size="none" onClick={() => navigate("/Rooms")}
-              className="w-full p-6 rounded-[24px] justify-between flex border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-[#B2BB1E]/50 transition-all shadow-sm group"
-            >
-              <div className="flex items-center gap-5">
-                <div className="bg-[#B2BB1E]/10 p-4 rounded-2xl text-[#B2BB1E] group-hover:bg-[#B2BB1E] group-hover:text-white transition-colors">
-                  <LayoutGrid size={28} />
-                </div>
-                <div className="text-left font-sans">
-                  <p className="font-black text-xl text-[#302782] dark:text-white">ดูรายการห้องเรียน</p>
-                  <p className="text-black dark:text-white text-sm font-medium mt-1">ตรวจสอบตารางการใช้ห้องทั้งหมด</p>
-                </div>
+            {/* เลย์เอาต์ส่วนซ้าย: รายงาน (Teacher) */}
+            {(role === "teacher") && (
+              <div className="lg:col-span-12 xl:col-span-5 space-y-6">
+                <RoomReportSection 
+                  reportData={reportData} 
+                  isLoading={isReportLoading} 
+                  error={reportError} 
+                />
               </div>
-            </Button>
+            )}
 
-            {role === "staff" && (
-              <div onClick={() => setIsModalOpen(true)} className="bg-white dark:bg-gray-800 rounded-[24px] p-6 border border-dashed border-gray-300 dark:border-gray-600 cursor-pointer hover:border-[#B2BB1E] hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-all flex justify-between items-center group shadow-sm">
+            {/* เลย์เอาต์ส่วนซ้าย: รายงาน (Staff) */}
+            {(role === "staff") && (
+              <div className="lg:col-span-12 xl:col-span-5 space-y-6">
+                <StaffReportSection 
+                  reportData={reportData} 
+                  isLoading={isReportLoading} 
+                  error={reportError} 
+                />
+              </div>
+            )}
+
+            <div className={`${role === "staff" || role === "teacher" ? "lg:col-span-12 xl:col-span-7" : ""} space-y-6`}>
+              
+              {(role === "staff" || role === "teacher") && (
+                <SmartSearchForm 
+                  searchQuery={searchQuery} 
+                  setSearchQuery={setSearchQuery} 
+                  onSubmit={handleSmartSearch}
+                  isDesktopView={true} 
+                />
+              )}
+              
+              <Button
+                variant="secondary" size="none" onClick={() => navigate("/Rooms")}
+                className="w-full p-6 rounded-[24px] justify-between flex border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-[#B2BB1E]/50 transition-all shadow-sm group"
+              >
                 <div className="flex items-center gap-5">
-                  <div className="bg-[#302782]/5 p-4 rounded-2xl text-[#302782] dark:text-white group-hover:bg-[#302782] group-hover:text-white transition-colors">
-                    <FilePlus size={28} />
+                  <div className="bg-[#B2BB1E]/10 p-4 rounded-2xl text-[#B2BB1E] group-hover:bg-[#B2BB1E] group-hover:text-white transition-colors">
+                    <LayoutGrid size={28} />
                   </div>
                   <div className="text-left font-sans">
-                    <h3 className="font-black text-xl text-[#302782] dark:text-white">ระบบจัดการไฟล์</h3>
-                    <p className="text-black dark:text-white text-sm font-medium mt-1">อัปโหลดตารางเรียน (.xlsx, .csv)</p>
+                    <p className="font-black text-xl text-[#302782] dark:text-white">ดูรายการห้องเรียน</p>
+                    <p className="text-black dark:text-white text-sm font-medium mt-1">ตรวจสอบตารางการใช้ห้องทั้งหมด</p>
                   </div>
                 </div>
-              </div>
-            )}
+              </Button>
 
+              {role === "staff" && (
+                <div onClick={() => setIsModalOpen(true)} className="bg-white dark:bg-gray-800 rounded-[24px] p-6 border border-dashed border-gray-300 dark:border-gray-600 cursor-pointer hover:border-[#B2BB1E] hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-all flex justify-between items-center group shadow-sm">
+                  <div className="flex items-center gap-5">
+                    <div className="bg-[#302782]/5 p-4 rounded-2xl text-[#302782] dark:text-white group-hover:bg-[#302782] group-hover:text-white transition-colors">
+                      <FilePlus size={28} />
+                    </div>
+                    <div className="text-left font-sans">
+                      <h3 className="font-black text-xl text-[#302782] dark:text-white">ระบบจัดการไฟล์</h3>
+                      <p className="text-black dark:text-white text-sm font-medium mt-1">อัปโหลดตารางเรียน (.xlsx, .csv)</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
+        <DashboardFooter />
       </div>
 
       <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
@@ -143,8 +174,6 @@ const Dashboard = () => {
           onClose={() => setAlertModal({ ...alertModal, isOpen: false })}
         />
       )}
-
-      <DashboardFooter />
     </div>
   );
 };

@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCalendarData } from "../hooks/useCalendarData";
 import {
-  Check,
   CheckCircle,
   X,
   Power,
@@ -54,9 +53,11 @@ const Calendar = () => {
   const [showModal, setShowModal] = useState(false);
   const [showConfirmCancel, setShowConfirmCancel] = useState(null);
   const [showConfirmRestore, setShowConfirmRestore] = useState(null);
-  
-  // ✨ เพิ่ม State สำหรับเก็บข้อความเหตุผล
   const [cancelReason, setCancelReason] = useState("");
+
+  // ✨ Synchronized Loading Engine
+  const [isCalendarBusy, setIsCalendarBusy] = useState(true);
+  const [isFullyReady, setIsFullyReady] = useState(false);
 
   const [alertConfig, setAlertConfig] = useState({
     show: false,
@@ -65,7 +66,31 @@ const Calendar = () => {
     type: "error",
   });
 
-  if (isLoading) return <LoadingSpinner fullPage text="กำลังจัดเตรียมตารางเรียน..." />;
+  // ✨ Double-Lock System: Syncs Internal Data + Google Calendar
+  useEffect(() => {
+    let timeout;
+    if (!isLoading && !isCalendarBusy) {
+      // 🛡️ Paint-Guard Delay: Ensuring browser finishing rendering events
+      timeout = setTimeout(() => {
+        setIsFullyReady(true);
+      }, 1000); // 1.0s buffer for a rock-solid reveal
+    }
+    return () => clearTimeout(timeout);
+  }, [isLoading, isCalendarBusy]);
+
+  // Reset busy state when changing rooms
+  useEffect(() => {
+    setIsCalendarBusy(true);
+    setIsFullyReady(false);
+  }, [selectedRoom]);
+
+  // Safety Watchdog (5s)
+  useEffect(() => {
+    const watchdog = setTimeout(() => {
+      if (!isFullyReady) setIsFullyReady(true);
+    }, 5000);
+    return () => clearTimeout(watchdog);
+  }, [isFullyReady]);
 
   const checkPermission = (event) => {
     const props = event.extendedProps;
@@ -92,83 +117,100 @@ const Calendar = () => {
   };
 
   return (
-    <div className="h-screen bg-[#FDFDFF] dark:bg-gray-900 flex flex-col overflow-hidden font-sans transition-colors duration-200">
-      <Navbar />
+    <div className="h-screen bg-[#FDFDFF] dark:bg-gray-900 flex flex-col overflow-hidden font-sans transition-colors duration-200 relative">
+      {/* ✨ Double-Lock Loader Layer */}
+      {!isFullyReady && (
+        <LoadingSpinner 
+          fullPage 
+          text={isLoading ? "กำลังโหลดข้อมูลห้องเรียน..." : "กำลังรอการซิงค์ข้อมูลลงปฏิทิน..."} 
+        />
+      )}
 
-      <main className="flex-grow flex flex-col overflow-hidden p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1800px] mx-auto w-full">
-        
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 flex-shrink-0">
-          <div className="flex flex-row items-center gap-3 w-full lg:w-auto flex-grow">
-            {/* Back Button */}
-            <button 
-              onClick={() => navigate(-1)} 
-              className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group flex-shrink-0"
-              title="ย้อนกลับ"
-            >
-              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
-            </button>
+      {/* Main Content Wrapper - Controlled transition */}
+      <div className={`flex flex-col h-full transition-all duration-700 ease-in-out ${!isFullyReady ? "opacity-0 scale-[0.98] blur-sm pointer-events-none" : "opacity-100 scale-100 blur-0 pointer-events-auto"}`}>
+        <Navbar />
 
-            <div className="flex-grow md:flex-grow-0 md:w-96 flex items-center">
-              <RoomSelector
-                rooms={rooms}
-                selectedRoom={selectedRoom}
-                onSelect={setSelectedRoom}
-                disabled={isCancelMode}
-              />
+        <main className="flex-grow flex flex-col overflow-hidden p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1800px] mx-auto w-full">
+          
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 flex-shrink-0">
+            <div className="flex flex-row items-center gap-3 w-full lg:w-auto flex-grow">
+              <button 
+                onClick={() => navigate(-1)} 
+                className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group flex-shrink-0"
+                title="ย้อนกลับ"
+              >
+                <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+              </button>
+
+              <div className="flex-grow md:flex-grow-0 md:w-96 flex items-center">
+                <RoomSelector
+                  rooms={rooms}
+                  selectedRoom={selectedRoom}
+                  onSelect={setSelectedRoom}
+                  disabled={isCancelMode}
+                />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4 px-1 text-[11px] sm:text-xs text-black dark:text-white font-bold uppercase tracking-wider">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-sm"></span>
+                  <span>อัปโหลดตารางเรียน</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shadow-sm"></span>
+                  <span>การจองผ่านระบบ</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#9CA3AF] shadow-sm"></span>
+                  <span>งดใช้ห้อง</span>
+                </div>
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 px-1 text-[11px] sm:text-xs text-black dark:text-white font-bold uppercase tracking-wider">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-sm"></span>
-                <span>อัปโหลดตารางเรียน</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shadow-sm"></span>
-                <span>การจองผ่านระบบ</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#9CA3AF] shadow-sm"></span>
-                <span>งดใช้ห้อง</span>
-              </div>
-            </div>
+            {selectedRoom && (
+              <button
+                onClick={() => setIsCancelMode(!isCancelMode)}
+                className={`w-full lg:w-auto flex items-center justify-center gap-2 px-6 h-12 rounded-2xl font-bold text-sm transition-all shadow-sm active:scale-[0.98] ${
+                  isCancelMode
+                    ? "bg-[#B2BB1E] text-white ring-4 ring-[#B2BB1E]/20"
+                    : "bg-white dark:bg-gray-800 text-[#302782] dark:text-white border border-gray-200 dark:border-gray-700 hover:border-[#302782]"
+                }`}
+              >
+                {isCancelMode ? <X size={18} /> : <Settings2 size={18} />}
+                <span>{isCancelMode ? "เสร็จสิ้น" : "จัดการงดใช้ห้อง"}</span>
+              </button>
+            )}
           </div>
 
-          {selectedRoom && (
-            <button
-              onClick={() => setIsCancelMode(!isCancelMode)}
-              className={`w-full lg:w-auto flex items-center justify-center gap-2 px-6 h-12 rounded-2xl font-bold text-sm transition-all shadow-sm active:scale-[0.98] ${
-                isCancelMode
-                  ? "bg-[#B2BB1E] text-white ring-4 ring-[#B2BB1E]/20"
-                  : "bg-white dark:bg-gray-800 text-[#302782] dark:text-white border border-gray-200 dark:border-gray-700 hover:border-[#302782]"
-              }`}
-            >
-              {isCancelMode ? <X size={18} /> : <Settings2 size={18} />}
-              <span>{isCancelMode ? "เสร็จสิ้น" : "จัดการงดใช้ห้อง"}</span>
-            </button>
-          )}
-        </div>
-
-        <div className="flex-grow bg-white dark:bg-gray-800 rounded-[24px] sm:rounded-[32px] shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
-          <CalendarView
-            events={events}
-            isCancelMode={isCancelMode}
-            currentUserId={userData.id}
-            currentUserRole={userData.role}
-            onEventClick={(info) => {
-              if (isCancelMode) {
-                if (checkPermission(info.event)) {
-                  const isClosed = info.event.extendedProps.temporarily_closed;
-                  if (isClosed) setShowConfirmRestore(info.event);
-                  else setShowConfirmCancel(info.event);
+          <div className="flex-grow bg-white dark:bg-gray-800 rounded-[24px] sm:rounded-[32px] shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
+            <CalendarView
+              events={events}
+              isCancelMode={isCancelMode}
+              currentUserId={userData.id}
+              currentUserRole={userData.role}
+              onLoading={(loading) => {
+                if (!loading) {
+                  setIsCalendarBusy(false);
+                } else {
+                  setIsCalendarBusy(true);
                 }
-                return;
-              }
-              setSelectedEvent(info.event);
-              setShowModal(true);
-            }}
-          />
-        </div>
-      </main>
+              }}
+              onEventClick={(info) => {
+                if (isCancelMode) {
+                  if (checkPermission(info.event)) {
+                    const isClosed = info.event.extendedProps.temporarily_closed;
+                    if (isClosed) setShowConfirmRestore(info.event);
+                    else setShowConfirmCancel(info.event);
+                  }
+                  return;
+                }
+                setSelectedEvent(info.event);
+                setShowModal(true);
+              }}
+            />
+          </div>
+        </main>
+      </div>
 
       <EventModal
         event={selectedEvent}
@@ -178,11 +220,9 @@ const Calendar = () => {
         }}
       />
 
-      {/* ✨ Modal ยืนยันการงดใช้ห้อง (เปลี่ยนเป็น Custom Modal เพื่อใส่ Textarea) */}
-      {/* ✨ Modal ยืนยันการงดใช้ห้อง (บังคับกรอกเหตุผล) */}
       {showConfirmCancel && (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-[#302782]/30 dark:bg-black/40 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 w-full max-w-md shadow-2xl flex flex-col border border-white dark:border-gray-700 scale-in">
+          <div className="bg-white dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 w-full max-m-md shadow-2xl flex flex-col border border-white dark:border-gray-700 scale-in">
             <div className="flex justify-center mb-4">
                <Power size={48} className="text-red-500" />
             </div>
@@ -190,21 +230,18 @@ const Calendar = () => {
             <p className="text-center text-black dark:text-white text-sm mb-6 font-medium">
               วิชา "{showConfirmCancel.title}" จะแสดงสถานะงดการใช้ห้องเรียน
             </p>
-
-            {/* ช่องกรอกเหตุผล */}
             <div className="mb-6">
               <label className="block text-sm font-bold text-black dark:text-white mb-2">
                 เหตุผลการงดใช้ห้อง <span className="text-red-500 font-bold">*</span>
               </label>
               <textarea
-                className="w-full p-4 rounded-[16px] bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent text-sm text-black dark:text-white resize-none transition-all placeholder:text-black dark:placeholder:text-white/30"
+                className="w-full p-4 rounded-[16px] bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent text-sm text-black dark:text-white resize-none transition-all"
                 rows="3"
-                placeholder="จำเป็นต้องระบุเหตุผล (เช่น อาจารย์ติดภารกิจ, ห้องปรับปรุง)..."
+                placeholder="จำเป็นต้องระบุเหตุผล..."
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
               />
             </div>
-
             <div className="flex gap-3">
               <button
                 onClick={() => {
@@ -216,7 +253,6 @@ const Calendar = () => {
                 ยกเลิก
               </button>
               <button
-                // ✨ ตรวจสอบว่าถ้าไม่ได้พิมพ์ข้อความ หรือพิมพ์แค่ Spacebar จะให้ปุ่มถูก Disabled
                 disabled={!cancelReason.trim()} 
                 onClick={async () => {
                   const res = await handleCancelSchedule(showConfirmCancel.id, cancelReason);
@@ -231,7 +267,6 @@ const Calendar = () => {
                     });
                   }
                 }}
-                // ✨ เปลี่ยนสีปุ่มให้จางลงเมื่อกดยืนยันไม่ได้
                 className={`flex-1 py-3.5 rounded-[16px] font-bold text-sm transition-all ${
                   cancelReason.trim()
                     ? "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/30"
@@ -245,7 +280,6 @@ const Calendar = () => {
         </div>
       )}
 
-      {/* Modal เปิดการใช้งานห้องกลับมาปกติ (ใช้ ActionModal เดิมได้เลยเพราะไม่ต้องระบุเหตุผล) */}
       {showConfirmRestore && (
         <ActionModal
           icon={<RotateCcw size={32} />}
@@ -267,7 +301,6 @@ const Calendar = () => {
         />
       )}
 
-      {/* Alert Modal */}
       {alertConfig.show && (
         <div className="fixed inset-0 z-[4000] flex items-center justify-center p-6 bg-[#302782]/30 dark:bg-black/40 backdrop-blur-md animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-800 rounded-[32px] p-8 w-full max-w-xs sm:max-w-sm shadow-2xl text-center border border-white dark:border-gray-700 scale-in flex flex-col items-center">

@@ -56,7 +56,7 @@ export const useCalendarData = (roomIdFromUrl) => {
       console.error("Fetch Data Error:", err);
       setEvents([]);
     } finally {
-      setTimeout(() => setIsLoading(false), 300);
+      setIsLoading(false);
     }
   }, [selectedRoom, rooms]);
 
