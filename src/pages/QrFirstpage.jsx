@@ -9,7 +9,8 @@ import {
   ChevronRight,
   Loader2,
   Building2,
-  Lock
+  Lock,
+  Download
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/common/Button.jsx";
@@ -308,44 +309,94 @@ const RoomList = ({ isLoading, groupedRooms, isRoomAvailable, onSelectRoom }) =>
 };
 
 // 2. Component แสดงรายละเอียดห้องตอนกดเลือก
-const RoomDetailView = ({ room, isFetchingQR, qrImageData, onSimulateScan, onBack }) => (
-  <div className="flex flex-col items-center animate-in slide-in-from-right-4 duration-300 py-6">
-    <div className="w-56 h-56 bg-white p-4 rounded-[32px] shadow-xl border border-gray-100 mb-8 flex items-center justify-center overflow-hidden relative">
-      {isFetchingQR ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm">
-          <Loader2 size={40} className="animate-spin text-[#302782]" />
+const RoomDetailView = ({
+  room,
+  isFetchingQR,
+  qrImageData,
+  onSimulateScan,
+  onBack,
+}) => {
+  // ฟังก์ชันสำหรับดาวน์โหลดรูปภาพ
+  const handleDownloadQR = () => {
+    if (!qrImageData) return;
+
+    const link = document.createElement("a");
+    link.href = qrImageData;
+    // ตั้งชื่อไฟล์: QR_Room_1501.png
+    link.download = `QR_Room_${room.room_number || room.room_id || "code"}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <div className="flex flex-col items-center animate-in slide-in-from-right-4 duration-300 py-6">
+      {/* ส่วนแสดงรูปภาพ */}
+      <div className="relative group">
+        <div className="w-56 h-56 bg-white p-4 rounded-[32px] shadow-xl border border-gray-100 mb-8 flex items-center justify-center overflow-hidden relative">
+          {isFetchingQR ? (
+            <Loader2 size={40} className="animate-spin text-[#302782]" />
+          ) : qrImageData ? (
+            <img
+              src={qrImageData}
+              alt="QR Code"
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            <p className="text-sm text-gray-400">ไม่พบ QR Code</p>
+          )}
         </div>
-      ) : qrImageData ? (
-        <img src={qrImageData} alt="QR Code" className="w-full h-full object-contain" />
-      ) : (
-        <p className="text-sm text-gray-400 font-medium">ไม่พบ QR Code</p>
-      )}
+
+        {/* ปุ่มดาวน์โหลดแบบลอยบนรูป (แสดงเมื่อมีรูปภาพ) */}
+        {!isFetchingQR && qrImageData && (
+          <button
+            onClick={handleDownloadQR}
+            className="absolute -top-2 -right-2 bg-[#302782] text-white p-3 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all z-20"
+            title="ดาวน์โหลด QR Code"
+          >
+            <Download size={20} />
+          </button>
+        )}
+      </div>
+
+      <h3 className="text-3xl font-black text-gray-800 dark:text-white text-center mb-2">
+        ห้อง {room.room_number || room.room_id || room.name}
+      </h3>
+
+      <p className="text-lg text-gray-500 dark:text-gray-400 text-center mb-10 flex items-center justify-center gap-2">
+        <Building2 size={20} />
+        {room.location || room.building || "ไม่ระบุอาคาร"}
+      </p>
+
+      <div className="w-full max-w-sm space-y-3">
+        <button
+          onClick={() => onSimulateScan(room.id || room.room_id)}
+          className="w-full bg-[#B2BB1E] text-[#302782] py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-[#9ca31a] transition-all shadow-lg shadow-[#B2BB1E]/20 active:scale-95 text-lg"
+        >
+          <QrCode size={24} /> เข้าดูตารางห้องเรียน
+        </button>
+
+        {/* ปุ่มดาวน์โหลดแบบเต็มความกว้าง (ทางเลือกเพิ่มเติม) */}
+        <button
+          onClick={handleDownloadQR}
+          disabled={!qrImageData}
+          className="w-full bg-white dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E] py-3 rounded-2xl font-bold flex items-center justify-center gap-2 border-2 border-gray-100 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all disabled:opacity-50"
+        >
+          <Download size={20} /> ดาวน์โหลดรูป QR
+        </button>
+
+        {/* <button
+          onClick={onBack}
+          className="w-full text-[#302782] dark:text-gray-300 font-bold py-3 mt-2 
+             hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-xl transition-all 
+             active:scale-95 border border-transparent hover:border-gray-200 dark:hover:border-gray-600"
+        >
+          ย้อนกลับ
+        </button> */}
+      </div>
     </div>
-    
-    <h3 className="text-3xl font-black text-gray-800 dark:text-white text-center mb-2">
-      ห้อง {room.room_number || room.room_id || room.name}
-    </h3>
-    <p className="text-lg text-gray-500 dark:text-gray-400 text-center mb-10 flex items-center justify-center gap-2">
-      <Building2 size={20} />
-      {room.location || room.building || "ไม่ระบุอาคาร"}
-    </p>
-    
-    <div className="w-full max-w-sm space-y-3">
-      <button
-        onClick={() => onSimulateScan(room.id || room.room_id)}
-        className="w-full bg-[#B2BB1E] text-[#302782] py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-[#9ca31a] transition-all shadow-lg shadow-[#B2BB1E]/20 active:scale-95 text-lg"
-      >
-        <QrCode size={24} /> เข้าดูตารางห้องเรียน
-      </button>
-      <button
-        onClick={onBack}
-        className="w-full text-gray-500 font-bold py-3 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-2xl transition-colors"
-      >
-        ย้อนกลับ
-      </button>
-    </div>
-  </div>
-);
+  );
+};
 
 // 3. UI Helpers
 const TabButton = ({ active, onClick, icon, label }) => (

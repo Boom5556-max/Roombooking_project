@@ -12,7 +12,7 @@ export const useRooms = () => {
     try {
       const response = await api.get("/rooms/");
       setRooms(response.data);
-      console.log(response)
+      // console.log(response)
     } catch (error) {
       console.error(
         "Error fetching rooms:",
@@ -79,7 +79,7 @@ export const useRooms = () => {
   // 5. ดึง QR Code ของห้อง (GET /rooms/:id/qrcode)
   const getRoomQRCode = async (roomId) => {
     try {
-      const response = await api.get(`/rooms/${roomId}/qrcode`);
+      const response = await api.get(`/rooms/${roomId}/qrcodeURL`);
       return response.data.qr_code; // คืนค่าเป็น base64 string
     } catch (error) {
       console.error("QR Code error:", error);
