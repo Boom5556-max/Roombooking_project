@@ -52,6 +52,8 @@ const ProtectedRoute = ({ children }) => {
       setIsVerifying(false);
       
       if (!result && window.location.pathname !== '/login' && window.location.pathname !== '/') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         window.location.replace("/");
       }
     };

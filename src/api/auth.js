@@ -19,8 +19,7 @@ export const verifyAndRefreshToken = async () => {
     const currentTime = Date.now() / 1000; // เวลาปัจจุบัน (หน่วย: วินาที)
     
     // คำนวณช่วงเวลาอนุโลม (ปรับเป็น 120 วิ ตามที่กำลังทดสอบอยู่, ถ้าจะแก้กลับเป็น 1.5 ชม ให้แก้ตรงนี้)
-    // const GRACE_PERIOD_SECONDS = 1.5 * 60 * 60; 
-    const GRACE_PERIOD_SECONDS = 60; 
+    const GRACE_PERIOD_SECONDS = 1.5 * 60 * 60; 
     
     // วันตายที่แท้จริง = วันหมดอายุของ Access Token + Grace Period
     const hardExpiryTime = decoded.exp + GRACE_PERIOD_SECONDS;
@@ -28,6 +27,8 @@ export const verifyAndRefreshToken = async () => {
     // 🚨 เงื่อนไขที่ 1: เลยช่วงอนุโลมไปแล้ว (เช่น ทิ้งไว้ข้ามคืน)
     if (currentTime > hardExpiryTime) {
       console.log('เลยเวลาอนุโลมไปแล้ว - เตรียมเตะออก');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       return false; 
     }
 
@@ -71,6 +72,8 @@ export const verifyAndRefreshToken = async () => {
   } catch (error) {
     // กรณีที่ Token พังหรือถอดรหัสไม่ได้
     console.error('Token ไม่ถูกต้อง');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     return false;
   }
 };
