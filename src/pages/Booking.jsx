@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { X, ChevronDown, ChevronLeft, Calendar, Clock, Edit3 } from "lucide-react";
+// 🌟 เพิ่ม FileText เข้ามาสำหรับไอคอนหมายเหตุ
+import { X, ChevronDown, ChevronLeft, Calendar, Clock, Edit3, FileText } from "lucide-react";
 import Button from "../components/common/Button.jsx";
 import { useBookingLogic } from "../hooks/useBooking.js";
 import { FormField } from "../components/common/FormField.jsx";
@@ -155,14 +156,25 @@ const BookingRoom = () => {
           </div>
 
           {/* 4. วัตถุประสงค์ */}
-          <FormField label="วัตถุประสงค์การใช้งาน">
+          <FormField label="วัตถุประสงค์การใช้งาน" icon={<Edit3 size={16} />}>
             <textarea
               rows="3"
               placeholder="เช่น ติวสอบ, ประชุมโปรเจกต์..."
               required
               className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 text-[#302782] dark:text-white resize-none font-medium transition-all leading-relaxed"
-              value={formData.purpose}
+              value={formData.purpose || ""}
               onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
+            ></textarea>
+          </FormField>
+
+          {/* 🌟 5. หมายเหตุเพิ่มเติม (ไม่บังคับ) */}
+          <FormField label="หมายเหตุเพิ่มเติม (ถ้ามี)" icon={<FileText size={16} />}>
+            <textarea
+              rows="2"
+              placeholder="เช่น ขอไมค์เพิ่ม, ขอเปิดแอร์ก่อนเวลา..."
+              className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 text-[#302782] dark:text-white resize-none font-medium transition-all leading-relaxed"
+              value={formData.additional_notes || ""}
+              onChange={(e) => setFormData({ ...formData, additional_notes: e.target.value })}
             ></textarea>
           </FormField>
 

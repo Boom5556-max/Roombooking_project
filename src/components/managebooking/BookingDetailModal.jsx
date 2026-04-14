@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { X, User, Calendar, Timer, Edit3, Trash2, Save, Ban, MessageSquare, CheckCircle, XCircle, Clock as ClockIcon, ChevronRight } from "lucide-react";
+// 🌟 เพิ่ม FileText สำหรับใช้เป็นไอคอนของหมายเหตุเพิ่มเติม
+import { X, User, Calendar, Timer, Edit3, Trash2, Save, Ban, MessageSquare, CheckCircle, XCircle, Clock as ClockIcon, ChevronRight, FileText } from "lucide-react";
 import { DetailItem, EditField, TextAreaField } from "./Manage_BookingComponents";
 import Button from "../common/Button";
 
@@ -15,7 +16,8 @@ const BookingDetailModal = ({
   booking, userRole, onClose, onUpdateStatus, onCancel, onBan, onUpdateBooking, getFullName, showAlert 
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ purpose: "", date: "", start_time: "", end_time: "" });
+  // 🌟 เพิ่ม additional_notes ใน state สำหรับการแก้ไข
+  const [editForm, setEditForm] = useState({ purpose: "", additional_notes: "", date: "", start_time: "", end_time: "" });
 
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return "";
@@ -31,6 +33,7 @@ const BookingDetailModal = ({
   const startEditing = () => {
     setEditForm({
       purpose: booking.purpose || "",
+      additional_notes: booking.additional_notes || "", // 🌟 โหลดข้อมูลหมายเหตุเดิมมาใส่
       date: formatDateForDisplay(booking.date),
       start_time: booking.start_time?.slice(0, 5) || "",
       end_time: booking.end_time?.slice(0, 5) || "",
@@ -111,6 +114,10 @@ const BookingDetailModal = ({
           {isEditing ? (
             <div className="space-y-5 py-2">
               <EditField icon={MessageSquare} label="วัตถุประสงค์การใช้ห้อง" value={editForm.purpose} onChange={v => setEditForm({...editForm, purpose: v})} />
+              
+              {/* 🌟 เพิ่มช่องแก้ไขหมายเหตุเพิ่มเติม (ถ้าต้องการให้แก้ได้ด้วย) */}
+              <EditField icon={FileText} label="หมายเหตุเพิ่มเติม" value={editForm.additional_notes} onChange={v => setEditForm({...editForm, additional_notes: v})} />
+
               <EditField icon={Calendar} label="วันที่ต้องการใช้งาน" type="date" value={editForm.date} onChange={v => setEditForm({...editForm, date: v})} />
               <div className="grid grid-cols-2 gap-4">
                 {renderTimeDropdown("start_time", "เวลาเริ่ม")}
@@ -125,6 +132,14 @@ const BookingDetailModal = ({
               <DetailItem icon={Timer} label="ช่วงเวลา" value={`${booking.start_time?.slice(0,5)} - ${booking.end_time?.slice(0,5)} น.`} />
               <div className="h-px bg-gray-100 dark:bg-gray-700 w-full" />
               <DetailItem icon={MessageSquare} label="วัตถุประสงค์" value={booking.purpose} />
+
+              {/* 🌟 เพิ่มช่องแสดงหมายเหตุเพิ่มเติม (จะแสดงก็ต่อเมื่อมีข้อมูล) */}
+              {booking.additional_notes && (
+                <>
+                  <div className="h-px bg-gray-100 dark:bg-gray-700 w-full" />
+                  <DetailItem icon={FileText} label="หมายเหตุเพิ่มเติม" value={booking.additional_notes} />
+                </>
+              )}
 
               {(booking.status === "rejected" || booking.status === "cancelled") && (
                 <>
@@ -169,19 +184,16 @@ const ActionButtons = ({ userRole, booking, onUpdateStatus, onCancel, onBan, onE
   const [actionType, setActionType] = useState(null); // 'reject' หรือ 'ban'
   const [reason, setReason] = useState("");
 
-  // ฟังก์ชันสำหรับกดยืนยันหลังจากกรอกเหตุผล (สำหรับ Reject และ Ban)
   const handleConfirmWithReason = () => {
     if (actionType === "ban") {
       onBan(bId, reason);
     } else if (actionType === "reject") {
       onCancel(bId, reason);
     }
-    // รีเซ็ตค่าเมื่อทำงานเสร็จ
     setActionType(null);
     setReason("");
   };
 
-  // --- ส่วนที่ 1: แสดงช่องกรอกเหตุผล (UI ภายใน Modal) ---
   if (actionType) {
     const config = {
       reject: { title: "เหตุผลการไม่อนุมัติ", icon: <XCircle size={18} />, btnText: "ยืนยันไม่อนุมัติ" },
@@ -216,10 +228,8 @@ const ActionButtons = ({ userRole, booking, onUpdateStatus, onCancel, onBan, onE
     );
   }
 
-  // --- ส่วนที่ 2: หน้าตาปุ่มกดปกติ ---
   return (
     <div className="flex flex-col gap-3">
-      {/* CASE 1: STAFF - อยู่ในสถานะรออนุมัติ */}
       {userRole === "staff" && isPending && (
         <div className="flex gap-4">
           <Button variant="primary" className="flex-1 py-4.5" onClick={() => onUpdateStatus(bId)}>อนุมัติคำขอ</Button>
@@ -229,20 +239,17 @@ const ActionButtons = ({ userRole, booking, onUpdateStatus, onCancel, onBan, onE
         </div>
       )}
       
-      {/* CASE 2: งดใช้ห้อง (Staff หรือ Teacher ก็ได้ ถ้าอนุมัติไปแล้ว) */}
       {isApproved && (
         <Button variant="danger" className="w-full py-4.5" onClick={() => setActionType("ban")}>
           <Ban size={18} /> แจ้งงดใช้ห้องเรียนนี้
         </Button>
       )}
 
-      {/* CASE 3: TEACHER - อยู่ในสถานะรออนุมัติ */}
       {userRole === "teacher" && isPending && (
         <div className="space-y-3">
           <Button variant="secondary" className="w-full py-4.5" onClick={onEdit}>
             <Edit3 size={18} /> แก้ไขข้อมูลการจอง
           </Button>
-          {/* ✨ ไฮไลท์: เรียก onCancel ตรงๆ เลย (ส่งเหตุผลเป็นค่าว่าง) เพื่อให้ showAlert ในหน้า Parent เด้งทันที */}
           <Button 
             variant="ghost" 
             className="w-full py-4 text-red-500 hover:bg-red-50 hover:text-red-600 font-bold" 

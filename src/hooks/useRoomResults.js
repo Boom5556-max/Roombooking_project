@@ -10,9 +10,9 @@ export const useRoomResults = (searchQuery) => {
 
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [purpose, setPurpose] = useState("");
+  const [additionalNotes, setAdditionalNotes] = useState(""); // 🌟 เพิ่ม State สำหรับหมายเหตุ
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 🚩 ฟังก์ชันจองห้อง (ปรับปรุงให้ส่งค่ากลับแทนการใช้ Swal)
   const handleConfirmBooking = async () => {
     // เช็คค่าว่างเบื้องต้น
     if (!purpose.trim()) {
@@ -28,9 +28,9 @@ export const useRoomResults = (searchQuery) => {
       let endpoint = "";
       if (role === 'teacher') {
         endpoint = "/bookings/teacher";
-      } else if (role === 'staff') {
+      } else if (role === 'staff' || role === 'admin') { // รองรับ admin
         endpoint = "/bookings/staff";
-      } else if (role === 'student') { // เพิ่มเผื่อไว้สำหรับนิสิต
+      } else if (role === 'student') { 
         endpoint = "/bookings/student";
       } else {
         throw new Error("คุณไม่มีสิทธิ์ในการจองห้อง");
@@ -41,18 +41,17 @@ export const useRoomResults = (searchQuery) => {
         date: searchQuery.date,
         start_time: searchQuery.start_time,
         end_time: searchQuery.end_time,
-        purpose: purpose
+        purpose: purpose,
+        additional_notes: additionalNotes // 🌟 ส่งหมายเหตุเพิ่มเติมไปยัง Backend
       };
 
       // ยิง API
       await axios.post(endpoint, bookingData);
 
-      // 🚩 ส่งกลับว่าสำเร็จเพื่อให้ Component เปิด Modal Success
       return { success: true };
 
     } catch (err) {
       console.error(err);
-      // 🚩 ส่งกลับว่าไม่สำเร็จเพื่อให้ Component เปิด Modal Error
       return { 
         success: false, 
         message: err.response?.data?.message || "ไม่สามารถจองได้" 
@@ -62,7 +61,6 @@ export const useRoomResults = (searchQuery) => {
     }
   };
 
-  // Logic fetchRooms (เหมือนเดิม)
   useEffect(() => {
     const fetchRooms = async () => {
       if (!searchQuery || !searchQuery.date) { setLoading(false); return; }
@@ -81,6 +79,7 @@ export const useRoomResults = (searchQuery) => {
     rooms, loading, error, 
     selectedRoom, setSelectedRoom, 
     purpose, setPurpose, 
+    additionalNotes, setAdditionalNotes, // 🌟 ส่งออกไปให้ UI ใช้งาน
     isSubmitting, handleConfirmBooking 
   };
 };

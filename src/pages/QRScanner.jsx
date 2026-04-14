@@ -216,7 +216,7 @@ const QRScanner = () => {
               }}
               className="w-full mt-6 bg-indigo-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E] py-4 rounded-xl font-bold border-2 border-indigo-100 dark:border-gray-600 flex items-center justify-center gap-2 hover:bg-indigo-100 dark:hover:bg-gray-600 transition-all active:scale-95 shadow-sm"
             >
-              <List size={20} /> เลือกห้องจากรายการ
+              <List size={20} /> เลือก QR code จากรายการห้อง
             </button>
           </div>
         </div>
@@ -230,7 +230,7 @@ const QRScanner = () => {
           <div className="bg-white dark:bg-gray-800 w-full sm:max-w-xl rounded-t-[30px] sm:rounded-[30px] p-6 sm:p-8 shadow-2xl flex flex-col h-[85vh] sm:h-auto sm:max-h-[85vh]">
             <div className="flex justify-between items-center mb-6 flex-shrink-0">
               <h2 className="text-2xl font-black text-[#302782] dark:text-white">
-                {selectedRoom ? "ข้อมูลห้องเรียน" : "เลือกระบุห้อง"}
+                {selectedRoom ? "ข้อมูลห้องเรียน" : "เลือกห้องที่ต้องการดูข้อมูล"}
               </h2>
               <button
                 onClick={() => {

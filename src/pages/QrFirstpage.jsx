@@ -169,7 +169,7 @@ const QrFirstpage = () => {
         <div className="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-800 w-full sm:max-w-xl rounded-t-[30px] sm:rounded-[30px] p-6 sm:p-8 shadow-2xl flex flex-col h-[85vh] sm:h-auto sm:max-h-[85vh]">
             <div className="flex justify-between items-center mb-6 flex-shrink-0">
-              <h2 className="text-2xl font-black text-[#302782] dark:text-white">{selectedRoom ? "ข้อมูลห้องเรียน" : "เลือกระบุห้อง"}</h2>
+              <h2 className="text-2xl font-black text-[#302782] dark:text-white">{selectedRoom ? "ข้อมูลห้องเรียน" : "เลือกห้องที่ต้องการดูข้อมูล"}</h2>
               <button onClick={() => { if (selectedRoom) setSelectedRoom(null); else setShowRoomModal(false); }} className="text-gray-400 hover:text-gray-600 bg-gray-100 dark:bg-gray-700 p-2.5 rounded-full transition-colors"><XCircle size={28} /></button>
             </div>
             <div className="overflow-y-auto pr-2 custom-scrollbar flex-grow">

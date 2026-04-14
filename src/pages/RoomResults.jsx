@@ -32,6 +32,8 @@ const RoomResults = () => {
     setSelectedRoom,
     purpose,
     setPurpose,
+    additionalNotes,
+    setAdditionalNotes,
     isSubmitting,
     handleConfirmBooking,
   } = useRoomResults(searchQuery);
@@ -41,13 +43,14 @@ const RoomResults = () => {
     if (result && result.success) {
       setBookingStatus("success");
       setSelectedRoom(null);
+      setPurpose(""); // เคลียร์ฟอร์ม
+      setAdditionalNotes(""); // เคลียร์ฟอร์ม
     } else {
       setBookingStatus("error");
       setErrorMessage(result?.message || "ขออภัย ห้องนี้อาจถูกจองไปแล้วในช่วงเวลานี้");
     }
   };
 
-  // Error State Handling
   if (!searchQuery) return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6 text-center font-sans">
       <div className="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[32px] sm:rounded-[40px] shadow-xl border border-gray-100 dark:border-gray-700 max-w-md w-full">
@@ -86,7 +89,6 @@ const RoomResults = () => {
             </h1>
           </div>
           
-          {/* Query Badges - Responsive Flex */}
           <div className="flex flex-wrap gap-2 sm:gap-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md p-2 sm:p-3 rounded-2xl sm:rounded-3xl border border-white dark:border-gray-700 shadow-sm">
             <Badge icon={<Calendar size={14} />} text={searchQuery.date} />
             <Badge icon={<Clock size={14} />} text={`${searchQuery.start_time} - ${searchQuery.end_time} น.`} />
@@ -133,51 +135,73 @@ const RoomResults = () => {
         )}
       </div>
 
-      {/* 🚩 Booking Modal - แก้ไข z-[100] เป็น z-[9999] เพื่อให้ทับ Navbar สนิท */}
+      {/* Booking Modal */}
       {selectedRoom && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#302782]/20 dark:bg-black/60 backdrop-blur-md p-4 sm:p-8 animate-in fade-in duration-300">
-          <div className="bg-white dark:bg-gray-800 w-full max-w-lg max-h-[85vh] rounded-[40px] md:rounded-[50px] p-6 sm:p-10 shadow-2xl flex flex-col relative border border-gray-100 dark:border-gray-700 overflow-hidden">
-            <div className="flex justify-between items-center mb-6 sm:mb-8 flex-shrink-0">
+          <div className="bg-white dark:bg-gray-800 w-full max-w-lg max-h-[90vh] rounded-[40px] md:rounded-[50px] p-6 sm:p-8 shadow-2xl flex flex-col relative border border-gray-100 dark:border-gray-700 overflow-hidden">
+            
+            <div className="flex justify-between items-center mb-6 flex-shrink-0">
               <h3 className="text-xl sm:text-2xl font-black text-[#302782] dark:text-white flex items-center gap-3">
                 <FileText className="text-[#B2BB1E]" /> รายละเอียดการจอง
               </h3>
               <button
-                onClick={() => { setSelectedRoom(null); setPurpose(""); }}
-                className="p-2 text-black dark:text-white hover:text-red-500 font-bold text-3xl transition-colors"
+                onClick={() => { 
+                  setSelectedRoom(null); 
+                  setPurpose(""); 
+                  setAdditionalNotes("");
+                }}
+                className="p-2 text-black dark:text-gray-300 hover:text-red-500 font-bold text-3xl transition-colors leading-none"
                 aria-label="Close"
               >
                 ×
               </button>
             </div>
 
-            <div className="flex-grow overflow-y-auto pr-2 -mr-2 space-y-6 sm:space-y-8 custom-scrollbar">
-              <div className="bg-gray-50 dark:bg-white/5 p-5 sm:p-6 rounded-3xl border border-gray-100 dark:border-white/10 grid grid-cols-2 gap-4">
+            <div className="flex-grow overflow-y-auto pr-2 -mr-2 space-y-5 custom-scrollbar">
+              <div className="bg-gray-50 dark:bg-white/5 p-5 rounded-3xl border border-gray-100 dark:border-white/10 grid grid-cols-2 gap-4">
                 <div className="col-span-2 border-b border-gray-200 dark:border-white/10 pb-3 mb-1">
-                  <p className="text-[10px] text-black dark:text-white font-black uppercase">ห้องที่เลือก</p>
-                  <p className="text-xl sm:text-2xl font-black text-[#302782] dark:text-white">{selectedRoom.room_id}</p>
+                  <p className="text-[10px] text-black dark:text-white font-black uppercase tracking-widest">ห้องที่เลือก</p>
+                  <p className="text-2xl font-black text-[#302782] dark:text-white">{selectedRoom.room_id}</p>
                 </div>
                 <InfoDetail label="วันที่" value={searchQuery.date} />
                 <InfoDetail label="เวลา" value={`${searchQuery.start_time} - ${searchQuery.end_time}`} />
               </div>
 
-              <div className="space-y-3">
-                <label className="text-xs font-black text-black dark:text-white ml-2 uppercase tracking-widest">วัตถุประสงค์ในการเข้าใช้งาน</label>
+              {/* วัตถุประสงค์ (บังคับ) */}
+              <div className="space-y-2">
+                <label className="text-xs font-black text-black dark:text-white ml-2 uppercase tracking-widest flex items-center gap-1.5">
+                  วัตถุประสงค์ <span className="text-red-500">*</span>
+                </label>
                 <textarea
-                  rows="4"
-                  className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-white/10 rounded-2xl sm:rounded-[30px] p-5 sm:p-6 outline-none transition-all font-medium text-[#302782] dark:text-white text-sm sm:text-base resize-none"
+                  rows="3"
+                  className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-white/10 rounded-2xl p-4 outline-none transition-all font-medium text-[#302782] dark:text-white text-sm resize-none"
                   placeholder="ระบุชื่อวิชา หรือกิจกรรม..."
                   value={purpose}
                   onChange={(e) => setPurpose(e.target.value)}
                 />
               </div>
+
+              {/* 🌟 หมายเหตุเพิ่มเติม (ไม่บังคับ) */}
+              <div className="space-y-2">
+                <label className="text-xs font-black text-black dark:text-white ml-2 uppercase tracking-widest">
+                  หมายเหตุเพิ่มเติม <span className="text-gray-400 font-normal text-[10px]"></span>
+                </label>
+                <textarea
+                  rows="2"
+                  className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-[#302782] focus:bg-white dark:focus:bg-white/10 rounded-2xl p-4 outline-none transition-all font-medium text-[#302782] dark:text-white text-sm resize-none"
+                  placeholder="เช่น ขอไมค์เพิ่ม, ขอเปิดแอร์ก่อนเวลา..."
+                  value={additionalNotes}
+                  onChange={(e) => setAdditionalNotes(e.target.value)}
+                />
+              </div>
             </div>
 
-            <div className="pt-6 sm:pt-10 flex-shrink-0">
+            <div className="pt-6 flex-shrink-0">
               <button
                 disabled={isSubmitting || !purpose.trim()}
                 onClick={onBookingClick}
                 className={`w-full py-4 sm:py-5 rounded-2xl sm:rounded-[30px] font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all shadow-lg active:scale-[0.98] ${
-                  isSubmitting || !purpose.trim() ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white cursor-not-allowed" : "bg-[#B2BB1E] text-white hover:bg-[#302782] cursor-pointer"
+                  isSubmitting || !purpose.trim() ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed" : "bg-[#B2BB1E] text-white hover:bg-[#302782] cursor-pointer"
                 }`}
               >
                 {isSubmitting ? "กำลังบันทึก..." : "ยืนยันการจอง"} <Send size={20} />
@@ -221,14 +245,14 @@ const InfoBox = ({ label, value, icon }) => (
 const InfoDetail = ({ label, value }) => (
   <div>
     <p className="text-[10px] text-black dark:text-white font-black uppercase">{label}</p>
-    <p className="text-xs sm:text-sm font-black text-[#302782] dark:text-white">{value}</p>
+    <p className="text-sm font-black text-[#302782] dark:text-white">{value}</p>
   </div>
 );
 
 const EmptyState = () => (
   <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-[40px] sm:rounded-[60px] border-2 border-dashed border-gray-200 dark:border-gray-700 px-6 text-center">
     <h2 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white mb-2">ไม่พบห้องว่างตามเงื่อนไข</h2>
-    <p className="text-black dark:text-white font-bold text-sm sm:text-base">ลองปรับเปลี่ยนเวลาหรือวันที่ค้นหาดูอีกครั้ง</p>
+    <p className="text-black dark:text-gray-400 font-bold text-sm sm:text-base">ลองปรับเปลี่ยนเวลาหรือวันที่ค้นหาดูอีกครั้ง</p>
   </div>
 );
 
@@ -239,21 +263,20 @@ const StatusModal = ({ isOpen, status, errorMessage, onClose }) => {
   const isTeacher = user?.role === "teacher";
 
   return (
-    // 🚩 แก้ไข z-[100] เป็น z-[9999] ตรงนี้ด้วยเหมือนกันครับ
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="bg-white dark:bg-gray-800/80 backdrop-blur-xl rounded-[40px] p-8 w-full max-w-sm shadow-2xl text-center animate-in zoom-in duration-300 border border-white/50 m-auto">
+      <div className="bg-white dark:bg-gray-800/90 backdrop-blur-xl rounded-[40px] p-8 w-full max-w-sm shadow-2xl text-center animate-in zoom-in duration-300 border border-white/50 dark:border-gray-600 m-auto">
         <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center mx-auto mb-6 ${isSuccess ? 'bg-[#B2BB1E]/10 text-[#B2BB1E]' : 'bg-red-50 dark:bg-red-500/10 text-red-500'}`}>
           {isSuccess ? <Check size={40} strokeWidth={3} /> : <AlertCircle size={40} strokeWidth={3} />}
         </div>
         <h3 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white mb-3">{isSuccess ? "จองสำเร็จ!" : "การจองไม่สำเร็จ"}</h3>
-        <p className="text-black dark:text-white font-bold text-sm sm:text-base mb-8">
+        <p className="text-gray-600 dark:text-gray-300 font-bold text-sm sm:text-base mb-8">
           {isSuccess 
             ? (isTeacher ? "คำขอจองถูกส่งแล้ว กรุณารอการอนุมัติ" : "การจองของคุณเสร็จสมบูรณ์") 
             : (errorMessage || "ขออภัย ห้องนี้อาจถูกจองไปแล้วในช่วงเวลานี้")}
         </p>
         <button
           onClick={onClose}
-          className={`w-full py-4 rounded-2xl font-black text-lg shadow-lg active:scale-[0.98] transition-all ${isSuccess ? 'bg-[#302782] text-white' : 'bg-gray-100 dark:bg-gray-700 text-black dark:text-white'}`}
+          className={`w-full py-4 rounded-2xl font-black text-lg shadow-lg active:scale-[0.98] transition-all ${isSuccess ? 'bg-[#302782] text-white hover:bg-[#251f66]' : 'bg-gray-100 dark:bg-gray-700 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600'}`}
         >
           {isSuccess ? "ตกลง" : "ลองใหม่อีกครั้ง"}
         </button>
