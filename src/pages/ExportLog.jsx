@@ -18,6 +18,7 @@ import {
 import Navbar from "../components/layout/Navbar.jsx";
 import { API_BASE_URL } from "../api/config.js";
 import api from "../api/axios.js";
+import PageReveal from "../components/common/PageReveal";
 
 // ข้อมูลเทอมแบบ Static ทั้ง 3 ชนิด
 const TERM_CONFIG = [
@@ -81,7 +82,6 @@ const ExportLog = () => {
   // คำนวณช่วงวันของเทอมปัจจุบัน โดยดึงข้อมูลอ้างอิงจาก Database
   const fillCurrentTerm = async () => {
     try {
-      // 1. ดึงข้อมูลจาก Backend (เปลี่ยน api.get เป็นตัวแปรที่คุณใช้เรียก axios ได้เลย)
       const response = await api.get(`${API_BASE_URL}/terms/showTerm`);
       const termData = response.data.data;
 
@@ -90,16 +90,11 @@ const ExportLog = () => {
         return;
       }
 
-      // 2. เรียงลำดับวันที่จากอดีต -> อนาคต 
       const sortedTerms = termData.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
-
-      // 3. เตรียมวันที่ปัจจุบันสำหรับเปรียบเทียบ
       const today = new Date();
-      today.setHours(0, 0, 0, 0); // ตัดเวลาทิ้งเพื่อเทียบแค่วันที่
+      today.setHours(0, 0, 0, 0);
 
       let currentTermIndex = -1;
-
-      // 4. หา "เทอมปัจจุบัน" (เทอมที่วันที่เริ่ม <= วันนี้ โดยดึงอันที่ใกล้ปัจจุบันที่สุด)
       for (let i = sortedTerms.length - 1; i >= 0; i--) {
         const termDate = new Date(sortedTerms[i].start_date);
         if (termDate <= today) {
@@ -108,23 +103,15 @@ const ExportLog = () => {
         }
       }
 
-      // กรณีที่เพิ่งเริ่มใช้ระบบ และวันนี้ยังไม่ถึงวันเริ่มเทอมแรกสุดเลย ให้ถือว่าเทอมแรกสุดคือเทอมปัจจุบัน
-      if (currentTermIndex === -1) {
-        currentTermIndex = 0;
-      }
+      if (currentTermIndex === -1) currentTermIndex = 0;
 
       const currentTerm = sortedTerms[currentTermIndex];
-      const termStart = currentTerm.start_date; // รูปแบบ YYYY-MM-DD จาก API
-      // 5. ดึงวันสิ้นสุด (termEnd) จาก Backend ที่เตรียมไว้ให้แล้ว
-      const termEnd = currentTerm.end_date || '';
-
-      // 6. อัปเดต State ให้หน้าเว็บ
-      setStartDate(termStart);
-      setEndDate(termEnd);
+      setStartDate(currentTerm.start_date);
+      setEndDate(currentTerm.end_date || '');
       setFeedback(null);
 
     } catch (error) {
-      console.error('Error fetching terms for current term calculation:', error);
+      console.error('Error fetching terms:', error);
       showFeedback('error', 'เกิดข้อผิดพลาดในการดึงข้อมูลเทอมจากระบบ');
     }
   };
@@ -188,7 +175,6 @@ const ExportLog = () => {
   // ===== Export Download Handler =====
   const handleDownload = async () => {
     setFeedback(null);
-
     if (!startDate || !endDate) {
       showFeedback("error", "กรุณาระบุวันที่เริ่มต้นและวันที่สิ้นสุด");
       return;
@@ -214,10 +200,7 @@ const ExportLog = () => {
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        showFeedback(
-          "error",
-          errData.message || `เกิดข้อผิดพลาด (${response.status})`
-        );
+        showFeedback("error", errData.message || `เกิดข้อผิดพลาด (${response.status})`);
         return;
       }
 
@@ -243,24 +226,19 @@ const ExportLog = () => {
   const handleTermDateChange = (termKey, field, value) => {
     setTermDates((prev) => ({
       ...prev,
-      [termKey]: {
-        ...prev[termKey],
-        [field]: value
-      }
+      [termKey]: { ...prev[termKey], [field]: value }
     }));
     setTermFeedback(null);
   };
 
   const handleSaveTerms = async () => {
     setTermFeedback(null);
-
     const filledTerms = TERM_CONFIG.filter((t) => termDates[t.key].start_date || termDates[t.key].end_date);
     if (filledTerms.length === 0) {
       showTermFeedback("error", "กรุณาระบุวันที่อย่างน้อย 1 เทอม");
       return;
     }
 
-    // Verify all filled terms have both start and end date
     const incompleteTerm = filledTerms.find(t => !termDates[t.key].start_date || !termDates[t.key].end_date);
     if (incompleteTerm) {
       showTermFeedback("error", `กรุณาระบุวันที่ให้ครบทั้งเริ่มต้นและสิ้นสุดสำหรับ ${incompleteTerm.label}`);
@@ -287,12 +265,8 @@ const ExportLog = () => {
       });
 
       const result = await response.json();
-
-      if (response.ok) {
-        showTermFeedback("success", result.message || "บันทึกข้อมูลเทอมสำเร็จ!");
-      } else {
-        showTermFeedback("error", result.message || "เกิดข้อผิดพลาดในการบันทึก");
-      }
+      if (response.ok) showTermFeedback("success", result.message || "บันทึกข้อมูลเทอมสำเร็จ!");
+      else showTermFeedback("error", result.message || "เกิดข้อผิดพลาดในการบันทึก");
     } catch (err) {
       showTermFeedback("error", "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
     } finally {
@@ -304,296 +278,115 @@ const ExportLog = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-sans">
       <Navbar />
 
-      <div className="p-4 sm:p-6 md:p-8 pb-28 flex-grow w-full max-w-[1600px] mx-auto">
-        {/* Header Section */}
-        <div className="flex items-center gap-4 mb-6">
-          <button 
-            onClick={() => navigate(-1)} 
-            className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
-            title="ย้อนกลับ"
-          >
-            <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
-          </button>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white">
-            ดาวน์โหลด Log รายงาน
-          </h1>
-        </div>
-
-        {/* ===== Two Column Layout ===== */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-
-          {/* ============================== */}
-          {/* LEFT: Export Excel             */}
-          {/* ============================== */}
-          <div className="bg-white dark:bg-gray-800 rounded-[28px] shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-            {/* Compact Header */}
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 bg-[#302782]/8 dark:bg-[#302782]/30 rounded-2xl flex items-center justify-center shrink-0">
-                <FileSpreadsheet size={28} className="text-[#302782] dark:text-[#B2BB1E]" />
-              </div>
-              <div>
-                <h2 className="text-base font-black text-[#302782] dark:text-white">
-                  ส่งออกรายงาน Excel
-                </h2>
-                <p className="text-xs text-black dark:text-white leading-relaxed mt-0.5">
-                  เลือกช่วงวันที่เพื่อสร้างรายงานสรุปการจอง
-                </p>
-              </div>
-            </div>
-
-            {/* Quick-fill */}
-            <button
-              onClick={fillCurrentTerm}
-              disabled={isLoading}
-              className="w-full mb-4 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-dashed border-[#B2BB1E]/60 hover:border-[#B2BB1E] bg-[#B2BB1E]/5 hover:bg-[#B2BB1E]/10 text-[#302782] dark:text-[#B2BB1E] font-black text-xs transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+      <PageReveal isLoading={isFetchingTerms} loadingText="กำลังเตรียมข้อมูลรายงานและภาคเรียน...">
+        <div className="p-4 sm:p-6 md:p-8 pb-28 flex-grow w-full max-w-[1600px] mx-auto">
+          {/* Header Section */}
+          <div className="flex items-center gap-4 mb-6 text-black dark:text-white">
+            <button 
+              onClick={() => navigate(-1)} 
+              className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
+              title="ฮ้อนกลับ"
             >
-              <Zap size={14} className="shrink-0" />
-              กรอกวันที่เทอมปัจจุบันอัตโนมัติ
+              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
             </button>
-
-            {/* Date Inputs — side by side */}
-            <div className="grid grid-cols-2 gap-3 mb-5">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-black dark:text-white flex items-center gap-1">
-                  <CalendarRange size={12} />
-                  วันที่เริ่มต้น
-                </label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  disabled={isLoading}
-                  className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-3 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#302782]/30 dark:focus:ring-[#B2BB1E]/30 focus:border-[#302782] dark:focus:border-[#B2BB1E] transition-all disabled:opacity-50"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-black dark:text-white flex items-center gap-1">
-                  <CalendarRange size={12} />
-                  วันที่สิ้นสุด
-                </label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  disabled={isLoading}
-                  className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-3 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#302782]/30 dark:focus:ring-[#B2BB1E]/30 focus:border-[#302782] dark:focus:border-[#B2BB1E] transition-all disabled:opacity-50"
-                />
-              </div>
-            </div>
-
-            {/* Feedback */}
-            {feedback && (
-              <div
-                className={`flex items-start gap-3 rounded-xl p-3 mb-4 text-sm font-bold transition-all ${feedback.type === "error"
-                  ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800"
-                  : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-800"
-                  }`}
-              >
-                {feedback.type === "error" ? (
-                  <AlertCircle size={16} className="shrink-0 mt-0.5" />
-                ) : (
-                  <CheckCircle2 size={16} className="shrink-0 mt-0.5" />
-                )}
-                <span className="text-xs">{feedback.message}</span>
-              </div>
-            )}
-
-            {/* Download Button */}
-            <button
-              onClick={handleDownload}
-              disabled={isLoading}
-              className="w-full bg-[#302782] hover:bg-[#B2BB1E] disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white font-black py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all duration-300 active:scale-[0.98] shadow-lg hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  กำลังสร้างรายงาน...
-                </>
-              ) : (
-                <>
-                  <Download size={18} />
-                  ดาวน์โหลด Excel
-                </>
-              )}
-            </button>
-
-            {/* Info — inline */}
-            <div className="mt-4 bg-[#302782]/5 dark:bg-[#302782]/20 rounded-xl border border-[#302782]/10 dark:border-[#302782]/30 p-4">
-              <p className="text-xs font-semibold text-[#302782] dark:text-[#B2BB1E] mb-1.5">
-                ไฟล์ที่สร้างจะประกอบด้วย
-              </p>
-              <ul className="text-xs text-black dark:text-white space-y-1 font-semibold">
-                <li className="flex items-center gap-2">
-                  <span className="w-1 h-1 rounded-full bg-[#B2BB1E] shrink-0" />
-                  Sheet 1: สรุปข้อมูล Dashboard
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-1 h-1 rounded-full bg-[#B2BB1E] shrink-0" />
-                  Sheet 2: ประวัติการจองห้อง
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-1 h-1 rounded-full bg-[#B2BB1E] shrink-0" />
-                  Sheet 3+: ตารางเรียน แยกตามสาขาวิชา
-                </li>
-              </ul>
-            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white">
+              ดาวน์โหลด Log รายงาน
+            </h1>
           </div>
 
-          {/* ============================== */}
-          {/* RIGHT: Term Management          */}
-          {/* ============================== */}
-          <div className="bg-white dark:bg-gray-800 rounded-[28px] shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-            {/* Compact Header */}
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 bg-[#302782]/8 dark:bg-[#302782]/30 rounded-2xl flex items-center justify-center shrink-0">
-                <GraduationCap size={28} className="text-[#302782] dark:text-[#B2BB1E]" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+            {/* LEFT: Export Excel */}
+            <div className="bg-white dark:bg-gray-800 rounded-[28px] shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-14 h-14 bg-[#302782]/8 dark:bg-[#302782]/30 rounded-2xl flex items-center justify-center shrink-0">
+                  <FileSpreadsheet size={28} className="text-[#302782] dark:text-[#B2BB1E]" />
+                </div>
+                <div>
+                  <h2 className="text-base font-black text-[#302782] dark:text-white">ส่งออกรายงาน Excel</h2>
+                  <p className="text-xs text-black dark:text-white leading-relaxed mt-0.5">เลือกช่วงวันที่เพื่อสร้างรายงานสรุปการจอง</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-base font-black text-[#302782] dark:text-white">
-                  กำหนดวันที่ของแต่ละเทอม
-                </h2>
-                <p className="text-xs text-black dark:text-white leading-relaxed mt-0.5">
-                  ระบุวันที่เริ่มต้นและสิ้นสุดของแต่ละภาคเรียน
-                </p>
+
+              <button
+                onClick={fillCurrentTerm}
+                disabled={isLoading}
+                className="w-full mb-4 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-dashed border-[#B2BB1E]/60 hover:border-[#B2BB1E] bg-[#B2BB1E]/5 hover:bg-[#B2BB1E]/10 text-[#302782] dark:text-[#B2BB1E] font-black text-xs transition-all active:scale-[0.98] disabled:opacity-50"
+              >
+                <Zap size={14} className="shrink-0" />
+                กรอกวันที่เทอมปัจจุบันอัตโนมัติ
+              </button>
+
+              <div className="grid grid-cols-2 gap-3 mb-5">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-medium text-black dark:text-white flex items-center gap-1"><CalendarRange size={12} /> วันที่เริ่มต้น</label>
+                  <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} disabled={isLoading} className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-3 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:border-[#302782] transition-all" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-medium text-black dark:text-white flex items-center gap-1"><CalendarRange size={12} /> วันที่สิ้นสุด</label>
+                  <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} disabled={isLoading} className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-3 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:border-[#302782] transition-all" />
+                </div>
               </div>
+
+              {feedback && (
+                <div className={`flex items-start gap-3 rounded-xl p-3 mb-4 text-sm font-bold ${feedback.type === "error" ? "bg-red-50 text-red-600 border-red-100" : "bg-green-50 text-green-600 border-green-100"} border`}>
+                  {feedback.type === "error" ? <AlertCircle size={16} /> : <CheckCircle2 size={16} />}
+                  <span className="text-xs">{feedback.message}</span>
+                </div>
+              )}
+
+              <button onClick={handleDownload} disabled={isLoading} className="w-full bg-[#302782] hover:bg-[#B2BB1E] text-white font-black py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all active:scale-[0.98] shadow-lg">
+                {isLoading ? <><Loader2 size={18} className="animate-spin" /> กำลังสร้างรายงาน...</> : <><Download size={18} /> ดาวน์โหลด Excel</>}
+              </button>
             </div>
 
-            {/* Loading Skeleton */}
-            {isFetchingTerms ? (
-              <div className="space-y-3 mb-5">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="animate-pulse bg-gray-100 dark:bg-gray-700 rounded-xl h-[60px]"
-                  />
-                ))}
+            {/* RIGHT: Term Management */}
+            <div className="bg-white dark:bg-gray-800 rounded-[28px] shadow-sm border border-gray-100 dark:border-gray-700 p-6 text-black dark:text-white">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-14 h-14 bg-[#302782]/8 dark:bg-[#302782]/30 rounded-2xl flex items-center justify-center shrink-0">
+                  <GraduationCap size={28} className="text-[#302782] dark:text-[#B2BB1E]" />
+                </div>
+                <div>
+                  <h2 className="text-base font-black text-[#302782] dark:text-white">กำหนดวันที่ของแต่ละเทอม</h2>
+                  <p className="text-xs text-black dark:text-white leading-relaxed mt-0.5">ระบุวันที่เริ่มต้นและสิ้นสุดของแต่ละภาคเรียน</p>
+                </div>
               </div>
-            ) : (
-              <>
-                {/* Term Cards — compact horizontal rows */}
-                <div className="space-y-3 mb-5">
-                  {TERM_CONFIG.map((term) => {
-                    const IconComponent = term.icon;
-                    return (
-                      <div
-                        key={term.key}
-                        className={`relative overflow-hidden rounded-xl border ${term.borderLight} ${term.borderDark} ${term.bgLight} ${term.bgDark} px-4 py-3 transition-all duration-200 hover:shadow-md`}
-                      >
-                        {/* Decorative gradient bar */}
-                        <div
-                          className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${term.gradient}`}
-                        />
 
-                        {/* Container: Stack on small, row on large */}
-                        <div className="flex flex-col 2xl:flex-row 2xl:items-center gap-3 sm:gap-4">
-                          
-                          {/* Icon and Label Group */}
-                          <div className="flex items-center gap-3 shrink-0">
-                            <div
-                              className={`w-10 h-10 ${term.iconBg} rounded-xl flex items-center justify-center shrink-0`}
-                            >
-                              <IconComponent size={18} className={term.textColor} />
-                            </div>
-                            <h3
-                              className={`text-sm font-black ${term.textColor} whitespace-nowrap shrink-0`}
-                            >
-                              {term.label}
-                            </h3>
-                          </div>
-
-                          {/* Date picker Group */}
-                          <div className="2xl:ml-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full 2xl:w-auto">
-                            <input
-                              type="date"
-                              value={termDates[term.key].start_date}
-                              onChange={(e) =>
-                                handleTermDateChange(term.key, 'start_date', e.target.value)
-                              }
-                              disabled={isTermLoading}
-                              className="w-full sm:flex-1 2xl:w-auto min-w-[130px] bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#302782]/30 dark:focus:ring-[#B2BB1E]/30 focus:border-[#302782] dark:focus:border-[#B2BB1E] transition-all disabled:opacity-50"
-                              title="วันที่เริ่มต้น"
-                            />
-                            <span className="text-gray-400 dark:text-gray-500 font-bold hidden sm:block text-center shrink-0">-</span>
-                            <input
-                              type="date"
-                              value={termDates[term.key].end_date}
-                              onChange={(e) =>
-                                handleTermDateChange(term.key, 'end_date', e.target.value)
-                              }
-                              disabled={isTermLoading}
-                              className="w-full sm:flex-1 2xl:w-auto min-w-[130px] bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#302782]/30 dark:focus:ring-[#B2BB1E]/30 focus:border-[#302782] dark:focus:border-[#B2BB1E] transition-all disabled:opacity-50"
-                              title="วันที่สิ้นสุด"
-                            />
-                          </div>
+              <div className="space-y-3 mb-5">
+                {TERM_CONFIG.map((term) => {
+                  const Icon = term.icon;
+                  return (
+                    <div key={term.key} className={`relative overflow-hidden rounded-xl border ${term.borderLight} ${term.borderDark} ${term.bgLight} ${term.bgDark} px-4 py-3 hover:shadow-md transition-all`}>
+                      <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${term.gradient}`} />
+                      <div className="flex flex-col 2xl:flex-row 2xl:items-center gap-3">
+                        <div className="flex items-center gap-3 shrink-0">
+                          <div className={`w-10 h-10 ${term.iconBg} rounded-xl flex items-center justify-center`}><Icon size={18} className={term.textColor} /></div>
+                          <h3 className={`text-sm font-black ${term.textColor}`}>{term.label}</h3>
+                        </div>
+                        <div className="2xl:ml-auto flex flex-col sm:flex-row items-center gap-2 w-full 2xl:w-auto">
+                          <input type="date" value={termDates[term.key].start_date} onChange={(e) => handleTermDateChange(term.key, 'start_date', e.target.value)} className="w-full sm:flex-1 bg-white dark:bg-gray-700 border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold" />
+                          <span className="text-gray-400 font-bold hidden sm:block">-</span>
+                          <input type="date" value={termDates[term.key].end_date} onChange={(e) => handleTermDateChange(term.key, 'end_date', e.target.value)} className="w-full sm:flex-1 bg-white dark:bg-gray-700 border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold" />
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {termFeedback && (
+                <div className={`flex items-start gap-3 rounded-xl p-3 mb-4 text-sm font-bold ${termFeedback.type === "error" ? "bg-red-50 text-red-600 border-red-100" : "bg-green-50 text-green-600 border-green-100"} border`}>
+                  {termFeedback.type === "error" ? <AlertCircle size={16} /> : <CheckCircle2 size={16} />}
+                  <span className="text-xs">{termFeedback.message}</span>
                 </div>
+              )}
 
-                {/* Term Feedback */}
-                {termFeedback && (
-                  <div
-                    className={`flex items-start gap-3 rounded-xl p-3 mb-4 text-sm font-bold transition-all ${termFeedback.type === "error"
-                      ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800"
-                      : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-800"
-                      }`}
-                  >
-                    {termFeedback.type === "error" ? (
-                      <AlertCircle size={16} className="shrink-0 mt-0.5" />
-                    ) : (
-                      <CheckCircle2 size={16} className="shrink-0 mt-0.5" />
-                    )}
-                    <span className="text-xs">{termFeedback.message}</span>
-                  </div>
-                )}
-
-                {/* Save Button */}
-                <button
-                  onClick={handleSaveTerms}
-                  disabled={isTermLoading}
-                  className="w-full bg-[#302782] hover:bg-[#B2BB1E] disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white font-black py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all duration-300 active:scale-[0.98] shadow-lg hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed"
-                >
-                  {isTermLoading ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" />
-                      กำลังบันทึก...
-                    </>
-                  ) : (
-                    <>
-                      <Save size={18} />
-                      บันทึกข้อมูลเทอม
-                    </>
-                  )}
-                </button>
-
-                {/* Term Info — inline */}
-                <div className="mt-4 bg-[#302782]/5 dark:bg-[#302782]/20 rounded-xl border border-[#302782]/10 dark:border-[#302782]/30 p-4">
-                  <p className="text-xs font-semibold text-[#302782] dark:text-[#B2BB1E] mb-1.5">
-                    หมายเหตุ
-                  </p>
-                  <ul className="text-xs text-black dark:text-white space-y-1 font-semibold">
-                    <li className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[#B2BB1E] shrink-0" />
-                      วันที่จะถูกใช้สำหรับระบบจัดตารางเรียนอัตโนมัติ
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[#B2BB1E] shrink-0" />
-                      สามารถแก้ไขวันที่ได้ตลอดเวลา
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[#B2BB1E] shrink-0" />
-                      เฉพาะเทอมที่ระบุวันที่เท่านั้นที่จะถูกบันทึก
-                    </li>
-                  </ul>
-                </div>
-              </>
-            )}
+              <button onClick={handleSaveTerms} disabled={isTermLoading} className="w-full bg-[#302782] hover:bg-[#B2BB1E] text-white font-black py-3.5 rounded-xl flex justify-center items-center gap-2 text-sm transiton-all active:scale-[0.98]">
+                {isTermLoading ? <><Loader2 size={18} className="animate-spin" /> กำลังบันทึก...</> : <><Save size={18} /> บันทึกข้อมูลเทอม</>}
+              </button>
+            </div>
           </div>
-
         </div>
-      </div>
+      </PageReveal>
     </div>
   );
 };

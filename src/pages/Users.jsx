@@ -6,14 +6,13 @@ import {
   Trash2,
   UserCog,
   Mail,
-  SearchX,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUsers } from "../hooks/useUsers";
-import LoadingSpinner from "../components/common/LoadingSpinner";
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
 import UserFormModal from "../components/user/UserFormModal.jsx";
+import PageReveal from "../components/common/PageReveal";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -66,38 +65,36 @@ const Users = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-sans">
       <Navbar />
 
-      <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-[1600px] mx-auto w-full">
-        {/* Header Section */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
-              title="ย้อนกลับ"
+      <PageReveal isLoading={isLoading} loadingText="กำลังเข้าถึงข้อมูลผู้ดูแลระบบ...">
+        <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-[1600px] mx-auto w-full">
+          {/* Header Section */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
+                title="ย้อนกลับ"
+              >
+                <ChevronLeft
+                  size={24}
+                  className="transition-transform group-hover:-translate-x-0.5"
+                />
+              </button>
+              <h1 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white">
+                จัดการผู้ใช้งาน
+              </h1>
+            </div>
+
+            <Button
+              onClick={() => openModal()}
+              className="w-full sm:w-auto bg-[#B2BB1E] text-white rounded-2xl px-6 py-3.5 flex items-center justify-center gap-2 font-black shadow-lg hover:bg-[#302782] transition-all active:scale-95"
             >
-              <ChevronLeft
-                size={24}
-                className="transition-transform group-hover:-translate-x-0.5"
-              />
-            </button>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#302782] dark:text-white">
-              จัดการผู้ใช้งาน
-            </h1>
+              <Plus size={20} /> เพิ่มผู้ใช้ใหม่
+            </Button>
           </div>
 
-          <Button
-            onClick={() => openModal()}
-            className="w-full sm:w-auto bg-[#B2BB1E] text-white rounded-2xl px-6 py-3.5 flex items-center justify-center gap-2 font-black shadow-lg hover:bg-[#302782] transition-all active:scale-95"
-          >
-            <Plus size={20} /> เพิ่มผู้ใช้ใหม่
-          </Button>
-        </div>
-
-        {/* Content Section */}
-        <div className="w-full">
-          {isLoading ? (
-            <LoadingSpinner text="กำลังโหลดข้อมูลผู้ใช้..." />
-          ) : (
+          {/* Content Section */}
+          <div className="w-full">
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-6">
               {users.length > 0 ? (
                 users.map((u) => (
@@ -111,7 +108,6 @@ const Users = () => {
                       </div>
 
                       <div className="flex-grow min-w-0">
-                        {/* 🚩 แก้ไข: รวมคำนำหน้าและชื่อให้อยู่ใน h3 เดียวกันเพื่อให้มันอยู่บรรทัดเดียวกันเสมอ */}
                         <h3 className="text-lg sm:text-xl font-black text-[#302782] dark:text-white truncate w-full">
                           <span className="text-sm font-black text-black dark:text-white mr-1.5 tracking-tight">
                             {u.title}
@@ -166,9 +162,9 @@ const Users = () => {
                 </div>
               )}
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      </PageReveal>
 
       {isModalOpen && (
         <UserFormModal

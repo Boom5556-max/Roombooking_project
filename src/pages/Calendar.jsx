@@ -9,13 +9,14 @@ import {
   AlertCircle,
   Settings2,
   ChevronLeft,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 import Navbar from "../components/layout/Navbar.jsx";
 import RoomSelector from "../components/calendar/RoomSelector";
 import CalendarView from "../components/calendar/CalendarView";
 import EventModal from "../components/calendar/EventModal";
 import ActionModal from "../components/common/ActionModal.jsx";
-import LoadingSpinner from "../components/common/LoadingSpinner";
+import PageReveal from "../components/common/PageReveal";
 import { jwtDecode } from "jwt-decode";
 
 const Calendar = () => {
@@ -55,9 +56,13 @@ const Calendar = () => {
   const [showConfirmRestore, setShowConfirmRestore] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
 
-  // ✨ Synchronized Loading Engine
+  // ✨ Holiday Toggle State (Persisted)
+  const [showHolidays, setShowHolidays] = useState(() => {
+    return localStorage.getItem("calendar_show_holidays") === "true";
+  });
+
+  // ✨ Sync State for FullCalendar
   const [isCalendarBusy, setIsCalendarBusy] = useState(true);
-  const [isFullyReady, setIsFullyReady] = useState(false);
 
   const [alertConfig, setAlertConfig] = useState({
     show: false,
@@ -66,31 +71,18 @@ const Calendar = () => {
     type: "error",
   });
 
-  // ✨ Double-Lock System: Syncs Internal Data + Google Calendar
-  useEffect(() => {
-    let timeout;
-    if (!isLoading && !isCalendarBusy) {
-      // 🛡️ Paint-Guard Delay: Ensuring browser finishing rendering events
-      timeout = setTimeout(() => {
-        setIsFullyReady(true);
-      }, 1000); // 1.0s buffer for a rock-solid reveal
-    }
-    return () => clearTimeout(timeout);
-  }, [isLoading, isCalendarBusy]);
-
   // Reset busy state when changing rooms
   useEffect(() => {
     setIsCalendarBusy(true);
-    setIsFullyReady(false);
   }, [selectedRoom]);
 
-  // Safety Watchdog (5s)
-  useEffect(() => {
-    const watchdog = setTimeout(() => {
-      if (!isFullyReady) setIsFullyReady(true);
-    }, 5000);
-    return () => clearTimeout(watchdog);
-  }, [isFullyReady]);
+  // Handle Holiday Toggle
+  const toggleHolidays = () => {
+    const newVal = !showHolidays;
+    setShowHolidays(newVal);
+    localStorage.setItem("calendar_show_holidays", String(newVal));
+    if (newVal) setIsCalendarBusy(true); // Trigger loading sync
+  };
 
   const checkPermission = (event) => {
     const props = event.extendedProps;
@@ -118,18 +110,13 @@ const Calendar = () => {
 
   return (
     <div className="h-screen bg-[#FDFDFF] dark:bg-gray-900 flex flex-col overflow-hidden font-sans transition-colors duration-200 relative">
-      {/* ✨ Double-Lock Loader Layer */}
-      {!isFullyReady && (
-        <LoadingSpinner 
-          fullPage 
-          text={isLoading ? "กำลังโหลดข้อมูลห้องเรียน..." : "กำลังรอการซิงค์ข้อมูลลงปฏิทิน..."} 
-        />
-      )}
+      <Navbar />
 
-      {/* Main Content Wrapper - Controlled transition */}
-      <div className={`flex flex-col h-full transition-all duration-700 ease-in-out ${!isFullyReady ? "opacity-0 scale-[0.98] blur-sm pointer-events-none" : "opacity-100 scale-100 blur-0 pointer-events-auto"}`}>
-        <Navbar />
-
+      <PageReveal 
+        isLoading={isLoading || isCalendarBusy} 
+        loadingText={isLoading ? "กำลังโหลดข้อมูลห้องเรียน..." : "กำลังรอการซิงค์ข้อมูลลงปฏิทิน..."}
+        delay={800}
+      >
         <main className="flex-grow flex flex-col overflow-hidden p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1800px] mx-auto w-full">
           
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 flex-shrink-0">
@@ -151,18 +138,30 @@ const Calendar = () => {
                 />
               </div>
 
+              {/* 📅 Holiday Integration Toggle (Opt-in) */}
+              <button
+                onClick={toggleHolidays}
+                className={`p-2.5 rounded-xl border transition-all active:scale-95 flex items-center gap-2 px-4 whitespace-nowrap group ${
+                  showHolidays
+                    ? "bg-[#302782] text-white border-transparent shadow-lg shadow-indigo-900/20"
+                    : "bg-white dark:bg-gray-800 text-gray-500 border-gray-100 dark:border-gray-700 hover:border-[#302782] dark:hover:border-white shadow-sm"
+                }`}
+                title={showHolidays ? "คลิกเพื่อซ่อนวันหยุด" : "คลิกเพื่อแสดงวันหยุดจาก Google"}
+              >
+                <CalendarIcon size={20} className={showHolidays ? "text-[#B2BB1E]" : "text-gray-400 group-hover:text-[#302782] dark:group-hover:text-white"} />
+                <span className="text-xs font-bold sm:inline hidden">
+                  {showHolidays ? "วันหยุด: เปิด" : "วันหยุด: ปิด"}
+                </span>
+              </button>
+
               <div className="flex flex-wrap items-center gap-4 px-1 text-[11px] sm:text-xs text-black dark:text-white font-bold uppercase tracking-wider">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 md:flex hidden">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-sm"></span>
                   <span>อัปโหลดตารางเรียน</span>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 md:flex hidden">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shadow-sm"></span>
                   <span>การจองผ่านระบบ</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#9CA3AF] shadow-sm"></span>
-                  <span>งดใช้ห้อง</span>
                 </div>
               </div>
             </div>
@@ -186,14 +185,12 @@ const Calendar = () => {
             <CalendarView
               events={events}
               isCancelMode={isCancelMode}
+              showHolidays={showHolidays}
               currentUserId={userData.id}
               currentUserRole={userData.role}
               onLoading={(loading) => {
-                if (!loading) {
-                  setIsCalendarBusy(false);
-                } else {
-                  setIsCalendarBusy(true);
-                }
+                if (!loading) setIsCalendarBusy(false);
+                else setIsCalendarBusy(true);
               }}
               onEventClick={(info) => {
                 if (isCancelMode) {
@@ -210,7 +207,7 @@ const Calendar = () => {
             />
           </div>
         </main>
-      </div>
+      </PageReveal>
 
       <EventModal
         event={selectedEvent}

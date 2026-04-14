@@ -11,6 +11,8 @@ const CalendarView = ({
   isCancelMode,
   currentUserId,
   currentUserRole,
+  onLoading,
+  showHolidays = false,
 }) => {
   const renderEventContent = (eventInfo) => {
     // ✨ Handle Google Calendar Holidays
@@ -139,6 +141,21 @@ const CalendarView = ({
     });
   }, [events]);
 
+  const eventSources = React.useMemo(() => {
+    const sources = [{ events: processedEvents || [] }];
+    
+    if (showHolidays) {
+      sources.push({
+        id: 'google-holidays-source',
+        googleCalendarId: 'th.th.official#holiday@group.v.calendar.google.com',
+        className: 'google-holiday',
+        display: 'block'
+      });
+    }
+    
+    return sources;
+  }, [processedEvents, showHolidays]);
+
   return (
     <div className="flex-grow w-full h-full bg-[#FFFFFF] dark:bg-gray-800 p-2 sm:p-4 md:p-6 flex flex-col relative font-sans overflow-hidden">
       <div className="calendar-container flex-grow h-full">
@@ -146,15 +163,8 @@ const CalendarView = ({
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, googleCalendarPlugin]}
           googleCalendarApiKey={import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY}
           initialView="dayGridMonth"
-          eventSources={[
-            { events: processedEvents || [] },
-            {
-              id: 'google-holidays-source',
-              googleCalendarId: 'th.th.official#holiday@group.v.calendar.google.com',
-              className: 'google-holiday',
-              display: 'block'
-            }
-          ]}
+          eventSources={eventSources}
+          loading={onLoading}
           eventClick={(info) => {
             if (info.event.source?.id === "google-holidays-source" || info.event.classNames.includes("google-holiday") || info.event.url) {
               info.jsEvent.preventDefault();

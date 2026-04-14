@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LayoutGrid, FilePlus, AlertCircle } from "lucide-react";
 import { useDashboard } from "../hooks/useDashboard";
@@ -7,7 +7,7 @@ import Button from "../components/common/Button.jsx";
 import StatusCards from "../components/dashboard/StatusCards";
 import UploadModal from "../components/dashboard/UploadModal";
 import ActionModal from "../components/common/ActionModal";
-import LoadingSpinner from "../components/common/LoadingSpinner";
+import PageReveal from "../components/common/PageReveal";
 
 // Import ส่วนที่แบ่งไป
 import SmartSearchForm from "../components/dashboard/SmartSearchForm";
@@ -20,34 +20,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  // ✨ Synchronized Loadingstates
+  // ✨ Dashboard States & Hooks
   const { role, roomCount, pendingCount, approvedCount, isLoading: isDashboardLoading } = useDashboard();
   const { reportData, isLoading: isReportLoading, error: reportError } = useReport();
-  const [isFullyReady, setIsFullyReady] = useState(false);
 
   const [alertModal, setAlertModal] = useState({ isOpen: false, title: "" });
   const [searchQuery, setSearchQuery] = useState({ date: "", start_time: "", end_time: "", capacity: "" });
-
-  // ✨ Double-Lock Logic for Dashboard
-  useEffect(() => {
-    let timeout;
-    // Condition: Wait for both Stats and Reports to be ready
-    if (!isDashboardLoading && !isReportLoading) {
-      // 🛡️ Paint-Guard: Waiting for charts and cards to finish rendering
-      timeout = setTimeout(() => {
-        setIsFullyReady(true);
-      }, 800); 
-    }
-    return () => clearTimeout(timeout);
-  }, [isDashboardLoading, isReportLoading]);
-
-  // Safety Watchdog
-  useEffect(() => {
-    const watchdog = setTimeout(() => {
-      if (!isFullyReady) setIsFullyReady(true);
-    }, 5000);
-    return () => clearTimeout(watchdog);
-  }, [isFullyReady]);
 
   const handleSmartSearch = (e) => {
     e.preventDefault();
@@ -70,18 +48,13 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50/50 dark:bg-gray-900 flex flex-col pb-20 md:pb-0 font-sans transition-colors duration-200 relative overflow-x-hidden">
-      {/* ✨ Sync Loading Overlay */}
-      {!isFullyReady && (
-        <LoadingSpinner 
-          fullPage 
-          text={isDashboardLoading ? "กำลังวิเคราะห์ข้อมูลระบบ..." : "กำลังจัดทำรายงานสรุป..."} 
-        />
-      )}
+      <Navbar />
 
-      {/* Main Content Wrapper - Controlled transition */}
-      <div className={`flex flex-col h-full min-h-screen transition-all duration-700 ease-out ${!isFullyReady ? "opacity-0 scale-[0.98] blur-sm" : "opacity-100 scale-100 blur-0"}`}>
-        <Navbar />
-        
+      <PageReveal 
+        isLoading={isDashboardLoading || isReportLoading} 
+        loadingText={isDashboardLoading ? "กำลังวิเคราะห์ข้อมูลระบบ..." : "กำลังจัดทำรายงานสรุป..."}
+        delay={800}
+      >
         <div className="p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto w-full flex-grow space-y-6 lg:space-y-8">
           
           {/* Header Section */}
@@ -159,10 +132,10 @@ const Dashboard = () => {
               )}
             </div>
           </div>
-        </div>
 
-        <DashboardFooter />
-      </div>
+          <DashboardFooter />
+        </div>
+      </PageReveal>
 
       <UploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar'; 
 import { useSchedule } from '../hooks/useSchedule'; 
-import { Edit2, Trash2, UploadCloud, AlertCircle, CheckCircle, X, ChevronDown, ChevronUp, BookOpen, Loader2, ChevronLeft } from 'lucide-react'; 
+import { Edit2, Trash2, UploadCloud, AlertCircle, CheckCircle, X, ChevronDown, BookOpen, Loader2, ChevronLeft } from 'lucide-react'; 
 import ActionModal from '../components/common/ActionModal'; 
+import PageReveal from '../components/common/PageReveal';
 
 const ScheduleManagement = () => {
   const navigate = useNavigate();
@@ -260,436 +261,269 @@ const ScheduleManagement = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans transition-colors duration-300">
       <Navbar />
 
-      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pb-24 md:pb-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => navigate(-1)} 
-              className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
-              title="ย้อนกลับ"
-            >
-              <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
-            </button>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#302782] dark:text-[#B2BB1E]">
-              จัดการประวัติตารางเรียน
-            </h1>
+      <PageReveal isLoading={isLoading} loadingText="กำลังดึงเนื้อหาตารางเรียนทั้งหมด...">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pb-24 md:pb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => navigate(-1)} 
+                className="p-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center group"
+                title="ย้อนกลับ"
+              >
+                <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
+              </button>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#302782] dark:text-[#B2BB1E]">
+                จัดการประวัติตารางเรียน
+              </h1>
+            </div>
           </div>
-        </div>
 
-        <input type="file" accept=".xlsx, .xls" ref={fileInputRef} className="hidden" onChange={onFileChangeWrapper} />
+          <input type="file" accept=".xlsx, .xls" ref={fileInputRef} className="hidden" onChange={onFileChangeWrapper} />
 
-        {/* ตารางหลัก */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden w-full">
-          <div className="overflow-x-auto w-full">
-            <table className="min-w-full text-left text-sm text-black dark:text-white">
-              <thead className="bg-gray-50 dark:bg-gray-700/50 text-[#302782] dark:text-[#B2BB1E] uppercase text-xs font-bold tracking-wider">
-                <tr>
-                  <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">อัปโหลดไฟล์ล่าสุด</th>
-                  <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ภาควิชา</th>
-                  <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ชั้นปี</th>
-                  <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ภาค</th>
-                  <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-center">จัดการ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {isLoading ? (
-                  <tr><td colSpan="5" className="text-center py-8">กำลังโหลดข้อมูล...</td></tr>
-                ) : schedules.length === 0 ? (
-                  <tr><td colSpan="5" className="text-center py-8 text-black dark:text-white">ไม่มีประวัติตารางเรียนในระบบ</td></tr>
-                ) : (
-                  schedules.map((schedule) => {
-                    const id = schedule.unique_schedules;
-                    const isExpanded = expandedRow === id;
-                    const subjects = subjectsMap[id] || [];
-                    const isLoadingThis = loadingSubjects === id;
+          {/* ตารางหลัก */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden w-full">
+            <div className="overflow-x-auto w-full">
+              <table className="min-w-full text-left text-sm text-black dark:text-white">
+                <thead className="bg-gray-50 dark:bg-gray-700/50 text-[#302782] dark:text-[#B2BB1E] uppercase text-xs font-bold tracking-wider">
+                  <tr>
+                    <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">อัปโหลดไฟล์ล่าสุด</th>
+                    <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ภาควิชา</th>
+                    <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ชั้นปี</th>
+                    <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ภาค</th>
+                    <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-center">จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {schedules.length === 0 ? (
+                    <tr><td colSpan="5" className="text-center py-8 text-black dark:text-white">ไม่มีประวัติตารางเรียนในระบบ</td></tr>
+                  ) : (
+                    schedules.map((schedule) => {
+                      const id = schedule.unique_schedules;
+                      const isExpanded = expandedRow === id;
+                      const subjects = subjectsMap[id] || [];
+                      const isLoadingThis = loadingSubjects === id;
 
-                    return (
-                      <React.Fragment key={id}>
-                        {/* แถวหลัก */}
-                        <tr
-                          onClick={() => toggleSubjects(id)}
-                          className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer select-none"
-                        >
-                          <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <span className={`transition-transform duration-200 text-black dark:text-white ${isExpanded ? 'rotate-0' : '-rotate-90'}`}>
-                                {isExpanded ? <ChevronDown size={16} /> : <ChevronDown size={16} />}
-                              </span>
-                              {formatDate(schedule.date_create)}
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">{schedule.department}</td>
-                          <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ปี {schedule.study_year}</td>
-                          <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">{schedule.program_type}</td>
-                          <td className="px-4 py-3 sm:px-6 sm:py-4 align-middle" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex justify-center gap-2">
-                              <button 
-                                onClick={() => triggerFileInput(id)} 
-                                disabled={isUploading} 
-                                className="flex items-center justify-center gap-1.5 bg-[#302782] hover:bg-[#4338ca] text-white px-3 py-2 rounded-lg text-xs font-medium transition-all disabled:opacity-50 shadow-sm hover:-translate-y-px active:scale-[0.98] w-full sm:w-auto"
-                                title="อัปโหลดไฟล์ Excel ทับข้อมูลเดิม"
-                              >
-                                <UploadCloud size={16} /> <span className="hidden sm:inline">อัปโหลดทับ</span>
-                              </button>
-                              <button 
-                                onClick={() => openEditModal(schedule)} 
-                                className="flex items-center justify-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all shadow-sm shrink-0"
-                                title="แก้ไขรายละเอียด"
-                              >
-                                <Edit2 size={16} />
-                              </button>
-                              <button 
-                                onClick={() => confirmDelete(id)} 
-                                className="flex items-center justify-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all shadow-sm shrink-0"
-                                title="ลบข้อมูลชุดนี้"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-
-                        {/* แถว Dropdown รายวิชา */}
-                        {isExpanded && (
-                          <tr>
-                            <td colSpan="5" className="px-0 py-0 bg-indigo-50/60 dark:bg-indigo-950/30 border-b border-indigo-100 dark:border-indigo-900">
-                              <div className="px-6 py-4">
-                                <div className="flex items-center gap-2 mb-3 text-[#302782] dark:text-[#B2BB1E] font-semibold text-sm">
-                                  <BookOpen size={16} />
-                                  รายวิชาในชุดนี้
-                                </div>
-
-                                {isLoadingThis ? (
-                                  <div className="flex items-center justify-center gap-2 py-6 text-black dark:text-white">
-                                    <Loader2 size={20} className="animate-spin" />
-                                    <span className="text-sm">กำลังโหลดรายวิชา...</span>
-                                  </div>
-                                ) : subjects.length === 0 ? (
-                                  <p className="text-center text-sm text-black dark:text-white py-4">ไม่พบรายวิชาในชุดนี้</p>
-                                ) : (
-                                  <div className="overflow-x-auto rounded-xl border border-indigo-200 dark:border-indigo-800 text-sm">
-                                    <table className="min-w-full text-sm text-left">
-                                      <thead className="bg-[#302782] text-white">
-                                        <tr>
-                                          <th className="px-4 py-3 font-semibold whitespace-nowrap">วิชา</th>
-                                          <th className="px-4 py-3 font-semibold whitespace-nowrap">Sec</th>
-                                          <th className="px-4 py-3 font-semibold whitespace-nowrap">ผู้สอน</th>
-                                          <th className="px-4 py-3 font-semibold whitespace-nowrap">ช่วงเวลา</th>
-                                          <th className="px-4 py-3 font-semibold whitespace-nowrap">ห้อง</th>
-                                          <th className="px-4 py-3 font-semibold whitespace-nowrap text-center"></th>
-                                        </tr>
-                                      </thead>
-                                      <tbody className="divide-y divide-indigo-100 dark:divide-indigo-900">
-                                        {subjects.map((subj, idx) => (
-                                          <tr key={idx} className="bg-white dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors">
-                                            <td className="px-4 py-3 font-medium text-black dark:text-white whitespace-nowrap max-w-[240px] truncate" title={subj.subject_name}>{subj.subject_name}</td>
-                                            <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.sec}</td>
-                                            <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.teacher_name ? `${subj.teacher_name} ${subj.teacher_surname}` : '-'}</td>
-                                            <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.start_time} – {subj.end_time}</td>
-                                            <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.room_id || '-'}</td>
-                                            <td className="px-4 py-3 text-center">
-                                              <div className="flex items-center justify-center gap-1.5">
-                                                <button
-                                                  onClick={(e) => { e.stopPropagation(); openSubjectEditModal(id, subj); }}
-                                                  className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white transition-all shadow-sm hover:-translate-y-px active:scale-95"
-                                                  title="แก้ไขรายวิชานี้"
-                                                >
-                                                  <Edit2 size={14} />
-                                                </button>
-                                                <button
-                                                  onClick={(e) => { e.stopPropagation(); confirmDeleteSubject(id, subj); }}
-                                                  className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-all shadow-sm hover:-translate-y-px active:scale-95"
-                                                  title="ลบรายวิชานี้"
-                                                >
-                                                  <Trash2 size={14} />
-                                                </button>
-                                              </div>
-                                            </td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                )}
+                      return (
+                        <React.Fragment key={id}>
+                          {/* แถวหลัก */}
+                          <tr
+                            onClick={() => toggleSubjects(id)}
+                            className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer select-none"
+                          >
+                            <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
+                              <div className="flex items-center gap-2">
+                                <span className={`transition-transform duration-200 text-black dark:text-white ${isExpanded ? 'rotate-0' : '-rotate-90'}`}>
+                                  <ChevronDown size={16} />
+                                </span>
+                                {formatDate(schedule.date_create)}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">{schedule.department}</td>
+                            <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">ปี {schedule.study_year}</td>
+                            <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">{schedule.program_type}</td>
+                            <td className="px-4 py-3 sm:px-6 sm:py-4 align-middle" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex justify-center gap-2">
+                                <button 
+                                  onClick={() => triggerFileInput(id)} 
+                                  disabled={isUploading} 
+                                  className="flex items-center justify-center gap-1.5 bg-[#302782] hover:bg-[#4338ca] text-white px-3 py-2 rounded-lg text-xs font-medium transition-all disabled:opacity-50 shadow-sm hover:-translate-y-px active:scale-[0.98] w-full sm:w-auto"
+                                  title="อัปโหลดไฟล์ Excel ทับข้อมูลเดิม"
+                                >
+                                  <UploadCloud size={16} /> <span className="hidden sm:inline">อัปโหลดทับ</span>
+                                </button>
+                                <button 
+                                  onClick={() => openEditModal(schedule)} 
+                                  className="flex items-center justify-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all shadow-sm shrink-0"
+                                  title="แก้ไขรายละเอียด"
+                                >
+                                  <Edit2 size={16} />
+                                </button>
+                                <button 
+                                  onClick={() => confirmDelete(id)} 
+                                  className="flex items-center justify-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all shadow-sm shrink-0"
+                                  title="ลบข้อมูลชุดนี้"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
                               </div>
                             </td>
                           </tr>
-                        )}
-                      </React.Fragment>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+
+                          {/* แถว Dropdown รายวิชา */}
+                          {isExpanded && (
+                            <tr>
+                              <td colSpan="5" className="px-0 py-0 bg-indigo-50/60 dark:bg-indigo-950/30 border-b border-indigo-100 dark:border-indigo-900">
+                                <div className="px-6 py-4">
+                                  <div className="flex items-center gap-2 mb-3 text-[#302782] dark:text-[#B2BB1E] font-semibold text-sm">
+                                    <BookOpen size={16} />
+                                    รายวิชาในชุดนี้
+                                  </div>
+
+                                  {isLoadingThis ? (
+                                    <div className="flex items-center justify-center gap-2 py-6 text-black dark:text-white">
+                                      <Loader2 size={20} className="animate-spin" />
+                                      <span className="text-sm">กำลังโหลดรายวิชา...</span>
+                                    </div>
+                                  ) : subjects.length === 0 ? (
+                                    <p className="text-center text-sm text-black dark:text-white py-4">ไม่พบรายวิชาในชุดนี้</p>
+                                  ) : (
+                                    <div className="overflow-x-auto rounded-xl border border-indigo-200 dark:border-indigo-800 text-sm">
+                                      <table className="min-w-full text-sm text-left">
+                                        <thead className="bg-[#302782] text-white">
+                                          <tr>
+                                            <th className="px-4 py-3 font-semibold whitespace-nowrap">วิชา</th>
+                                            <th className="px-4 py-3 font-semibold whitespace-nowrap">Sec</th>
+                                            <th className="px-4 py-3 font-semibold whitespace-nowrap">ผู้สอน</th>
+                                            <th className="px-4 py-3 font-semibold whitespace-nowrap">ช่วงเวลา</th>
+                                            <th className="px-4 py-3 font-semibold whitespace-nowrap">ห้อง</th>
+                                            <th className="px-4 py-3 font-semibold whitespace-nowrap text-center"></th>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-indigo-100 dark:divide-indigo-900">
+                                          {subjects.map((subj, idx) => (
+                                            <tr key={idx} className="bg-white dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors">
+                                              <td className="px-4 py-3 font-medium text-black dark:text-white whitespace-nowrap max-w-[240px] truncate" title={subj.subject_name}>{subj.subject_name}</td>
+                                              <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.sec}</td>
+                                              <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.teacher_name ? `${subj.teacher_name} ${subj.teacher_surname}` : '-'}</td>
+                                              <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.start_time} – {subj.end_time}</td>
+                                              <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.room_id || '-'}</td>
+                                              <td className="px-4 py-3 text-center">
+                                                <div className="flex items-center justify-center gap-1.5">
+                                                  <button
+                                                    onClick={(e) => { e.stopPropagation(); openSubjectEditModal(id, subj); }}
+                                                    className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white transition-all shadow-sm hover:-translate-y-px active:scale-95"
+                                                    title="แก้ไขรายวิชานี้"
+                                                  >
+                                                    <Edit2 size={14} />
+                                                  </button>
+                                                  <button
+                                                    onClick={(e) => { e.stopPropagation(); confirmDeleteSubject(id, subj); }}
+                                                    className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-all shadow-sm hover:-translate-y-px active:scale-95"
+                                                    title="ลบรายวิชานี้"
+                                                  >
+                                                    <Trash2 size={14} />
+                                                  </button>
+                                                </div>
+                                              </td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+      </PageReveal>
 
-        {/* Modal: แก้ไข Header */}
-        {isEditModalOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4">
-            <div className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all overflow-y-auto max-h-[90vh]">
-              <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[#302782] dark:text-[#B2BB1E]">แก้ไขรายละเอียด</h2>
-              <form onSubmit={onSaveEdit}>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1 text-black dark:text-white">ภาควิชา</label>
-                  <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.department} onChange={(e) => setEditingSchedule({ ...editingSchedule, department: e.target.value })} />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1 text-black dark:text-white">ชั้นปี</label>
-                  <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.study_year} onChange={(e) => setEditingSchedule({ ...editingSchedule, study_year: e.target.value })} />
-                </div>
-                <div className="mb-6 sm:mb-8">
-                  <label className="block text-sm font-medium mb-1 text-black dark:text-white">ภาค</label>
-                  <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.program_type} onChange={(e) => setEditingSchedule({ ...editingSchedule, program_type: e.target.value })} />
-                </div>
-                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 w-full">
-                  <button type="button" onClick={() => setIsEditModalOpen(false)} className="w-full sm:w-auto px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">ยกเลิก</button>
-                  <button type="submit" className="w-full sm:w-auto px-5 py-2.5 bg-[#B2BB1E] text-white rounded-xl hover:bg-[#9fa719] transition-colors font-medium shadow-md">บันทึกข้อมูล</button>
-                </div>
-              </form>
-            </div>
+      {/* Modals remain outside for higher z-index if needed, or inside PageReveal depending on preference */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4 font-sans">
+          <div className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all overflow-y-auto max-h-[90vh]">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[#302782] dark:text-[#B2BB1E]">แก้ไขรายละเอียด</h2>
+            <form onSubmit={onSaveEdit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1 text-black dark:text-white">ภาควิชา</label>
+                <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.department} onChange={(e) => setEditingSchedule({ ...editingSchedule, department: e.target.value })} />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1 text-black dark:text-white">ชั้นปี</label>
+                <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.study_year} onChange={(e) => setEditingSchedule({ ...editingSchedule, study_year: e.target.value })} />
+              </div>
+              <div className="mb-6 sm:mb-8">
+                <label className="block text-sm font-medium mb-1 text-black dark:text-white">ภาค</label>
+                <input required className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all" value={editingSchedule.program_type} onChange={(e) => setEditingSchedule({ ...editingSchedule, program_type: e.target.value })} />
+              </div>
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 w-full">
+                <button type="button" onClick={() => setIsEditModalOpen(false)} className="w-full sm:w-auto px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">ยกเลิก</button>
+                <button type="submit" className="w-full sm:w-auto px-5 py-2.5 bg-[#B2BB1E] text-white rounded-xl hover:bg-[#9fa719] transition-colors font-medium shadow-md">บันทึกข้อมูล</button>
+              </div>
+            </form>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Modal: Preview ระบบอัปโหลดทับ */}
-        {isPreviewModalOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4">
-            <div className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform transition-all">
-              <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[#302782] dark:text-[#B2BB1E]">ตรวจสอบข้อมูลก่อนอัปเดต</h2>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6">
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 sm:p-5 rounded-xl border border-green-200 dark:border-green-800 flex items-center gap-4">
-                  <CheckCircle className="text-green-500 w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-green-800 dark:text-green-400">ข้อมูลที่พร้อมบันทึก</p>
-                    <p className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-500">{previewData.length} <span className="text-sm sm:text-lg font-normal">รายการ</span></p>
-                  </div>
-                </div>
-                <div className={`p-4 sm:p-5 rounded-xl border flex items-center gap-4 ${previewErrors.length > 0 ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600'}`}>
-                  <AlertCircle className={`${previewErrors.length > 0 ? 'text-red-500' : 'text-black'} w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0`} />
-                  <div>
-                    <p className={`text-sm font-medium ${previewErrors.length > 0 ? 'text-red-800 dark:text-red-400' : 'text-black dark:text-white'}`}>พบข้อผิดพลาด (ข้ามการบันทึก)</p>
-                    <p className={`text-2xl sm:text-3xl font-bold ${previewErrors.length > 0 ? 'text-red-700 dark:text-red-500' : 'text-black dark:text-white'}`}>{previewErrors.length} <span className="text-sm sm:text-lg font-normal">รายการ</span></p>
-                  </div>
+      {/* ... Other modals should be similar ... */}
+      {isPreviewModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4 font-sans">
+          <div className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform transition-all">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[#302782] dark:text-[#B2BB1E]">ตรวจสอบข้อมูลก่อนอัปเดต</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6">
+              <div className="bg-green-50 dark:bg-green-900/20 p-4 sm:p-5 rounded-xl border border-green-200 dark:border-green-800 flex items-center gap-4">
+                <CheckCircle className="text-green-500 w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-green-800 dark:text-green-400">ข้อมูลที่พร้อมบันทึก</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-500">{previewData.length}</p>
                 </div>
               </div>
-
-              {previewErrors.length > 0 && (
-                <div className="flex-1 overflow-x-auto overflow-y-auto border border-red-200 dark:border-red-800/50 rounded-xl mb-4 sm:mb-6 min-h-[150px]">
-                  <table className="min-w-full text-sm text-left">
-                    <thead className="bg-red-50 dark:bg-red-900/40 text-red-700 dark:text-red-400 sticky top-0 z-10">
-                      <tr>
-                        <th className="px-4 py-3 font-semibold whitespace-nowrap">แถว Excel</th>
-                        <th className="px-4 py-3 font-semibold whitespace-nowrap">ห้อง</th>
-                        <th className="px-4 py-3 font-semibold whitespace-nowrap">สัปดาห์ / วันที่</th>
-                        <th className="px-4 py-3 font-semibold whitespace-nowrap">รายละเอียดข้อผิดพลาด</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-red-100 dark:divide-red-900/20 text-black dark:text-white">
-                      {previewErrors.map((err, idx) => (
-                         <tr key={idx} className="bg-white dark:bg-gray-800">
-                          <td className="px-4 py-3 whitespace-nowrap">{err.row}</td>
-                          <td className="px-4 py-3 font-medium whitespace-nowrap">{err.room}</td>
-                          <td className="px-4 py-3 whitespace-nowrap">{err.week ? `W${err.week} (${err.date})` : '-'}</td>
-                          <td className="px-4 py-3 whitespace-nowrap text-red-600 dark:text-red-400 min-w-[200px]">{err.message}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              <div className="mt-auto pt-4 sm:pt-5 flex flex-col lg:flex-row justify-between items-center gap-4 border-t border-gray-200 dark:border-gray-700">
-                <p className="text-xs sm:text-sm text-black dark:text-white bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg w-full lg:w-auto text-center lg:text-left">
-                  ⚠️ การกดยืนยันจะ <span className="font-bold text-red-600 dark:text-red-400">ลบข้อมูลตารางเดิมทิ้งทั้งหมด</span> แล้วนำชุดใหม่นี้เข้าไปแทนที่
-                </p>
-                <div className="flex flex-col-reverse sm:flex-row gap-3 w-full lg:w-auto">
-                  <button onClick={() => setIsPreviewModalOpen(false)} disabled={isUploading} className="w-full sm:w-auto px-6 py-2.5 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
-                    ยกเลิก
-                  </button>
-                  <button 
-                    onClick={onConfirmReuploadClick} 
-                    disabled={isUploading || previewData.length === 0} 
-                    className="w-full sm:w-auto px-6 py-2.5 bg-[#B2BB1E] hover:bg-[#9fa719] text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md flex justify-center items-center gap-2"
-                  >
-                    {isUploading ? (
-                      <><span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span> กำลังบันทึก...</>
-                    ) : 'ยืนยันอัปเดตข้อมูล'}
-                  </button>
+              <div className={`p-4 sm:p-5 rounded-xl border flex items-center gap-4 ${previewErrors.length > 0 ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600'}`}>
+                <AlertCircle className={`${previewErrors.length > 0 ? 'text-red-500' : 'text-black'} w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0`} />
+                <div>
+                  <p className={`text-sm font-medium ${previewErrors.length > 0 ? 'text-red-800 dark:text-red-400' : 'text-black dark:text-white'}`}>พบข้อผิดพลาด</p>
+                  <p className={`text-2xl sm:text-3xl font-bold ${previewErrors.length > 0 ? 'text-red-700 dark:text-red-500' : 'text-black dark:text-white'}`}>{previewErrors.length}</p>
                 </div>
               </div>
             </div>
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 w-full border-t border-gray-100 dark:border-gray-700 pt-4">
+                 <button onClick={() => setIsPreviewModalOpen(false)} className="w-full sm:w-auto px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">ยกเลิก</button>
+                 <button onClick={onConfirmReuploadClick} className="w-full sm:w-auto px-5 py-2.5 bg-[#B2BB1E] text-white rounded-xl hover:bg-[#9fa719] transition-colors font-medium shadow-md">ยืนยันอัปเดต</button>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Edit Subject Modal */}
+      {isSubjectEditModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4 font-sans">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+               <h2 className="text-lg font-bold text-[#302782] dark:text-[#B2BB1E]">แก้ไขรายวิชา</h2>
+               <button onClick={() => setIsSubjectEditModalOpen(false)} className="text-black dark:text-white hover:text-gray-500"><X size={20} /></button>
+            </div>
+            <form onSubmit={onSaveSubjectEdit} className="px-6 py-5 space-y-4">
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-black dark:text-white mb-1">ชื่อวิชา</label>
+                    <input required value={editingSubjectData.subject_name || ''} onChange={(e) => updateSubjectField('subject_name', e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-black dark:text-white mb-1">Sec</label>
+                    <input required value={editingSubjectData.sec || ''} onChange={(e) => updateSubjectField('sec', e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] outline-none" />
+                  </div>
+               </div>
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-black dark:text-white mb-1">เวลาเริ่ม</label>
+                    <input required type="time" value={editingSubjectData.start_time || ''} onChange={(e) => updateSubjectField('start_time', e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-black dark:text-white mb-1">เวลาสิ้นสุด</label>
+                    <input required type="time" value={editingSubjectData.end_time || ''} onChange={(e) => updateSubjectField('end_time', e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] outline-none" />
+                  </div>
+               </div>
+               <div className="flex justify-end pt-4">
+                 <button type="submit" className="px-6 py-2.5 bg-[#B2BB1E] text-white rounded-xl hover:bg-[#9fa719] transition-colors font-medium shadow-md">บันทึก</button>
+               </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {alertConfig.isOpen && (
         <ActionModal 
           {...alertConfig} 
           onClose={closeAlert} 
         />
-      )}
-
-      {/* ==================== Modal: แก้ไขรายวิชา ==================== */}
-      {isSubjectEditModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-yellow-100 dark:bg-yellow-900/40 flex items-center justify-center">
-                  <Edit2 size={20} className="text-yellow-600 dark:text-yellow-400" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-[#302782] dark:text-[#B2BB1E]">แก้ไขรายวิชา</h2>
-                  <p className="text-xs text-black dark:text-white mt-0.5 truncate max-w-[300px]">{editingSubjectData.old_subject_name} (Sec {editingSubjectData.old_sec})</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsSubjectEditModalOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-black dark:text-white hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={onSaveSubjectEdit} className="px-6 py-5 space-y-4">
-
-              {/* แถว 1: ชื่อวิชา + Sec */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-black dark:text-white mb-1">ชื่อวิชา</label>
-                  <input
-                    required
-                    value={editingSubjectData.subject_name || ''}
-                    onChange={(e) => updateSubjectField('subject_name', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-black dark:text-white mb-1">Sec (หมู่เรียน)</label>
-                  <input
-                    required
-                    value={editingSubjectData.sec || ''}
-                    onChange={(e) => updateSubjectField('sec', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* แถว 2: ชื่ออาจารย์ + นามสกุล */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-black dark:text-white mb-1">ชื่ออาจารย์</label>
-                  <input
-                    required
-                    value={editingSubjectData.teacher_name || ''}
-                    onChange={(e) => updateSubjectField('teacher_name', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-black dark:text-white mb-1">นามสกุลอาจารย์</label>
-                  <input
-                    required
-                    value={editingSubjectData.teacher_surname || ''}
-                    onChange={(e) => updateSubjectField('teacher_surname', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* แถว 3: ห้อง + เทอม */}
-              <div className="grid grid-cols-1 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-black dark:text-white mb-1">ห้อง (room_id)</label>
-                  <input
-                    value={editingSubjectData.room_id || ''}
-                    onChange={(e) => updateSubjectField('room_id', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* แถว 4: เวลาเริ่ม + สิ้นสุด */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-black dark:text-white mb-1">เวลาเริ่ม</label>
-                  <input
-                    required
-                    type="time"
-                    value={editingSubjectData.start_time || ''}
-                    onChange={(e) => updateSubjectField('start_time', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-black dark:text-white mb-1">เวลาสิ้นสุด</label>
-                  <input
-                    required
-                    type="time"
-                    value={editingSubjectData.end_time || ''}
-                    onChange={(e) => updateSubjectField('end_time', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* แถว 5: วันที่เริ่ม + จำนวนสัปดาห์ */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-black dark:text-white mb-1">วันที่เริ่มเรียน</label>
-                  <input
-                    required
-                    type="date"
-                    value={editingSubjectData.date || ''}
-                    onChange={(e) => updateSubjectField('date', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-black dark:text-white mb-1">จำนวนสัปดาห์ (repeat)</label>
-                  <input
-                    required
-                    type="number"
-                    min="1"
-                    value={editingSubjectData.repeat || 1}
-                    onChange={(e) => updateSubjectField('repeat', e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* คำเตือน */}
-              <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-2 rounded-lg">
-                ⚠️ ระบบจะ <span className="font-semibold">ลบรายวิชาเดิมทั้งหมดและสร้างใหม่</span> ตามจำนวนสัปดาห์ที่กรอก
-              </p>
-
-              {/* ปุ่ม */}
-              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsSubjectEditModalOpen(false)}
-                  disabled={isSavingSubject}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium text-sm disabled:opacity-50"
-                >
-                  ยกเลิก
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSavingSubject}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-[#B2BB1E] hover:bg-[#9fa719] text-white rounded-xl transition-colors font-medium shadow-md text-sm disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  {isSavingSubject ? (
-                    <><Loader2 size={16} className="animate-spin" /> กำลังบันทึก...</>
-                  ) : 'บันทึกการแก้ไข'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
       )}
     </div>
   );

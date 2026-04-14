@@ -78,11 +78,10 @@ api.interceptors.response.use(
     // ถ้าพบ Error 401 (Unauthorized / Token มีปัญหา)
     if (error.response && error.response.status === 401) {
       
-      // 🚨 กรณีที่ 1: โดนเตะออกเพราะล็อกอินซ้อน (SESSION_SUPERSEDED)
+      // 🚨 กรณีที่ 1: โดนเตะออกเพราะล็อกอินซ้อน (SESSION_SUPERSEDED) - ห้าม Retry!
       if (error.response.data && error.response.data.code === 'SESSION_SUPERSEDED') {
         if (!isRedirecting) {
           isRedirecting = true;
-
           Swal.fire({
             icon: 'warning',
             title: 'ถูกออกจากระบบ',
@@ -91,11 +90,7 @@ api.interceptors.response.use(
             confirmButtonColor: '#302782',
             allowOutsideClick: false,
             allowEscapeKey: false,
-            customClass: {
-              backdrop: 'swal-backdrop-blur',
-              popup: 'rounded-3xl',
-              confirmButton: 'rounded-lg'
-            }
+            customClass: { backdrop: 'swal-backdrop-blur', popup: 'rounded-3xl', confirmButton: 'rounded-lg' }
           }).then(() => {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
@@ -105,9 +100,26 @@ api.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      // 🔄 กรณีที่ 2: Access Token พังหรือหมดอายุระหว่างการใช้งาน
-      // หน้าบ้านจัดการตรวจสอบ token ใหม่ให้แล้วก่อนจะเปลี่ยนหน้าจอ 
-      // แต่ถ้าระหว่างที่กำลังค้างอยู่หน้านั้นนานๆ แล้ว API หายไป จะตกลงมาตรงนี้ เราจึงทำการเตะออก
+      // 🔄 กรณีที่ 2: Access Token พังหรือหมดอายุระหว่างการใช้งาน (ลอง Refresh และ Retry)
+      if (!originalRequest._retry) {
+        originalRequest._retry = true;
+
+        try {
+          console.log('พบ 401 - กำลังลองขอ Token ใหม่และRetry...');
+          const isRefreshed = await verifyAndRefreshToken(true);
+          
+          if (isRefreshed) {
+            const newToken = localStorage.getItem('token');
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            console.log('Refresh สำเร็จ - กำลังส่งคำขอเดิมซ้ำ (Retry)');
+            return api(originalRequest); // ยิงใหม่!
+          }
+        } catch (refreshErr) {
+          console.error('Refresh & Retry Error:', refreshErr);
+        }
+      }
+
+      // 🚨 ถ้ามาถึงตรงนี้แสดงว่า Refresh ไม่ผ่าน หรือ Retry แล้วก็ยัง 401 อยู่ (ล้มเหลวโดยสิ้นเชิง)
       if (!isRedirecting) {
         isRedirecting = true;
         
@@ -119,11 +131,7 @@ api.interceptors.response.use(
           confirmButtonColor: '#302782',
           allowOutsideClick: false,
           allowEscapeKey: false,
-          customClass: {
-            backdrop: 'swal-backdrop-blur',
-            popup: 'rounded-3xl',
-            confirmButton: 'rounded-lg'
-          }
+          customClass: { backdrop: 'swal-backdrop-blur', popup: 'rounded-3xl', confirmButton: 'rounded-lg' }
         }).then(() => {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
