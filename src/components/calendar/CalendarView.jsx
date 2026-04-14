@@ -3,6 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import googleCalendarPlugin from "@fullcalendar/google-calendar";
 
 const CalendarView = ({
   events,
@@ -12,6 +13,17 @@ const CalendarView = ({
   currentUserRole,
 }) => {
   const renderEventContent = (eventInfo) => {
+    // ✨ Handle Google Calendar Holidays
+    if (eventInfo.event.source?.id === "google-holidays-source" || eventInfo.event.classNames.includes("google-holiday")) {
+      return (
+        <div className="flex items-center justify-center w-full h-full px-2 py-1 bg-[#ef4444] rounded-[12px] cursor-default">
+          <span className="text-white font-bold text-[11px] sm:text-[13px] truncate drop-shadow-sm cursor-default">
+            {eventInfo.event.title}
+          </span>
+        </div>
+      );
+    }
+
     const props = eventInfo.event.extendedProps;
 
     const isSchedule = props.isSchedule;
@@ -129,16 +141,32 @@ const CalendarView = ({
     <div className="flex-grow w-full h-full bg-[#FFFFFF] dark:bg-gray-800 p-2 sm:p-4 md:p-6 flex flex-col relative font-sans overflow-hidden">
       <div className="calendar-container flex-grow h-full">
         <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, googleCalendarPlugin]}
+          googleCalendarApiKey={import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY}
           initialView="dayGridMonth"
-          events={processedEvents}
-          eventClick={onEventClick}
+          eventSources={[
+            { events: processedEvents || [] },
+            {
+              id: 'google-holidays-source',
+              googleCalendarId: 'th.th.official#holiday@group.v.calendar.google.com',
+              className: 'google-holiday',
+              display: 'block'
+            }
+          ]}
+          eventClick={(info) => {
+            if (info.event.source?.id === "google-holidays-source" || info.event.classNames.includes("google-holiday") || info.event.url) {
+              info.jsEvent.preventDefault();
+              return;
+            }
+            if (onEventClick) onEventClick(info);
+          }}
           locale="th"
           height="100%"
           stickyHeaderDates={true}
           timeZone="UTC"
           eventDisplay="block"
-          allDaySlot={false}
+          allDaySlot={true}
+          allDayText="ทั้งวัน"
           slotMinTime="08:00:00"
           slotMaxTime="20:00:00"
           expandRows={true}
