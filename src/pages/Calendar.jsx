@@ -16,7 +16,7 @@ import RoomSelector from "../components/calendar/RoomSelector";
 import CalendarView from "../components/calendar/CalendarView";
 import EventModal from "../components/calendar/EventModal";
 import ActionModal from "../components/common/ActionModal.jsx";
-import LoadingSpinner from "../components/common/LoadingSpinner";
+import PageReveal from "../components/common/PageReveal";
 import { jwtDecode } from "jwt-decode";
 
 const Calendar = () => {
@@ -61,9 +61,8 @@ const Calendar = () => {
     return localStorage.getItem("calendar_show_holidays") === "true";
   });
 
-  // ✨ Synchronized Loading Engine
+  // ✨ Sync State for FullCalendar
   const [isCalendarBusy, setIsCalendarBusy] = useState(true);
-  const [isFullyReady, setIsFullyReady] = useState(false);
 
   const [alertConfig, setAlertConfig] = useState({
     show: false,
@@ -72,43 +71,17 @@ const Calendar = () => {
     type: "error",
   });
 
-  // ✨ Double-Lock System: Syncs Internal Data + Google Calendar
-  useEffect(() => {
-    let timeout;
-    if (!isLoading && !isCalendarBusy) {
-      // 🛡️ Paint-Guard Delay
-      timeout = setTimeout(() => {
-        setIsFullyReady(true);
-      }, 1000); 
-    }
-    return () => clearTimeout(timeout);
-  }, [isLoading, isCalendarBusy]);
-
   // Reset busy state when changing rooms
   useEffect(() => {
     setIsCalendarBusy(true);
-    setIsFullyReady(false);
   }, [selectedRoom]);
-
-  // Safety Watchdog (5s)
-  useEffect(() => {
-    const watchdog = setTimeout(() => {
-      if (!isFullyReady) setIsFullyReady(true);
-    }, 5000);
-    return () => clearTimeout(watchdog);
-  }, [isFullyReady]);
 
   // Handle Holiday Toggle
   const toggleHolidays = () => {
     const newVal = !showHolidays;
     setShowHolidays(newVal);
     localStorage.setItem("calendar_show_holidays", String(newVal));
-    
-    // Forced reload logic: When toggling ON, we show the loader again for sync
-    if (newVal) {
-      setIsCalendarBusy(true);
-      setIsFullyReady(false);
-    }
+    if (newVal) setIsCalendarBusy(true); // Trigger loading sync
   };
 
   const checkPermission = (event) => {
@@ -137,18 +110,13 @@ const Calendar = () => {
 
   return (
     <div className="h-screen bg-[#FDFDFF] dark:bg-gray-900 flex flex-col overflow-hidden font-sans transition-colors duration-200 relative">
-      {/* ✨ Double-Lock Loader Layer */}
-      {!isFullyReady && (
-        <LoadingSpinner 
-          fullPage 
-          text={isLoading ? "กำลังโหลดข้อมูลห้องเรียน..." : "กำลังรอการซิงค์ข้อมูลลงปฏิทิน..."} 
-        />
-      )}
+      <Navbar />
 
-      {/* Main Content Wrapper - Controlled transition */}
-      <div className={`flex flex-col h-full transition-all duration-700 ease-in-out ${!isFullyReady ? "opacity-0 scale-[0.98] blur-sm pointer-events-none" : "opacity-100 scale-100 blur-0 pointer-events-auto"}`}>
-        <Navbar />
-
+      <PageReveal 
+        isLoading={isLoading || isCalendarBusy} 
+        loadingText={isLoading ? "กำลังโหลดข้อมูลห้องเรียน..." : "กำลังรอการซิงค์ข้อมูลลงปฏิทิน..."}
+        delay={800}
+      >
         <main className="flex-grow flex flex-col overflow-hidden p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1800px] mx-auto w-full">
           
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4 flex-shrink-0">
@@ -221,11 +189,8 @@ const Calendar = () => {
               currentUserId={userData.id}
               currentUserRole={userData.role}
               onLoading={(loading) => {
-                if (!loading) {
-                  setIsCalendarBusy(false);
-                } else {
-                  setIsCalendarBusy(true);
-                }
+                if (!loading) setIsCalendarBusy(false);
+                else setIsCalendarBusy(true);
               }}
               onEventClick={(info) => {
                 if (isCancelMode) {
@@ -242,7 +207,7 @@ const Calendar = () => {
             />
           </div>
         </main>
-      </div>
+      </PageReveal>
 
       <EventModal
         event={selectedEvent}

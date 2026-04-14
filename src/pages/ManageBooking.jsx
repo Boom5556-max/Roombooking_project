@@ -17,6 +17,7 @@ import {
 import Navbar from "../components/layout/Navbar.jsx";
 import ActionModal from "../components/common/ActionModal.jsx";
 import BookingDetailModal from "../components/managebooking/BookingDetailModal.jsx";
+import PageReveal from "../components/common/PageReveal";
 
 const isPastDate = (dateString) => {
   if (!dateString) return false;
@@ -35,6 +36,7 @@ const ManageBooking = () => {
     userRole,
     selectedBooking,
     setSelectedBooking,
+    isLoading,
     handleUpdateStatus,
     handleUpdateBooking,
     handleCancelBooking,
@@ -118,7 +120,6 @@ const ManageBooking = () => {
   };
 
   const handleCancelClick = (bookingId, reason) => { 
-    console.log("reason ที่รับมา:", reason)
     const confirmMessage = 
       userRole === "staff" 
         ? "คุณต้องการไม่อนุมัติคำขอนี้ใช่หรือไม่?" 
@@ -138,7 +139,6 @@ const ManageBooking = () => {
         
         let result;
         if (userRole === "staff") {
-          console.log("reason ตอนส่ง API:", reason)
           result = await handleUpdateStatus(bookingId, "rejected", reason); 
         } else {
           result = await handleCancelBooking(bookingId, reason); 
@@ -187,175 +187,175 @@ const ManageBooking = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
+    <div className="fixed inset-0 bg-[#F8F9FE] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
       <Navbar />
 
-      {/* Tabs สำหรับ User Role: Teacher */}
-      {userRole === "teacher" && (
-        <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-4 bg-[#302782] dark:bg-gray-950">
-          {/* ขยาย max-w จาก 7xl เป็น 1400px เพื่อให้กว้างขึ้น */}
-          <div className="flex gap-3 w-full max-w-[1400px] mx-auto">
-            <button
-              onClick={() => setActiveTab("current")}
-              className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "current" ? "bg-white dark:bg-gray-800 text-[#302782] dark:text-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)]" : "bg-white/10 text-white hover:bg-white/20"}`}
-            >
-              การจองของฉัน
-            </button>
-            <button
-              onClick={() => setActiveTab("history")}
-              className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "history" ? "bg-white dark:bg-gray-800 text-[#302782] dark:text-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)]" : "bg-white/10 text-white hover:bg-white/20"}`}
-            >
-              ประวัติการจอง
-            </button>
-          </div>
-        </div>
-      )}
+      <PageReveal isLoading={isLoading} loadingText="กำลังดึงเนื้อหาการจองทั้งหมด...">
+        <div className="flex-grow flex flex-col h-full overflow-hidden">
+          {/* Tabs สำหรับ User Role: Teacher */}
+          {userRole === "teacher" && (
+            <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-4 bg-[#302782] dark:bg-gray-950">
+              <div className="flex gap-3 w-full max-w-[1400px] mx-auto">
+                <button
+                  onClick={() => setActiveTab("current")}
+                  className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "current" ? "bg-white dark:bg-gray-800 text-[#302782] dark:text-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)]" : "bg-white/10 text-white hover:bg-white/20"}`}
+                >
+                  การจองของฉัน
+                </button>
+                <button
+                  onClick={() => setActiveTab("history")}
+                  className={`flex-1 py-3.5 rounded-t-[24px] sm:rounded-t-[30px] font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "history" ? "bg-white dark:bg-gray-800 text-[#302782] dark:text-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)]" : "bg-white/10 text-white hover:bg-white/20"}`}
+                >
+                  ประวัติการจอง
+                </button>
+              </div>
+            </div>
+          )}
 
-      {/* ตัวกรองห้อง: สำหรับ Staff เท่านั้น */}
-      {userRole === "staff" && uniqueRooms.length > 0 && (
-        <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-4 pb-1 bg-[#302782] dark:bg-gray-950">
-          <div className="w-full max-w-3xl mx-auto">
-            <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
-              {/* ปุ่ม "ทั้งหมด" */}
-              <button
-                onClick={() => setSelectedRoom(null)}
-                className={`flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
-                  selectedRoom === null
-                    ? "bg-white text-[#302782]"
-                    : "bg-white/15 text-white/80 hover:bg-white/25 active:scale-95"
-                }`}
-              >
-                ทั้งหมด
-              </button>
-              {uniqueRooms.map((room) => {
-                const roomColor = getRoomColor(room);
-                return (
+          {/* ตัวกรองห้อง: สำหรับ Staff เท่านั้น */}
+          {userRole === "staff" && uniqueRooms.length > 0 && (
+            <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-4 pb-1 bg-[#302782] dark:bg-gray-950">
+              <div className="w-full max-w-3xl mx-auto">
+                <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
                   <button
-                    key={room}
-                    onClick={() => setSelectedRoom(room)}
-                    className={`flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
-                      selectedRoom === room
-                        ? "text-white"
+                    onClick={() => setSelectedRoom(null)}
+                    className={`flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
+                      selectedRoom === null
+                        ? "bg-white text-[#302782]"
                         : "bg-white/15 text-white/80 hover:bg-white/25 active:scale-95"
                     }`}
-                    style={selectedRoom === room ? { backgroundColor: roomColor.bg } : {}}
                   >
-                    {selectedRoom !== room && (
-                      <span
-                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: roomColor.bg }}
-                      />
-                    )}
-                    {room}
+                    ทั้งหมด
                   </button>
-                );
-              })}
+                  {uniqueRooms.map((room) => {
+                    const roomColor = getRoomColor(room);
+                    return (
+                      <button
+                        key={room}
+                        onClick={() => setSelectedRoom(room)}
+                        className={`flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
+                          selectedRoom === room
+                            ? "text-white"
+                            : "bg-white/15 text-white/80 hover:bg-white/25 active:scale-95"
+                        }`}
+                        style={selectedRoom === room ? { backgroundColor: roomColor.bg } : {}}
+                      >
+                        {selectedRoom !== room && (
+                          <span
+                            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: roomColor.bg }}
+                          />
+                        )}
+                        {room}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* Main Content Area */}
-      <div
-        className={`flex-grow overflow-y-auto bg-white dark:bg-gray-800 p-4 sm:p-8 lg:px-12 xl:px-16 transition-all duration-500 
-        ${userRole === "staff" ? "rounded-t-[40px] sm:rounded-t-[50px] mt-4" : ""}`}
-      >
-        {/* ขยายพื้นที่จาก max-w-3xl เป็น max-w-[1400px] */}
-        <div className="w-full max-w-[1400px] mx-auto pb-24">
-          {userRole === "staff" ? (
-            // ปรับ Staff ให้เป็น Grid 3 คอลัมน์บนจอใหญ่ (lg) เพื่อกระจายพื้นที่
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8 items-start">
-              <StaffSection
-                title="รออนุมัติ"
-                icon={ClockIcon}
-                data={filteredPending}
-                color="text-[#302782] dark:text-white"
-                getFullName={getFullName}
-                onSelect={setSelectedBooking}
-                variant="pending"
-              />
-              <StaffSection
-                title="อนุมัติแล้ว"
-                icon={CheckCircle}
-                data={filteredApproved}
-                color="text-[#B2BB1E]"
-                getFullName={getFullName}
-                onSelect={(b) =>
-                  setSelectedBooking({
-                    ...b,
-                    isHistory: isPastDate(b.booking_date || b.date),
-                  })
-                }
-                variant="approved"
-              />
-              <StaffSection
-                title="ไม่อนุมัติ"
-                icon={XCircle}
-                data={filteredHistory}
-                color="text-red-400"
-                getFullName={getFullName}
-                onSelect={(b) => setSelectedBooking({ ...b, isHistory: true })}
-                variant="rejected"
-              />
-            </div>
-          ) : (
-            <div className="space-y-10 animate-in fade-in duration-500">
-              {activeTab === "current" ? (
-                <>
-                  <div className="space-y-4">
-                    <SectionTitle
-                      title="รออนุมัติ"
-                      icon={ClockIcon}
-                      colorClass="text-[#302782] dark:text-white"
-                    />
-                    <RoomGroupedList 
-                      data={pendingRequests} 
-                      variant="pending" 
-                      getFullName={getFullName} 
-                      onSelect={setSelectedBooking}
-                      isGrid={true} // ส่ง prop บอกว่าให้แสดงการ์ดแบบกริด
-                    />
-                  </div>
-                  <div className="space-y-4 pt-4">
-                    <SectionTitle
-                      title="อนุมัติแล้ว"
-                      icon={CheckCircle}
-                      colorClass="text-[#B2BB1E]"
-                    />
-                    <RoomGroupedList 
-                      data={approvedRequests} 
-                      variant="approved" 
-                      getFullName={getFullName} 
-                      onSelect={(b) =>
-                        setSelectedBooking({
-                          ...b,
-                          isHistory: isPastDate(b.booking_date || b.date),
-                        })
-                      }
-                      isGrid={true}
-                    />
-                  </div>
-                </>
-              ) : (
-                <div className="space-y-4">
-                  <SectionTitle
-                    title="ประวัติการจอง"
-                    icon={History}
-                    colorClass="text-black dark:text-white"
+          {/* Main Content Area */}
+          <div
+            className={`flex-grow overflow-y-auto bg-white dark:bg-gray-800 p-4 sm:p-8 lg:px-12 xl:px-16 transition-all duration-500 
+            ${userRole === "staff" ? "rounded-t-[40px] sm:rounded-t-[50px] mt-4" : ""}`}
+          >
+            <div className="w-full max-w-[1400px] mx-auto pb-24">
+              {userRole === "staff" ? (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8 items-start">
+                  <StaffSection
+                    title="รออนุมัติ"
+                    icon={ClockIcon}
+                    data={filteredPending}
+                    color="text-[#302782] dark:text-white"
+                    getFullName={getFullName}
+                    onSelect={setSelectedBooking}
+                    variant="pending"
                   />
-                  <RoomGroupedList 
-                    data={historyRequests} 
-                    variant="history" 
-                    getFullName={getFullName} 
+                  <StaffSection
+                    title="อนุมัติแล้ว"
+                    icon={CheckCircle}
+                    data={filteredApproved}
+                    color="text-[#B2BB1E]"
+                    getFullName={getFullName}
+                    onSelect={(b) =>
+                      setSelectedBooking({
+                        ...b,
+                        isHistory: isPastDate(b.booking_date || b.date),
+                      })
+                    }
+                    variant="approved"
+                  />
+                  <StaffSection
+                    title="ไม่อนุมัติ"
+                    icon={XCircle}
+                    data={filteredHistory}
+                    color="text-red-400"
+                    getFullName={getFullName}
                     onSelect={(b) => setSelectedBooking({ ...b, isHistory: true })}
-                    isGrid={true}
+                    variant="rejected"
                   />
+                </div>
+              ) : (
+                <div className="space-y-10">
+                  {activeTab === "current" ? (
+                    <>
+                      <div className="space-y-4">
+                        <SectionTitle
+                          title="รออนุมัติ"
+                          icon={ClockIcon}
+                          colorClass="text-[#302782] dark:text-white"
+                        />
+                        <RoomGroupedList 
+                          data={pendingRequests} 
+                          variant="pending" 
+                          getFullName={getFullName} 
+                          onSelect={setSelectedBooking}
+                          isGrid={true}
+                        />
+                      </div>
+                      <div className="space-y-4 pt-4">
+                        <SectionTitle
+                          title="อนุมัติแล้ว"
+                          icon={CheckCircle}
+                          colorClass="text-[#B2BB1E]"
+                        />
+                        <RoomGroupedList 
+                          data={approvedRequests} 
+                          variant="approved" 
+                          getFullName={getFullName} 
+                          onSelect={(b) =>
+                            setSelectedBooking({
+                              ...b,
+                              isHistory: isPastDate(b.booking_date || b.date),
+                            })
+                          }
+                          isGrid={true}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <div className="space-y-4">
+                      <SectionTitle
+                        title="ประวัติการจอง"
+                        icon={History}
+                        colorClass="text-black dark:text-white"
+                      />
+                      <RoomGroupedList 
+                        data={historyRequests} 
+                        variant="history" 
+                        getFullName={getFullName} 
+                        onSelect={(b) => setSelectedBooking({ ...b, isHistory: true })}
+                        isGrid={true}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      </PageReveal>
 
       {/* Modals */}
       {selectedBooking && (
@@ -409,8 +409,7 @@ const StaffSection = ({
   const hasData = data.length > 0;
 
   return (
-    <section className="animate-in slide-in-from-bottom-2 duration-500">
-      {/* หัวข้อ: กดเพื่อพับ/กาง */}
+    <section>
       <button
         onClick={() => hasData && setIsOpen((prev) => !prev)}
         className={`flex items-center gap-3 mt-10 mb-4 px-1 w-full text-left group ${hasData ? "cursor-pointer" : "cursor-default"}`}
@@ -423,17 +422,12 @@ const StaffSection = ({
         <h2 className={`text-xl font-black tracking-tight ${color || "text-[#302782]"}`}>
           {title}
         </h2>
-
-        {/* จำนวนรายการ */}
         {hasData && (
           <span className="text-xs font-bold text-black bg-gray-100 dark:bg-gray-700 dark:text-white px-2.5 py-1 rounded-full">
             {data.length}
           </span>
         )}
-
         <div className="flex-grow h-[1px] bg-gradient-to-r from-gray-100 dark:from-gray-600 to-transparent ml-2" />
-
-        {/* ลูกศร Chevron */}
         {hasData && (
           <ChevronDown 
             size={20} 
@@ -443,7 +437,6 @@ const StaffSection = ({
         )}
       </button>
 
-      {/* รายการ Booking */}
       <div className={`grid grid-cols-1 gap-4 overflow-hidden transition-all duration-300 ${
         !hasData || isOpen ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"
       }`}>
@@ -452,10 +445,7 @@ const StaffSection = ({
             <BookingCard
               key={req.booking_id || req.id}
               req={req}
-              variant={
-                variant === "rejected" ? "rejected" : 
-                (req.status || variant)
-              }
+              variant={variant === "rejected" ? "rejected" : (req.status || variant)}
               getFullName={getFullName}
               onClick={onSelect}
             />
@@ -468,7 +458,6 @@ const StaffSection = ({
   );
 };
 
-// เพิ่ม prop isGrid เพื่อจัด Layout การ์ดด้านในตามการใช้งาน (Staff = เรียงลง, Teacher = เรียงเป็น Grid)
 const RoomGroupedList = ({ data, variant, getFullName, onSelect, isGrid }) => {
   const groupedData = data.reduce((acc, curr) => {
     const room = curr.room_id || "ไม่ได้ระบุห้อง";
@@ -492,8 +481,6 @@ const RoomGroupedList = ({ data, variant, getFullName, onSelect, isGrid }) => {
               {groupedData[room].length} รายการ
             </span>
           </h4>
-          
-          {/* เงื่อนไขแสดงเป็น Grid เฉพาะของ Teacher เพื่อให้เต็มพื้นที่จอ */}
           <div className={`grid gap-3 sm:gap-4 ${isGrid ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'}`}>
             {groupedData[room].map((req) => (
               <BookingCard

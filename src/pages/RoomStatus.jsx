@@ -4,11 +4,11 @@ import { ChevronLeft, Calendar as CalendarIcon, XCircle } from "lucide-react";
 
 import { useRoomStatusLogic } from "../hooks/useRoomStatus.js";
 import {
-  LoadingState,
   ScheduleItem,
   CurrentBookingCard,
 } from "../components/rooms/RoomStatus_component.jsx";
 import ActionModal from "../components/common/ActionModal";
+import PageReveal from "../components/common/PageReveal";
 
 const RoomStatus = () => {
   const { id } = useParams();
@@ -57,8 +57,6 @@ const RoomStatus = () => {
     return { currentBooking: current, filteredSchedule: filtered };
   }, [roomData, isAvailable]);
 
-  if (isLoading) return <LoadingState />;
-
   if (error) {
     return (
       <div className="fixed inset-0 bg-[#302782]/20 dark:bg-gray-950/80 flex flex-col font-sans overflow-hidden backdrop-blur-sm z-50">
@@ -76,11 +74,8 @@ const RoomStatus = () => {
     );
   }
 
-  if (!roomData) return null;
-
   return (
     <div className="fixed inset-0 bg-[#302782] dark:bg-gray-950 flex flex-col font-sans overflow-hidden">
-      {/* --- Adaptive Header --- */}
       <header className="px-4 sm:px-8 py-4 sm:py-6 text-white flex items-center justify-between z-20">
         <button 
           onClick={handleBack}
@@ -92,71 +87,65 @@ const RoomStatus = () => {
         <h1 className="text-base sm:text-xl font-black tracking-widest uppercase">Room Status</h1>
         <div className="w-12"></div>
       </header>
-      
-      {/* --- Content Area --- */}
-      <div className="flex-grow bg-[#FFFFFF] dark:bg-gray-800 rounded-t-[40px] sm:rounded-t-[60px] relative shadow-[0_-10px_50px_rgba(0,0,0,0.3)] border-t-[6px] border-[#B2BB1E] overflow-hidden">
-        
-        <div className="h-full overflow-y-auto px-6 py-8">
-          <div className="max-w-2xl mx-auto space-y-8 pb-20">
-            
-            {/* Header Section */}
-            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
-              <div className="space-y-1">
-                <h2 className="text-[#302782] dark:text-white text-5xl sm:text-7xl font-black leading-tight">
-                  {id}
-                </h2>
-              </div>
-              
-              {/* 🚩 แก้ไข: เพิ่ม dark:bg-gray-700 และ dark:border-gray-600 */}
-              <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-1 bg-gray-50 dark:bg-gray-700 sm:bg-transparent sm:dark:bg-transparent px-4 py-2 sm:p-0 rounded-2xl w-full sm:w-auto border border-gray-100 dark:border-gray-600 sm:border-0">
-                <p className="text-[10px] sm:text-xs font-black text-black dark:text-white uppercase tracking-widest">
-                  Update
-                </p>
-                <span className="text-xs sm:text-sm font-bold text-black dark:text-white">
-                  {formatDate(roomData.date)}
-                </span>
-              </div>
-            </header>
 
-            {/* 🚩 แก้ไข: เพิ่ม dark:bg-gray-700 ให้เส้นคั่น */}
-            <div className="h-px bg-gray-100 dark:bg-gray-700 w-full" />
+      <PageReveal isLoading={isLoading} loadingText="กำลังดึงสถานะห้องเรียน...">
+        <div className="h-full bg-[#FFFFFF] dark:bg-gray-800 rounded-t-[40px] sm:rounded-t-[60px] relative shadow-[0_-10px_50px_rgba(0,0,0,0.3)] border-t-[6px] border-[#B2BB1E] overflow-hidden">
+          <div className="h-full overflow-y-auto px-6 py-8">
+            <div className="max-w-2xl mx-auto space-y-8 pb-20">
+              <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                <div className="space-y-1">
+                  <h2 className="text-[#302782] dark:text-white text-5xl sm:text-7xl font-black leading-tight">
+                    {id}
+                  </h2>
+                </div>
+                <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-1 bg-gray-50 dark:bg-gray-700 sm:bg-transparent sm:dark:bg-transparent px-4 py-2 sm:p-0 rounded-2xl w-full sm:w-auto border border-gray-100 dark:border-gray-600 sm:border-0">
+                  <p className="text-[10px] sm:text-xs font-black text-black dark:text-white uppercase tracking-widest">Update</p>
+                  <span className="text-xs sm:text-sm font-bold text-black dark:text-white">
+                    {roomData ? formatDate(roomData.date) : '-'}
+                  </span>
+                </div>
+              </header>
 
-            <section className="transform transition-all duration-500 hover:scale-[1.01]">
-              <CurrentBookingCard
-                item={currentBooking}
-                isAvailable={isAvailable}
-                capacity={roomDetail?.capacity}
-              />
-            </section>
+              <div className="h-px bg-gray-100 dark:bg-gray-700 w-full" />
 
-            <section className="space-y-6">
-              <div className="flex items-center gap-4 px-2">
-                {/* 🚩 แก้ไข: เพิ่ม dark:bg-gray-700 ให้เส้นข้างข้อความ */}
-                <div className="h-0.5 flex-grow bg-gray-100 dark:bg-gray-700 rounded-full" />
-                <h4 className="text-[10px] sm:text-xs font-black text-black dark:text-white whitespace-nowrap uppercase tracking-[0.2em]">
-                  {isAvailable ? "ตารางการใช้ห้องวันนี้" : "รายการจองถัดไป"}
-                </h4>
-                <div className="h-0.5 flex-grow bg-gray-100 dark:bg-gray-700 rounded-full" />
-              </div>
-
-              <div className="grid grid-cols-1 gap-4">
-                {filteredSchedule.length > 0 ? (
-                  filteredSchedule.map((item, index) => (
-                    <div key={item.booking_id || `schedule-${index}`} className="group transition-all">
-                      <ScheduleItem
-                        item={item}
-                        capacity={roomDetail?.capacity}
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <EmptyScheduleState isAvailable={isAvailable} />
+              <section className="transform transition-all duration-500 hover:scale-[1.01]">
+                {roomData && (
+                  <CurrentBookingCard
+                    item={currentBooking}
+                    isAvailable={isAvailable}
+                    capacity={roomDetail?.capacity}
+                  />
                 )}
-              </div>
-            </section>
+              </section>
+
+              <section className="space-y-6">
+                <div className="flex items-center gap-4 px-2">
+                  <div className="h-0.5 flex-grow bg-gray-100 dark:bg-gray-700 rounded-full" />
+                  <h4 className="text-[10px] sm:text-xs font-black text-black dark:text-white whitespace-nowrap uppercase tracking-[0.2em]">
+                    {isAvailable ? "ตารางการใช้ห้องวันนี้" : "รายการจองถัดไป"}
+                  </h4>
+                  <div className="h-0.5 flex-grow bg-gray-100 dark:bg-gray-700 rounded-full" />
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  {filteredSchedule.length > 0 ? (
+                    filteredSchedule.map((item, index) => (
+                      <div key={item.booking_id || `schedule-${index}`} className="group transition-all">
+                        <ScheduleItem
+                          item={item}
+                          capacity={roomDetail?.capacity}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <EmptyScheduleState isAvailable={isAvailable} />
+                  )}
+                </div>
+              </section>
+            </div>
           </div>
         </div>
-      </div>
+      </PageReveal>
     </div>
   );
 };
@@ -164,7 +153,6 @@ const RoomStatus = () => {
 // --- Sub-components ---
 const EmptyScheduleState = ({ isAvailable }) => (
   <div className="py-16 text-center bg-gray-50 dark:bg-gray-700/50 rounded-[40px] border-2 border-dashed border-gray-100 dark:border-gray-600 flex flex-col items-center justify-center group">
-    {/* 🚩 แก้ไข: เพิ่ม dark:bg-gray-800 หรือ dark:bg-gray-600 ให้วงกลมไอคอน */}
     <div className="w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 shadow-sm transition-transform group-hover:rotate-12">
        <CalendarIcon size={32} className="text-black dark:text-white" />
     </div>
