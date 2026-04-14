@@ -9,6 +9,7 @@ import {
   AlertCircle,
   Settings2,
   ChevronLeft,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 import Navbar from "../components/layout/Navbar.jsx";
 import RoomSelector from "../components/calendar/RoomSelector";
@@ -55,6 +56,11 @@ const Calendar = () => {
   const [showConfirmRestore, setShowConfirmRestore] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
 
+  // ✨ Holiday Toggle State (Persisted)
+  const [showHolidays, setShowHolidays] = useState(() => {
+    return localStorage.getItem("calendar_show_holidays") === "true";
+  });
+
   // ✨ Synchronized Loading Engine
   const [isCalendarBusy, setIsCalendarBusy] = useState(true);
   const [isFullyReady, setIsFullyReady] = useState(false);
@@ -70,10 +76,10 @@ const Calendar = () => {
   useEffect(() => {
     let timeout;
     if (!isLoading && !isCalendarBusy) {
-      // 🛡️ Paint-Guard Delay: Ensuring browser finishing rendering events
+      // 🛡️ Paint-Guard Delay
       timeout = setTimeout(() => {
         setIsFullyReady(true);
-      }, 1000); // 1.0s buffer for a rock-solid reveal
+      }, 1000); 
     }
     return () => clearTimeout(timeout);
   }, [isLoading, isCalendarBusy]);
@@ -91,6 +97,19 @@ const Calendar = () => {
     }, 5000);
     return () => clearTimeout(watchdog);
   }, [isFullyReady]);
+
+  // Handle Holiday Toggle
+  const toggleHolidays = () => {
+    const newVal = !showHolidays;
+    setShowHolidays(newVal);
+    localStorage.setItem("calendar_show_holidays", String(newVal));
+    
+    // Forced reload logic: When toggling ON, we show the loader again for sync
+    if (newVal) {
+      setIsCalendarBusy(true);
+      setIsFullyReady(false);
+    }
+  };
 
   const checkPermission = (event) => {
     const props = event.extendedProps;
@@ -151,18 +170,30 @@ const Calendar = () => {
                 />
               </div>
 
+              {/* 📅 Holiday Integration Toggle (Opt-in) */}
+              <button
+                onClick={toggleHolidays}
+                className={`p-2.5 rounded-xl border transition-all active:scale-95 flex items-center gap-2 px-4 whitespace-nowrap group ${
+                  showHolidays
+                    ? "bg-[#302782] text-white border-transparent shadow-lg shadow-indigo-900/20"
+                    : "bg-white dark:bg-gray-800 text-gray-500 border-gray-100 dark:border-gray-700 hover:border-[#302782] dark:hover:border-white shadow-sm"
+                }`}
+                title={showHolidays ? "คลิกเพื่อซ่อนวันหยุด" : "คลิกเพื่อแสดงวันหยุดจาก Google"}
+              >
+                <CalendarIcon size={20} className={showHolidays ? "text-[#B2BB1E]" : "text-gray-400 group-hover:text-[#302782] dark:group-hover:text-white"} />
+                <span className="text-xs font-bold sm:inline hidden">
+                  {showHolidays ? "วันหยุด: เปิด" : "วันหยุด: ปิด"}
+                </span>
+              </button>
+
               <div className="flex flex-wrap items-center gap-4 px-1 text-[11px] sm:text-xs text-black dark:text-white font-bold uppercase tracking-wider">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 md:flex hidden">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-sm"></span>
                   <span>อัปโหลดตารางเรียน</span>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 md:flex hidden">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shadow-sm"></span>
                   <span>การจองผ่านระบบ</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#9CA3AF] shadow-sm"></span>
-                  <span>งดใช้ห้อง</span>
                 </div>
               </div>
             </div>
@@ -186,6 +217,7 @@ const Calendar = () => {
             <CalendarView
               events={events}
               isCancelMode={isCancelMode}
+              showHolidays={showHolidays}
               currentUserId={userData.id}
               currentUserRole={userData.role}
               onLoading={(loading) => {
