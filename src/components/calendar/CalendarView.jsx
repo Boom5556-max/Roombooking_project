@@ -18,10 +18,11 @@ const CalendarView = ({
     // ✨ Handle Google Calendar Holidays
     if (eventInfo.event.source?.id === "google-holidays-source" || eventInfo.event.classNames.includes("google-holiday")) {
       return (
-        <div className="flex items-center justify-center w-full h-full px-2 py-1 bg-[#ef4444] rounded-[12px] cursor-default">
-          <span className="text-white font-bold text-[11px] sm:text-[13px] truncate drop-shadow-sm cursor-default">
+        <div className="flex items-center justify-center w-full h-full px-1 py-1 bg-[#ef4444] rounded-[12px] cursor-default">
+          <span className="hidden min-[491px]:inline-block text-white font-bold text-[11px] sm:text-[13px] truncate drop-shadow-sm cursor-default">
             {eventInfo.event.title}
           </span>
+          <span className="inline-block min-[491px]:hidden w-2 h-2 rounded-full bg-white/40"></span>
         </div>
       );
     }
@@ -116,11 +117,11 @@ const CalendarView = ({
           style={{ backgroundColor: dotConfig.bg }}
         ></span>
 
-        <span className={`fc-event-time-bold text-[11px] sm:text-[0.9rem] flex-shrink-0 rounded px-1.5 py-0.5 ${timeClasses}`} style={{ borderRadius: '6px' }}>
+        <span className={`fc-event-time-bold text-[11px] sm:text-[0.9rem] flex-shrink-0 rounded px-1.5 py-0.5 hidden min-[491px]:inline-block ${timeClasses}`} style={{ borderRadius: '6px' }}>
           {eventInfo.timeText}
         </span>
 
-        <span className={`fc-event-title-light text-[13px] sm:text-[1rem] w-full flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap ${titleClasses}`}>
+        <span className={`fc-event-title-light text-[13px] sm:text-[1rem] w-full flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap hidden min-[491px]:inline-block ${titleClasses}`}>
           {eventInfo.event.title}
         </span>
       </div>
@@ -200,6 +201,25 @@ const CalendarView = ({
           .fc .fc-button { padding: 4px 6px !important; font-size: 0.7rem !important; }
           .fc-event-inline-wrapper { padding: 2px !important; gap: 2px !important; }
           .fc-daygrid-day-number { font-size: 0.75rem !important; padding: 2px !important; }
+        }
+
+        @media (max-width: 490px) {
+          .fc-event-inline-wrapper { 
+            justify-content: center !important; 
+            padding: 2px !important;
+            gap: 0 !important;
+            min-height: 20px !important;
+          }
+          .fc-v-event .fc-event-inline-wrapper {
+            flex-direction: row !important;
+            align-items: center !important;
+          }
+        }
+
+        @media (max-width: 375px) {
+          .fc .fc-toolbar-title { font-size: 0.85rem !important; }
+          .fc .fc-col-header-cell-cushion { font-size: 0.7rem !important; }
+          .fc-timegrid-axis-cushion, .fc-timegrid-slot-label-cushion { font-size: 0.7rem !important; }
         }
 
         /* 🚨 แก้ปัญหาขอบแหลมที่ระดับนอกสุดของ FullCalendar */

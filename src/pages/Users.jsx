@@ -66,7 +66,7 @@ const Users = () => {
       <Navbar />
 
       <PageReveal isLoading={isLoading} loadingText="กำลังเข้าถึงข้อมูลผู้ดูแลระบบ...">
-        <div className="p-4 sm:p-6 md:p-10 pb-24 flex-grow max-w-[1600px] mx-auto w-full">
+        <div className="p-4 sm:p-6 md:p-10 pb-40 flex-grow max-w-[1600px] mx-auto w-full">
           {/* Header Section */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-4">

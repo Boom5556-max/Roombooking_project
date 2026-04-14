@@ -12,7 +12,7 @@ const RoomSelector = ({ rooms, selectedRoom, onSelect, disabled }) => {
           // 🚩 2. ใส่ attribute disabled
           disabled={disabled}
           // 🚩 3. ปรับ ClassName แบบมีเงื่อนไข (ถ้า disabled ให้เป็นสีเทาและกดไม่ได้)
-          className={`w-full text-sm sm:text-base font-bold rounded-[16px] sm:rounded-[20px] py-3.5 sm:py-4 px-4 sm:px-5 appearance-none outline-none transition-all ${
+          className={`w-full text-xs md:text-base font-bold rounded-[12px] md:rounded-[20px] py-2.5 md:py-4 px-3 md:px-5 appearance-none outline-none transition-all ${
             disabled
               ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white border border-gray-200 dark:border-gray-600 cursor-not-allowed opacity-70"
               : "bg-[#FFFFFF] dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-[#302782] dark:text-white cursor-pointer focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/10 shadow-sm hover:border-gray-300 active:scale-[0.99]"

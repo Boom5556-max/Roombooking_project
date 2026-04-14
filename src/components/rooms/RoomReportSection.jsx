@@ -89,63 +89,66 @@ const RoomReportSection = ({ reportData, isLoading, error, className = "" }) => 
         
         {/* Row 2: Date */}
         <p className="text-gray-500 dark:text-gray-400 text-sm font-medium flex items-center gap-2 ml-5 -mt-2">
-          <CalendarIcon size={16} /> 
+          <CalendarIcon size={16} className="hidden min-[375px]:inline-block" /> 
           {formatDate(period.start_date)} - {formatDate(period.end_date)}
         </p>
 
         {/* Row 3: Tab Toggle */}
-        <div className="bg-gray-100 dark:bg-gray-700 p-1 rounded-2xl flex items-center w-full mt-2">
+        <div className="bg-gray-100 dark:bg-gray-700 p-1 rounded-2xl flex items-center w-full mt-2 overflow-hidden">
           <button
             onClick={() => setActiveTab('all')}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === 'all' ? 'bg-white dark:bg-gray-800 text-[#302782] dark:text-[#B2BB1E] shadow-sm' : 'text-gray-500 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-gray-600'}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-1 sm:px-4 py-2.5 rounded-xl font-bold text-[11px] min-[375px]:text-xs sm:text-sm transition-all duration-300 ${activeTab === 'all' ? 'bg-white dark:bg-gray-800 text-[#302782] dark:text-[#B2BB1E] shadow-sm' : 'text-gray-500 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-gray-600'}`}
           >
-            <Layers size={18} /> ภาพรวม
+            <Layers size={16} className="shrink-0 sm:w-[18px] sm:h-[18px]" /> 
+            <span className="truncate">ภาพรวม</span>
           </button>
           <button
             onClick={() => setActiveTab('bookings')}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === 'bookings' ? 'bg-white dark:bg-gray-800 text-[#302782] dark:text-[#B2BB1E] shadow-sm' : 'text-gray-500 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-gray-600'}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-1 sm:px-4 py-2.5 rounded-xl font-bold text-[11px] min-[375px]:text-xs sm:text-sm transition-all duration-300 ${activeTab === 'bookings' ? 'bg-white dark:bg-gray-800 text-[#302782] dark:text-[#B2BB1E] shadow-sm' : 'text-gray-500 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-gray-600'}`}
           >
-            <CalendarDays size={18} /> การจอง
+            <CalendarDays size={16} className="shrink-0 sm:w-[18px] sm:h-[18px]" /> 
+            <span className="truncate">การจอง</span>
           </button>
           <button
             onClick={() => setActiveTab('schedules')}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === 'schedules' ? 'bg-white dark:bg-gray-800 text-[#302782] dark:text-[#B2BB1E] shadow-sm' : 'text-gray-500 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-gray-600'}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-1 sm:px-4 py-2.5 rounded-xl font-bold text-[11px] min-[375px]:text-xs sm:text-sm transition-all duration-300 ${activeTab === 'schedules' ? 'bg-white dark:bg-gray-800 text-[#302782] dark:text-[#B2BB1E] shadow-sm' : 'text-gray-500 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-gray-600'}`}
           >
-            <BookOpen size={18} /> ตารางเรียน
+            <BookOpen size={16} className="shrink-0 sm:w-[18px] sm:h-[18px]" /> 
+            <span className="truncate">ตารางเรียน</span>
           </button>
         </div>
       </div>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="bg-gradient-to-br from-[#302782] to-[#453a99] p-6 rounded-3xl text-white shadow-lg relative overflow-hidden group">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <div className="bg-gradient-to-br from-[#302782] to-[#453a99] p-5 sm:p-6 rounded-3xl text-white shadow-lg relative overflow-hidden group">
           <div className="absolute -right-4 -top-4 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
           <div className="relative z-10 flex flex-col h-full justify-between">
-            <div className="flex items-center gap-3 opacity-90 mb-4">
-              <div className="p-2 bg-white/20 rounded-xl">
-                <Clock size={20} />
+            <div className="flex items-center gap-2 sm:gap-3 opacity-90 mb-3 sm:mb-4">
+              <div className="p-1.5 sm:p-2 bg-white/20 rounded-xl">
+                <Clock size={18} className="sm:w-5 sm:h-5" />
               </div>
-              <span className="font-bold text-sm tracking-wide">รวมเวลาใช้งาน</span>
+              <span className="font-bold text-[11px] sm:text-sm tracking-wide">รวมเวลาใช้งาน</span>
             </div>
-            <div className="flex items-end gap-2">
-              <span className="text-5xl font-black">{total_hours_this_week.toFixed(1)}</span>
-              <span className="text-lg font-bold opacity-80 mb-1">ชั่วโมง</span>
+            <div className="flex items-end gap-1.5 sm:gap-2">
+              <span className="text-3xl sm:text-4xl md:text-5xl font-black leading-none">{total_hours_this_week.toFixed(1)}</span>
+              <span className="text-sm sm:text-base md:text-lg font-bold opacity-80 mb-1">ชั่วโมง</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-[#B2BB1E] to-[#c5cf23] p-6 rounded-3xl text-white shadow-lg relative overflow-hidden group">
+        <div className="bg-gradient-to-br from-[#B2BB1E] to-[#c5cf23] p-5 sm:p-6 rounded-3xl text-white shadow-lg relative overflow-hidden group">
           <div className="absolute -right-4 -top-4 w-32 h-32 bg-white/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
           <div className="relative z-10 flex flex-col h-full justify-between">
-            <div className="flex items-center gap-3 opacity-90 mb-4">
-               <div className="p-2 bg-black/10 rounded-xl">
-                <Home size={20} />
+            <div className="flex items-center gap-2 sm:gap-3 opacity-90 mb-3 sm:mb-4">
+               <div className="p-1.5 sm:p-2 bg-black/10 rounded-xl">
+                <Home size={18} className="sm:w-5 sm:h-5" />
               </div>
-              <span className="font-bold text-sm tracking-wide text-white">จำนวนห้องที่ใช้งาน</span>
+              <span className="font-bold text-[11px] sm:text-sm tracking-wide text-white">จำนวนห้องที่ใช้งาน</span>
             </div>
-            <div className="flex items-end gap-2">
-              <span className="text-5xl font-black text-white">{usage_by_room.length}</span>
-              <span className="text-lg font-bold opacity-80 mb-1 text-white">ห้อง</span>
+            <div className="flex items-end gap-1.5 sm:gap-2">
+              <span className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-none">{usage_by_room.length}</span>
+              <span className="text-sm sm:text-base md:text-lg font-bold opacity-80 mb-1 text-white">ห้อง</span>
             </div>
           </div>
         </div>
@@ -165,7 +168,7 @@ const RoomReportSection = ({ reportData, isLoading, error, className = "" }) => 
               .map((room) => (
               <div key={room.room_id} className="bg-white dark:bg-gray-800 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-gray-100 dark:border-gray-700 hover:border-[#B2BB1E]/50 hover:shadow-sm transition-all group">
                 <div className="flex items-center gap-4 sm:w-[35%]">
-                  <div className="font-black text-lg text-[#302782] dark:text-[#B2BB1E] w-16">
+                  <div className="font-black text-base sm:text-lg text-[#302782] dark:text-[#B2BB1E] w-12 sm:w-16">
                     {room.room_id}
                   </div>
                   <span className="font-bold text-gray-700 dark:text-gray-300">

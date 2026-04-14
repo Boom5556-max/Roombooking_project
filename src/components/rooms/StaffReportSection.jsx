@@ -58,10 +58,10 @@ const StaffReportSection = ({ reportData, isLoading, error, className = "" }) =>
         </h2>
 
         <p className="text-gray-500 dark:text-gray-400 text-sm font-medium flex items-center gap-2 ml-5 -mt-2">
-          <BookOpen size={16} />
+          <BookOpen size={16} className="hidden min-[375px]:inline-block" />
           ภาคเรียน {getTermLabel(term_info.term_name)}
           <span className="mx-2">•</span>
-          <CalendarDays size={16} />
+          <CalendarDays size={16} className="hidden min-[375px]:inline-block" />
           {formatDate(term_info.start_date)} - {formatDate(term_info.end_date)}
         </p>
       </div>
@@ -78,7 +78,7 @@ const StaffReportSection = ({ reportData, isLoading, error, className = "" }) =>
           </div>
           <div className="flex items-end gap-2">
             <span className="text-5xl font-black">{total_hours_all_rooms.toFixed(1)}</span>
-            <span className="text-lg font-bold opacity-80 mb-1">ชั่วโมง</span>
+            <span className="text-lg font-bold opacity-80 mb-1 hidden min-[321px]:inline">ชั่วโมง</span>
           </div>
         </div>
       </div>
@@ -96,7 +96,7 @@ const StaffReportSection = ({ reportData, isLoading, error, className = "" }) =>
               {room_ranking.map((room) => (
                 <div key={room.room_id} className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-2xl flex flex-col gap-3 border border-gray-100 dark:border-gray-800">
                   <div className="flex items-center justify-between">
-                    <span className="font-black text-lg text-[#302782] dark:text-[#B2BB1E]">{room.room_id}</span>
+                    <span className="font-black text-base sm:text-lg text-[#302782] dark:text-[#B2BB1E]">{room.room_id}</span>
                     <span className="font-bold text-gray-700 dark:text-gray-300">
                       {room.total_hours.toFixed(1)} <span className="text-xs text-gray-500 font-medium">ชม.</span>
                     </span>
