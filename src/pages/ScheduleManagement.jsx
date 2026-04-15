@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar'; 
 import { useSchedule } from '../hooks/useSchedule'; 
-import { Edit2, Trash2, UploadCloud, AlertCircle, CheckCircle, X, ChevronDown, BookOpen, Loader2, ChevronLeft, Clock } from 'lucide-react'; 
+import { useRooms } from '../hooks/useRooms';
+import { Edit2, Trash2, UploadCloud, AlertCircle, CheckCircle, X, ChevronDown, BookOpen, Loader2, ChevronLeft, Clock, User, MapPin, Calendar, Hash } from 'lucide-react'; 
 import ActionModal from '../components/common/ActionModal'; 
 import PageReveal from '../components/common/PageReveal';
 
@@ -18,6 +19,7 @@ const ScheduleManagement = () => {
     triggerFileInput, handleFileChange, handleConfirmReupload,
     fetchSubjects, editSubjectSchedule, deleteSubjectSchedule
   } = useSchedule(); 
+  const { rooms: allRooms } = useRooms();
 
   // State สำหรับ Dropdown รายวิชา
   const [expandedRow, setExpandedRow] = useState(null); // unique_schedules ของแถวที่ขยายอยู่
@@ -51,6 +53,17 @@ const ScheduleManagement = () => {
   const [editingSubjectData, setEditingSubjectData] = useState({});
   const [isSavingSubject, setIsSavingSubject] = useState(false);
 
+  const formatDateForInput = (dateStr) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
+    // Format to YYYY-MM-DD for <input type="date" />
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const openSubjectEditModal = (scheduleId, subj) => {
     setSubjectEditScheduleId(scheduleId);
     setEditingSubjectData({
@@ -59,12 +72,12 @@ const ScheduleManagement = () => {
       subject_name: subj.subject_name,
       sec: String(subj.sec),
       room_id: subj.room_id || '',
-      date: subj.date || '',
+      date: formatDateForInput(subj.date),
       start_time: subj.start_time || '',
       end_time: subj.end_time || '',
       teacher_name: subj.teacher_name || '',
       teacher_surname: subj.teacher_surname || '',
-      repeat: 1,
+      repeat: 15,
     });
     setIsSubjectEditModalOpen(true);
   };
@@ -375,7 +388,7 @@ const ScheduleManagement = () => {
                                           <tr>
                                             <th className="px-4 py-3 font-semibold whitespace-nowrap">วิชา</th>
                                             <th className="px-4 py-3 font-semibold whitespace-nowrap">Sec</th>
-                                            <th className="px-4 py-3 font-semibold whitespace-nowrap">ผู้สอน</th>
+                                            <th className="px-4 py-3 font-semibold whitespace-nowrap">บุคลากร</th>
                                             <th className="px-4 py-3 font-semibold whitespace-nowrap">ช่วงเวลา</th>
                                             <th className="px-4 py-3 font-semibold whitespace-nowrap">ห้อง</th>
                                             <th className="px-4 py-3 font-semibold whitespace-nowrap text-center"></th>
@@ -386,7 +399,7 @@ const ScheduleManagement = () => {
                                             <tr key={idx} className="bg-white dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors">
                                               <td className="px-4 py-3 font-medium text-black dark:text-white whitespace-nowrap max-w-[240px] truncate" title={subj.subject_name}>{subj.subject_name}</td>
                                               <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.sec}</td>
-                                              <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.teacher_name ? `${subj.teacher_name} ${subj.teacher_surname}` : '-'}</td>
+                                              <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.teacher_name ? `${subj.teacher_name} ${subj.teacher_surname}` : 'ไม่ระบุผู้รับผิดชอบ'}</td>
                                               <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.start_time} – {subj.end_time}</td>
                                               <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">{subj.room_id || '-'}</td>
                                               <td className="px-4 py-3 text-center">
@@ -618,39 +631,191 @@ const ScheduleManagement = () => {
         </div>
       )}
 
-      {/* Edit Subject Modal */}
       {isSubjectEditModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4 font-sans">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-               <h2 className="text-lg font-bold text-[#302782] dark:text-[#B2BB1E]">แก้ไขรายวิชา</h2>
-               <button onClick={() => setIsSubjectEditModalOpen(false)} className="text-black dark:text-white hover:text-gray-500"><X size={20} /></button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[2000] p-4 font-sans animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col transform transition-all scale-100 border border-white/20">
+            {/* Header */}
+            <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+               <div className="flex items-center gap-3">
+                 <div className="p-2.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl text-[#302782] dark:text-[#B2BB1E]">
+                   <Edit2 size={24} />
+                 </div>
+                 <div>
+                   <h2 className="text-xl font-bold text-[#302782] dark:text-[#B2BB1E]">แก้ไขรายละเอียดรายวิชา</h2>
+                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">ปรับเปลี่ยนข้อมูล และจัดตารางเรียนใหม่</p>
+                 </div>
+               </div>
+               <button 
+                 onClick={() => setIsSubjectEditModalOpen(false)} 
+                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-gray-400 transition-colors"
+               >
+                 <X size={24} />
+               </button>
             </div>
-            <form onSubmit={onSaveSubjectEdit} className="px-6 py-5 space-y-4">
-               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-black dark:text-white mb-1">ชื่อวิชา</label>
-                    <input required value={editingSubjectData.subject_name || ''} onChange={(e) => updateSubjectField('subject_name', e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] outline-none" />
+
+            <form onSubmit={onSaveSubjectEdit} className="overflow-y-auto flex-grow p-8 space-y-8">
+               {/* ส่วนที่ 1: ข้อมูลผู้สอน */}
+                <div className="space-y-4">
+                  <h3 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <User size={14} className="text-[#302782] dark:text-[#B2BB1E]" /> 
+                    ข้อมูลบุคลากรผู้รับผิดชอบ
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div className="relative group">
+                      <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1">ชื่อบุคลากร</label>
+                      <input 
+                        required 
+                        value={editingSubjectData.teacher_name || ''} 
+                        onChange={(e) => updateSubjectField('teacher_name', e.target.value)} 
+                        className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all hover:border-gray-300 dark:hover:border-gray-600"
+                        placeholder="เช่น สมชาย"
+                      />
+                    </div>
+                    <div className="relative group">
+                      <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1">นามสกุล</label>
+                      <input 
+                        required 
+                        value={editingSubjectData.teacher_surname || ''} 
+                        onChange={(e) => updateSubjectField('teacher_surname', e.target.value)} 
+                        className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all hover:border-gray-300 dark:hover:border-gray-600"
+                        placeholder="เช่น แสนดี"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-black dark:text-white mb-1">Sec</label>
-                    <input required value={editingSubjectData.sec || ''} onChange={(e) => updateSubjectField('sec', e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] outline-none" />
-                  </div>
+                </div>
+
+               {/* ส่วนที่ 2: รายละเอียดวิชา */}
+               <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                 <h3 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                   <BookOpen size={14} className="text-[#302782] dark:text-[#B2BB1E]" />
+                   ข้อมูลรายวิชา
+                 </h3>
+                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                   <div className="sm:col-span-2">
+                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1">ชื่อวิชา</label>
+                     <input 
+                       required 
+                       value={editingSubjectData.subject_name || ''} 
+                       onChange={(e) => updateSubjectField('subject_name', e.target.value)} 
+                       className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all"
+                     />
+                   </div>
+                   <div>
+                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1">Section</label>
+                     <input 
+                       required 
+                       value={editingSubjectData.sec || ''} 
+                       onChange={(e) => updateSubjectField('sec', e.target.value)} 
+                       className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all"
+                     />
+                   </div>
+                 </div>
                </div>
-               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-black dark:text-white mb-1">เวลาเริ่ม</label>
-                    <input required type="time" value={editingSubjectData.start_time || ''} onChange={(e) => updateSubjectField('start_time', e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-black dark:text-white mb-1">เวลาสิ้นสุด</label>
-                    <input required type="time" value={editingSubjectData.end_time || ''} onChange={(e) => updateSubjectField('end_time', e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2.5 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] outline-none" />
-                  </div>
-               </div>
-               <div className="flex justify-end pt-4">
-                 <button type="submit" className="px-6 py-2.5 bg-[#B2BB1E] text-white rounded-xl hover:bg-[#9fa719] transition-colors font-medium shadow-md">บันทึก</button>
+
+               {/* ส่วนที่ 3: สถานที่และเวลา */}
+               <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                 <h3 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                   <Calendar size={14} className="text-[#302782] dark:text-[#B2BB1E]" />
+                   กำหนดการและสถานที่
+                 </h3>
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                   <div>
+                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
+                       <MapPin size={12} /> เลือกห้องเรียน
+                     </label>
+                     <select 
+                       required 
+                       value={editingSubjectData.room_id || ''} 
+                       onChange={(e) => updateSubjectField('room_id', e.target.value)} 
+                       className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                     >
+                       <option value="">-- เลือกห้องเรียน --</option>
+                       {allRooms.map((room) => (
+                         <option key={room.room_id} value={room.room_id}>
+                           {room.room_id} {room.location ? `(${room.location})` : ''}
+                         </option>
+                       ))}
+                     </select>
+                   </div>
+                   <div>
+                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
+                       <Calendar size={12} /> วันที่เริ่ม (สัปดาห์แรก)
+                     </label>
+                     <input 
+                       required 
+                       type="date" 
+                       value={editingSubjectData.date || ''} 
+                       onChange={(e) => updateSubjectField('date', e.target.value)} 
+                       className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all"
+                     />
+                   </div>
+                   <div>
+                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
+                       <Clock size={12} /> เวลาเริ่ม
+                     </label>
+                     <input 
+                       required 
+                       type="time" 
+                       value={editingSubjectData.start_time || ''} 
+                       onChange={(e) => updateSubjectField('start_time', e.target.value)} 
+                       className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all"
+                     />
+                   </div>
+                   <div>
+                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
+                       <Clock size={12} /> เวลาสิ้นสุด
+                     </label>
+                     <input 
+                       required 
+                       type="time" 
+                       value={editingSubjectData.end_time || ''} 
+                       onChange={(e) => updateSubjectField('end_time', e.target.value)} 
+                       className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all"
+                     />
+                   </div>
+                   <div className="sm:col-span-2">
+                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
+                       <Hash size={12} /> จำนวนสัปดาห์ที่สอน (Repeat)
+                     </label>
+                     <div className="flex items-center gap-4">
+                       <input 
+                         required 
+                         type="number" 
+                         min="1" 
+                         max="20"
+                         value={editingSubjectData.repeat || 1} 
+                       onChange={(e) => updateSubjectField('repeat', e.target.value)} 
+                       className="w-32 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] outline-none transition-all"
+                     />
+                     <p className="text-xs text-gray-400 italic">* ระบบจะสร้างตารางเรียนรายสัปดาห์ตามจำนวนที่ระบุ</p>
+                     </div>
+                   </div>
+                 </div>
                </div>
             </form>
+
+            {/* Footer Actions */}
+            <div className="px-8 py-6 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-end gap-3">
+               <button 
+                 type="button"
+                 onClick={() => setIsSubjectEditModalOpen(false)}
+                 className="px-6 py-3 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-all font-bold text-sm border border-gray-200 dark:border-gray-600 shadow-sm active:scale-95"
+               >
+                 ยกเลิก
+               </button>
+               <button 
+                 onClick={onSaveSubjectEdit}
+                 disabled={isSavingSubject}
+                 className="px-10 py-3 bg-[#B2BB1E] hover:bg-[#9fa719] text-white rounded-2xl transition-all font-bold text-sm shadow-lg shadow-lime-500/20 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
+               >
+                 {isSavingSubject ? (
+                   <>
+                     <Loader2 size={18} className="animate-spin" />
+                     กำลังบันทึก...
+                   </>
+                 ) : 'บันทึกการเปลี่ยนแปลง'}
+               </button>
+            </div>
           </div>
         </div>
       )}
