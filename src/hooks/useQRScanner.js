@@ -22,17 +22,36 @@ export const useQRScanner = (activeTab, showAlert) => {
 
   // สกัด Room ID จาก URL หรือข้อความตรงๆ
   const extractRoomId = (text) => {
-    try {
-      if (text.startsWith("http")) {
-        const url = new URL(text);
-        const pathParts = url.pathname.split("/").filter((p) => p !== "");
-        return pathParts[pathParts.length - 1];
+  try {
+    // 1. ถ้าเป็น URL เต็มรูปแบบ
+    if (text.startsWith("http")) {
+      const url = new URL(text);
+      const pathParts = url.pathname.split("/").filter((p) => p !== "");
+      
+      // หาตำแหน่งของคำว่า room-status หรือ roomstatus ใน array
+      const statusIdx = pathParts.findIndex(p => p === "room-status" || p === "roomstatus");
+      
+      // ถ้าเจอ ให้เอาค่าตัวถัดไป (ซึ่งคือ ID ห้องจริง)
+      if (statusIdx !== -1 && pathParts[statusIdx + 1]) {
+        return pathParts[statusIdx + 1];
       }
-      return text.trim();
-    } catch (e) {
-      return text.trim();
+      
+      // ถ้าไม่เจอ pattern ด้านบน ให้เอาตัวสุดท้ายตามเดิม
+      return pathParts[pathParts.length - 1];
     }
-  };
+    
+    // 2. ถ้าสแกนได้แค่ Path เช่น "/room-status/A101" หรือ "roomstatus/A101"
+    if (text.includes("roomstatus") || text.includes("room-status")) {
+        const cleanText = text.startsWith("/") ? text.substring(1) : text;
+        const parts = cleanText.split("/");
+        return parts[parts.length - 1];
+    }
+
+    return text.trim();
+  } catch (e) {
+    return text.trim();
+  }
+};
 
   const handleProcessScan = useCallback((decodedText) => {
     const roomId = extractRoomId(decodedText);

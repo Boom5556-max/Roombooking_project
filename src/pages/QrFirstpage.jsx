@@ -151,7 +151,7 @@ const QrFirstpage = () => {
               </div>
               
               <button onClick={() => { stopCamera(); setShowRoomModal(true); }} className="w-full mt-6 bg-indigo-50 dark:bg-gray-700 text-[#302782] dark:text-[#B2BB1E] py-4 rounded-xl font-bold border-2 border-indigo-100 dark:border-gray-600 flex items-center justify-center gap-2 hover:bg-indigo-100 dark:hover:bg-gray-600 transition-all active:scale-95 shadow-sm">
-                <List size={20} /> เลือกห้องจากรายการ
+                <List size={20} /> เลือก QR code จากรายการห้อง
               </button>
             </div>
           </div>
@@ -292,7 +292,7 @@ const RoomDetailView = ({
           onClick={() => onSimulateScan(room.id || room.room_id)}
           className="w-full bg-[#B2BB1E] text-[#302782] py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-[#9ca31a] transition-all shadow-lg shadow-[#B2BB1E]/20 active:scale-95 text-lg"
         >
-          <QrCode size={24} /> เข้าดูตารางห้องเรียน
+          <QrCode size={24} /> เข้าดูตารางการใช้ห้องเรียน
         </button>
 
         {/* ปุ่มดาวน์โหลดแบบเต็มความกว้าง (ทางเลือกเพิ่มเติม) */}

@@ -1,27 +1,32 @@
 import React from "react";
-import { Mail, Lock, RefreshCw, Send, AlertCircle } from "lucide-react"; 
+import { Mail, Lock, RefreshCw, Send, AlertCircle } from "lucide-react";
 import InputField from "../common/InputField";
 import Button from "../common/Button";
 
-const LoginForm = ({ 
-  email, 
-  setEmail, 
-  otp, 
-  setOtp, 
-  onSubmit, 
-  requestOTP, 
+const LoginForm = ({
+  email,
+  setEmail,
+  otp,
+  setOtp,
+  onSubmit,
+  requestOTP,
   authData,
-  errorMsg 
+  errorMsg,
 }) => {
   const { timer, isSent, isLoading, statusMsg } = authData;
 
   return (
     // เพิ่ม w-full เพื่อความแน่นอนใน Layout
     <div className="w-full mx-auto transition-all duration-300">
-      
       {/* Message Status */}
-      <div className={`min-h-[24px] mb-4 text-xs sm:text-sm font-bold transition-all duration-200 ${statusMsg && !errorMsg ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"}`}>
-        <p className={statusMsg?.includes("❌") ? "text-red-500" : "text-green-500"}>
+      <div
+        className={`min-h-[24px] mb-4 text-xs sm:text-sm font-bold transition-all duration-200 ${statusMsg && !errorMsg ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"}`}
+      >
+        <p
+          className={
+            statusMsg?.includes("❌") ? "text-red-500" : "text-green-500"
+          }
+        >
           {statusMsg}
         </p>
       </div>
@@ -51,9 +56,26 @@ const LoginForm = ({
         >
           {!isLoading && (
             <div className="flex items-center justify-center gap-2">
-              {isSent ? <RefreshCw size={18} className={timer > 0 ? "animate-spin" : ""} /> : <Send size={18} />}
-              <span className="text-sm sm:text-base font-bold">
-                {timer > 0 ? `ขอรหัสใหม่ใน (${timer}s)` : isSent ? "ส่งรหัสอีกครั้ง" : "ขอรหัส OTP"}
+              {isSent ? (
+                <RefreshCw
+                  size={18}
+                  // เพิ่มสีให้ Icon เข้มขึ้นด้วยถ้าจำเป็น
+                  className={timer > 0 ? "animate-spin text-gray-700" : ""}
+                />
+              ) : (
+                <Send size={18} />
+              )}
+              <span
+                // เช็คเงื่อนไขเพื่อบังคับสีตัวอักษรให้เข้มขึ้นตอนที่ปุ่ม disabled
+                className={`text-sm sm:text-base font-bold ${
+                  timer > 0 ? "text-gray-700" : ""
+                }`}
+              >
+                {timer > 0
+                  ? `ขอรหัสใหม่ใน (${timer}s)`
+                  : isSent
+                    ? "ส่งรหัสอีกครั้ง"
+                    : "ขอรหัส OTP"}
               </span>
             </div>
           )}
@@ -70,15 +92,17 @@ const LoginForm = ({
             required
             maxLength={6}
             value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))} // กันพิมพ์ตัวอักษรอื่น
+            onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ""))} // กันพิมพ์ตัวอักษรอื่น
             placeholder="000000"
-            className={`text-center text-2xl sm:text-3xl tracking-[0.2em] sm:tracking-[0.3em] font-black transition-colors ${errorMsg ? 'text-red-500 border-red-500' : 'text-[#302782]'}`}
+            className={`text-center text-2xl sm:text-3xl tracking-[0.2em] sm:tracking-[0.3em] font-black transition-colors ${errorMsg ? "text-red-500 border-red-500" : "text-[#302782]"}`}
           />
-          
+
           {errorMsg && (
             <div className="flex items-center justify-center gap-1.5 text-red-500 mt-3 animate-in fade-in slide-in-from-top-1 duration-200">
               <AlertCircle size={14} className="sm:w-[16px]" />
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wide">{errorMsg}</span>
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wide">
+                {errorMsg}
+              </span>
             </div>
           )}
         </div>

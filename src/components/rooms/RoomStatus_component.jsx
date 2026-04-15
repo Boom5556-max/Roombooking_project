@@ -51,7 +51,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
     <div className="flex justify-between items-start mb-8 sm:mb-12">
       <div>
         <h3 className="font-black text-[10px] sm:text-xs text-black dark:text-white uppercase tracking-[0.2em] mb-1">
-          Current Status
+          สถานะ ปัจจุบัน
         </h3>
       </div>
       <div
@@ -61,7 +61,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
             : "bg-[#10B981] shadow-lg shadow-[#10B981]/20"
         }`}
       >
-        {!isAvailable ? "Occupied" : "Available"}
+        {!isAvailable ? "มีผู้ใช่" : "ว่าง"}
       </div>
     </div>
 

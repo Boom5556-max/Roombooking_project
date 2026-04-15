@@ -111,7 +111,7 @@ const QRScanner = () => {
     if (scanResult) {
       const timer = setTimeout(() => {
         stopCamera();
-        navigate(`/roomstatus/${scanResult}`);
+        navigate(`/room-status/${scanResult}`);
       }, 800);
       return () => clearTimeout(timer);
     }
@@ -434,7 +434,7 @@ const RoomDetailView = ({
           onClick={() => onSimulateScan(room.id || room.room_id)}
           className="w-full bg-[#B2BB1E] text-[#302782] py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-[#9ca31a] transition-all shadow-lg shadow-[#B2BB1E]/20 active:scale-95 text-lg"
         >
-          <QrCode size={24} /> เข้าดูตารางห้องเรียน
+          <QrCode size={24} /> เข้าดูตารางการใช้ห้องเรียน
         </button>
 
         {/* ปุ่มดาวน์โหลดแบบเต็มความกว้าง (ทางเลือกเพิ่มเติม) */}
