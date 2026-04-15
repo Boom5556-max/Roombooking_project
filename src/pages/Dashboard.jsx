@@ -47,7 +47,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 dark:bg-gray-900 flex flex-col pb-20 md:pb-0 font-sans transition-colors duration-200 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50/50 dark:bg-gray-900 flex flex-col pb-40 md:pb-0 font-sans transition-colors duration-200 relative overflow-x-hidden">
       <Navbar />
 
       <PageReveal 

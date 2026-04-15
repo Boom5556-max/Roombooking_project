@@ -60,12 +60,12 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
     <div className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center bg-[#302782]/30 dark:bg-black/40 backdrop-blur-md p-0 sm:p-4 font-sans">
       <form
         onSubmit={handleSubmit}
-        className="bg-[#FFFFFF] dark:bg-gray-800 w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-8 md:p-10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-white dark:border-gray-700 flex flex-col max-h-[92vh] animate-in slide-in-from-bottom sm:zoom-in duration-300"
+        className="bg-[#FFFFFF] dark:bg-gray-800 w-full max-w-lg rounded-t-[40px] sm:rounded-[40px] p-6 sm:p-8 md:p-10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-white dark:border-gray-700 flex flex-col max-h-[92vh] animate-in slide-in-from-bottom sm:zoom-in duration-300"
       >
         {/* Header Section */}
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-black text-[#302782] dark:text-white tracking-tight">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-[#302782] dark:text-white tracking-tight">
               {user ? "แก้ไขข้อมูล" : "เพิ่มผู้ใช้งานใหม่"}
             </h2>
           </div>
@@ -84,12 +84,12 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
           {/* Title & Name Grid */}
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-4 flex flex-col gap-2">
-              <label className="text-xs font-medium text-black dark:text-white ml-1">
+              <label className="text-[10px] sm:text-xs font-medium text-black dark:text-white ml-1">
                 คำนำหน้า
               </label>
               <div className="relative">
                 <select
-                  className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white cursor-pointer appearance-none transition-all text-base"
+                  className="w-full p-3.5 sm:p-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white cursor-pointer appearance-none transition-all text-sm sm:text-base"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -111,11 +111,11 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
               </div>
             </div>
             <div className="col-span-8 flex flex-col gap-2">
-              <label className="text-xs font-medium text-black dark:text-white ml-1">
+              <label className="text-[10px] sm:text-xs font-medium text-black dark:text-white ml-1">
                 ชื่อจริง
               </label>
               <input
-                className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all text-base"
+                className="w-full p-3.5 sm:p-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all text-sm sm:text-base"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -128,11 +128,11 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
 
           {/* Surname */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-black dark:text-white ml-1">
+            <label className="text-[10px] sm:text-xs font-medium text-black dark:text-white ml-1">
               นามสกุล
             </label>
             <input
-              className="w-full p-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all text-base"
+              className="w-full p-3.5 sm:p-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all text-sm sm:text-base"
               value={formData.surname}
               onChange={(e) =>
                 setFormData({ ...formData, surname: e.target.value })
@@ -144,7 +144,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
 
           {/* Email with Icon */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-black dark:text-white ml-1">
+            <label className="text-[10px] sm:text-xs font-medium text-black dark:text-white ml-1">
               อีเมลติดต่อ (KU Mail)
             </label>
             <div className="relative group">
@@ -154,7 +154,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
               />
               <input
                 type="email"
-                className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all text-base"
+                className="w-full pl-11 sm:pl-12 pr-4 py-3.5 sm:py-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent rounded-[20px] outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-[#B2BB1E] font-bold text-[#302782] dark:text-white transition-all text-sm sm:text-base"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -168,7 +168,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
           {/* Role selection - ซ่อนเมื่ออยู่ในโหมดแก้ไข (!!user เป็น true) */}
           {!user && (
             <div className="flex flex-col gap-2 pb-2">
-              <label className="text-xs font-medium text-black dark:text-white ml-1">
+              <label className="text-[10px] sm:text-xs font-medium text-black dark:text-white ml-1">
                 สิทธิ์การเข้าถึงระบบ
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -192,7 +192,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
           <Button
             type="submit"
             variant="primary"
-            className="w-full py-5 rounded-[22px] text-lg shadow-xl shadow-[#302782]/20"
+            className="w-full py-4 sm:py-5 rounded-[22px] text-base sm:text-lg shadow-xl shadow-[#302782]/20"
           >
             <Save size={20} />
             <span>
@@ -210,7 +210,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
 const RoleOption = ({ selected, label, onClick }) => (
   <div
     onClick={onClick}
-    className={`p-4 rounded-[20px] border-2 cursor-pointer transition-all flex items-center justify-center gap-2 font-black text-sm hover:border-gray-300 dark:hover:border-gray-500
+    className={`p-3 sm:p-4 rounded-[20px] border-2 cursor-pointer transition-all flex items-center justify-center gap-2 font-black text-xs sm:text-sm hover:border-gray-300 dark:hover:border-gray-500
       ${
         selected
           ? "border-[#B2BB1E] bg-[#B2BB1E]/5 text-[#302782] dark:text-white"

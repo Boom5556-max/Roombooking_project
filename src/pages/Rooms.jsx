@@ -162,7 +162,7 @@ const Rooms = () => {
       <Navbar />
 
       <PageReveal isLoading={isLoading} loadingText="กำลังดึงรายชื่ออาคารและห้องเรียน...">
-        <main className="p-4 sm:p-6 lg:p-10 flex-grow w-full max-w-[1600px] mx-auto">
+        <main className="p-4 pb-40 sm:p-6 lg:p-10 flex-grow w-full max-w-[1600px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-8">
             <aside className="w-full lg:w-80 flex flex-col gap-6">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-700">

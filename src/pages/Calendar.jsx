@@ -113,9 +113,9 @@ const Calendar = () => {
       <Navbar />
 
       <PageReveal 
-        isLoading={isLoading || isCalendarBusy} 
-        loadingText={isLoading ? "กำลังโหลดข้อมูลห้องเรียน..." : "กำลังรอการซิงค์ข้อมูลลงปฏิทิน..."}
-        delay={800}
+        isLoading={isLoading} 
+        loadingText="กำลังโหลดข้อมูลห้องเรียน..."
+        delay={600}
       >
         <main className="flex-grow flex flex-col overflow-hidden p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1800px] mx-auto w-full">
           
@@ -148,7 +148,14 @@ const Calendar = () => {
                 }`}
                 title={showHolidays ? "คลิกเพื่อซ่อนวันหยุด" : "คลิกเพื่อแสดงวันหยุดจาก Google"}
               >
-                <CalendarIcon size={20} className={showHolidays ? "text-[#B2BB1E]" : "text-gray-400 group-hover:text-[#302782] dark:group-hover:text-white"} />
+                <div className="relative flex items-center">
+                  <CalendarIcon size={20} className={showHolidays ? "text-[#B2BB1E]" : "text-gray-400 group-hover:text-[#302782] dark:group-hover:text-white"} />
+                  {isCalendarBusy && showHolidays && (
+                    <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm">
+                       <RotateCcw size={10} className="animate-spin text-[#302782] dark:text-[#B2BB1E]" />
+                    </div>
+                  )}
+                </div>
                 <span className="text-xs font-bold sm:inline hidden">
                   {showHolidays ? "วันหยุด: เปิด" : "วันหยุด: ปิด"}
                 </span>

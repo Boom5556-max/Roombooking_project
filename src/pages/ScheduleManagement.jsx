@@ -262,7 +262,7 @@ const ScheduleManagement = () => {
       <Navbar />
 
       <PageReveal isLoading={isLoading} loadingText="กำลังดึงเนื้อหาตารางเรียนทั้งหมด...">
-        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pb-24 md:pb-8">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pb-40 md:pb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div className="flex items-center gap-4">
               <button 
@@ -280,9 +280,11 @@ const ScheduleManagement = () => {
 
           <input type="file" accept=".xlsx, .xls" ref={fileInputRef} className="hidden" onChange={onFileChangeWrapper} />
 
-          {/* ตารางหลัก */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden w-full">
-            <div className="overflow-x-auto w-full">
+          {/* Main List Table/Cards */}
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl shadow-indigo-500/5 sm:rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden w-full">
+            
+            {/* Desktop View: Table */}
+            <div className="hidden md:block overflow-x-auto w-full">
               <table className="min-w-full text-left text-sm text-black dark:text-white">
                 <thead className="bg-gray-50 dark:bg-gray-700/50 text-[#302782] dark:text-[#B2BB1E] uppercase text-xs font-bold tracking-wider">
                   <tr>
@@ -349,7 +351,7 @@ const ScheduleManagement = () => {
                             </td>
                           </tr>
 
-                          {/* แถว Dropdown รายวิชา */}
+                          {/* แถว Dropdown รายวิชา (Desktop) */}
                           {isExpanded && (
                             <tr>
                               <td colSpan="5" className="px-0 py-0 bg-indigo-50/60 dark:bg-indigo-950/30 border-b border-indigo-100 dark:border-indigo-900">
@@ -421,6 +423,140 @@ const ScheduleManagement = () => {
                   )}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile View: Cards Layout */}
+            <div className="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+              {schedules.length === 0 ? (
+                <div className="text-center py-12 text-gray-400 font-medium">ไม่มีประวัติตารางเรียนในระบบ</div>
+              ) : (
+                schedules.map((schedule) => {
+                  const id = schedule.unique_schedules;
+                  const isExpanded = expandedRow === id;
+                  const subjects = subjectsMap[id] || [];
+                  const isLoadingThis = loadingSubjects === id;
+
+                  return (
+                    <div key={id} className="flex flex-col bg-white dark:bg-gray-800">
+                      {/* Card Header (Main Info) */}
+                      <div 
+                        onClick={() => toggleSubjects(id)}
+                        className="p-5 flex flex-col gap-4 active:bg-gray-50 dark:active:bg-gray-700 transition-colors cursor-pointer"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs font-bold text-[#302782] dark:text-[#B2BB1E] uppercase tracking-wider">อัปโหลดล่าสุด</span>
+                            <span className="text-sm font-semibold text-gray-900 dark:text-white">{formatDate(schedule.date_create)}</span>
+                          </div>
+                          <span className={`p-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-[#302782] dark:text-[#B2BB1E] transition-transform duration-300 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}>
+                            <ChevronDown size={20} />
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+                          <div className="flex flex-col">
+                            <span className="text-[11px] font-bold text-gray-400 uppercase">ภาควิชา</span>
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 line-clamp-1">{schedule.department}</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[11px] font-bold text-gray-400 uppercase">ชั้นปี / ภาค</span>
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">ปี {schedule.study_year} ({schedule.program_type})</span>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons in Card */}
+                        <div className="flex gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                          <button 
+                            onClick={() => triggerFileInput(id)} 
+                            disabled={isUploading} 
+                            className="flex-1 flex items-center justify-center gap-2 bg-[#302782] hover:bg-[#4338ca] text-white px-4 py-3 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
+                          >
+                            <UploadCloud size={16} /> อัปโหลดทับ
+                          </button>
+                          <button 
+                            onClick={() => openEditModal(schedule)} 
+                            className="p-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl shadow-sm active:scale-95"
+                          >
+                            <Edit2 size={18} />
+                          </button>
+                          <button 
+                            onClick={() => confirmDelete(id)} 
+                            className="p-3 bg-red-500 hover:bg-red-600 text-white rounded-xl shadow-sm active:scale-95"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Card Dropdown Expanded Subjects */}
+                      {isExpanded && (
+                        <div className="bg-indigo-50/50 dark:bg-indigo-950/20 border-t border-indigo-100 dark:border-indigo-900 overflow-hidden">
+                          <div className="p-4 sm:p-5">
+                            <div className="flex items-center gap-2 mb-4 text-[#302782] dark:text-[#B2BB1E] font-bold text-sm">
+                              <BookOpen size={16} />
+                              รายวิชาในชุดนี้ ({subjects.length})
+                            </div>
+
+                            {isLoadingThis ? (
+                              <div className="flex items-center justify-center gap-3 py-10 text-gray-500">
+                                <Loader2 size={24} className="animate-spin text-[#302782] dark:text-[#B2BB1E]" />
+                                <span className="text-sm font-medium">กำลังโหลดรายวิชา...</span>
+                              </div>
+                            ) : subjects.length === 0 ? (
+                              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center text-sm text-gray-400 border border-dashed border-gray-200 dark:border-gray-700">ไม่พบรายวิชาในชุดนี้</div>
+                            ) : (
+                              <div className="space-y-3">
+                                {subjects.map((subj, idx) => (
+                                  <div key={idx} className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-indigo-100 dark:border-indigo-900/50 relative overflow-hidden group">
+                                    <div className="flex flex-col gap-3">
+                                      <div className="flex justify-between items-start gap-2">
+                                        <div className="flex-grow">
+                                          <h5 className="text-sm font-black text-[#302782] dark:text-white leading-tight mb-1">{subj.subject_name}</h5>
+                                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                            <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/40 rounded text-[11px] font-bold text-[#302782] dark:text-[#B2BB1E]">Sec: {subj.sec}</span>
+                                            <span className="text-[11px] font-medium text-gray-500 flex items-center gap-1">
+                                              <Clock size={12} /> {subj.start_time} - {subj.end_time}
+                                            </span>
+                                          </div>
+                                        </div>
+                                        <div className="flex gap-1.5" onClick={(e) => e.stopPropagation()}>
+                                          <button
+                                            onClick={() => openSubjectEditModal(id, subj)}
+                                            className="w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 flex items-center justify-center hover:bg-yellow-500 hover:text-white transition-all"
+                                          >
+                                            <Edit2 size={14} />
+                                          </button>
+                                          <button
+                                            onClick={() => confirmDeleteSubject(id, subj)}
+                                            className="w-8 h-8 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
+                                          >
+                                            <Trash2 size={14} />
+                                          </button>
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="grid grid-cols-2 gap-2 text-[12px] pt-1 border-t border-gray-50 dark:border-gray-700">
+                                        <div className="flex flex-col">
+                                          <span className="text-gray-400 font-bold uppercase text-[10px]">ผู้สอน</span>
+                                          <span className="font-medium text-gray-700 dark:text-gray-300 truncate">{subj.teacher_name ? `${subj.teacher_name} ${subj.teacher_surname}` : '-'}</span>
+                                        </div>
+                                        <div className="flex flex-col">
+                                          <span className="text-gray-400 font-bold uppercase text-[10px]">ห้องเรียน</span>
+                                          <span className="font-medium text-gray-700 dark:text-gray-300">{subj.room_id || '-'}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })
+              )}
             </div>
           </div>
         </div>

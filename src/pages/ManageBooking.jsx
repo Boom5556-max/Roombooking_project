@@ -219,7 +219,7 @@ const ManageBooking = () => {
                 <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
                   <button
                     onClick={() => setSelectedRoom(null)}
-                    className={`flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
+                    className={`flex-shrink-0 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 ${
                       selectedRoom === null
                         ? "bg-white text-[#302782]"
                         : "bg-white/15 text-white/80 hover:bg-white/25 active:scale-95"
@@ -233,7 +233,7 @@ const ManageBooking = () => {
                       <button
                         key={room}
                         onClick={() => setSelectedRoom(room)}
-                        className={`flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
+                        className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 ${
                           selectedRoom === room
                             ? "text-white"
                             : "bg-white/15 text-white/80 hover:bg-white/25 active:scale-95"
