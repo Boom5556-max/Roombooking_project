@@ -196,7 +196,7 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
           >
             <Save size={20} />
             <span>
-              {user ? "บันทึกการเปลี่ยนแปลง" : "ยืนยันเพิ่มผู้ใช้งาน"}
+              {user ? "บันทึกการเเก้ไข" : "เพิ่มผู้ใช้งาน"}
             </span>
           </Button>
         </div>
