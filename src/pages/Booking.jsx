@@ -140,6 +140,7 @@ const BookingRoom = () => {
               type="date"
               required
               min={new Date().toISOString().split("T")[0]}
+              max={new Date(new Date().setDate(new Date().getDate() + 10)).toISOString().split("T")[0]}
               className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 text-[#302782] dark:text-white font-semibold transition-all text-base cursor-pointer"
               value={formData.date}
               onChange={(e) => {
