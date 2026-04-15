@@ -149,7 +149,7 @@ const BookingDetailModal = ({
                       <XCircle size={20} className="mt-0.5 shrink-0" />
                       <div>
                         <p className="text-xs font-bold mb-1">เหตุผลที่{booking.status === "rejected" ? "ไม่อนุมัติ" : "ยกเลิก"}</p>
-                        <p className="text-sm font-medium text-red-700 dark:text-red-300">{booking.cancel_reason || "ไม่ได้ระบุเหตุผล"}</p>
+                        <p className="text-sm font-medium text-red-700 dark:text-red-300 break-words whitespace-pre-wrap">{booking.cancel_reason || "ไม่ได้ระบุเหตุผล"}</p>
                       </div>
                     </div>
                   </div>

@@ -1099,7 +1099,7 @@ const ScheduleManagement = () => {
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
+                    <label className=" text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
                       <MapPin size={12} /> เลือกห้องเรียน
                     </label>
                     <select
@@ -1120,7 +1120,7 @@ const ScheduleManagement = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
+                    <label className=" text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
                       <Calendar size={12} /> วันที่เริ่ม (สัปดาห์แรก)
                     </label>
                     <input
@@ -1163,7 +1163,7 @@ const ScheduleManagement = () => {
                     </div>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
+                    <label className=" text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
                       <Hash size={12} /> จำนวนสัปดาห์ที่สอน (Repeat)
                     </label>
                     <div className="flex items-center gap-4">

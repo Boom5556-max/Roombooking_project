@@ -102,15 +102,19 @@ export const SectionTitle = ({ title, icon: Icon, colorClass }) => (
 
 // 3. DetailItem: รายการข้อมูลใน Modal
 export const DetailItem = ({ icon: Icon, label, value }) => (
-  <div className="flex items-center gap-4 p-4 bg-[#FFFFFF] dark:bg-gray-700 rounded-[20px] border border-gray-50 dark:border-gray-600 shadow-sm transition-all hover:border-[#B2BB1E]/30">
-    <div className="text-[#302782] dark:text-[#B2BB1E] bg-gray-50 dark:bg-gray-600 p-2.5 rounded-xl flex-shrink-0">
+  // 1. เปลี่ยน items-center เป็น items-start เพื่อให้ไอคอนอยู่ชิดบนเสมอเวลาข้อความมีหลายบรรทัด
+  <div className="flex items-start gap-4 p-4 bg-[#FFFFFF] dark:bg-gray-700 rounded-[20px] border border-gray-50 dark:border-gray-600 shadow-sm transition-all hover:border-[#B2BB1E]/30">
+    <div className="text-[#302782] dark:text-[#B2BB1E] bg-gray-50 dark:bg-gray-600 p-2.5 rounded-xl flex-shrink-0 mt-1">
       <Icon size={20} strokeWidth={2.5} />
     </div>
-    <div className="min-w-0">
-      <p className="text-[10px] font-black text-black dark:text-white uppercase tracking-widest mb-0.5">
+    <div className="min-w-0 w-full">
+      <p className="text-[10px] font-black text-black dark:text-white uppercase tracking-widest mb-1">
         {label}
       </p>
-      <p className="text-sm sm:text-base font-bold text-[#302782] dark:text-white leading-tight truncate">
+      {/* 2. ลบ truncate ออก 
+          3. เพิ่ม break-words และ whitespace-pre-wrap 
+          4. ปรับ leading-tight เป็น leading-normal หรือ relaxed ให้อ่านง่ายขึ้นเวลาขึ้นบรรทัดใหม่ */}
+      <p className="text-sm sm:text-base font-bold text-[#302782] dark:text-white leading-relaxed break-words whitespace-pre-wrap">
         {value || "-"}
       </p>
     </div>
