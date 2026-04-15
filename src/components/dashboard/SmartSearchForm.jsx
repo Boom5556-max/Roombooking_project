@@ -47,6 +47,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
   };
 
   const today = new Date().toLocaleDateString('en-CA'); 
+  const maxDate = new Date(new Date().setDate(new Date().getDate() + 10)).toLocaleDateString('en-CA');
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 shadow-sm border border-gray-200 dark:border-gray-700 h-full flex flex-col justify-between transition-colors">
@@ -74,6 +75,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
                   type="date" 
                   required 
                   min={today}
+                  max={maxDate}
                   className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-4 text-[#302782] dark:text-white outline-none font-bold transition-all cursor-pointer"
                   onChange={(e) => setSearchQuery({ ...searchQuery, date: e.target.value })}
                 />
