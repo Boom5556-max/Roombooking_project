@@ -4,24 +4,27 @@ import Button from "../common/Button.jsx";
 
 // 1. SuccessOverlay: แสดงเมื่อสแกนสำเร็จ
 export const SuccessOverlay = () => (
-  <div className="absolute inset-0 bg-[#B2BB1E]/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center z-[100] animate-in fade-in duration-300">
-    <div className="bg-white p-6 rounded-[32px] mb-8 text-[#302782] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.2)] animate-in zoom-in duration-500 delay-150">
-      <CheckCircle2 size={72} strokeWidth={2.5} className="animate-bounce-short" />
+  <div className="absolute inset-0 bg-[#B2BB1E] flex flex-col items-center justify-center p-8 text-center z-[100] animate-in fade-in duration-500">
+    {/* Icon Container with Glassmorphism effect instead of heavy shadow */}
+    <div className="bg-white/20 backdrop-blur-md p-8 rounded-[40px] mb-10 text-white border border-white/30 animate-in zoom-in duration-700 delay-200">
+      <CheckCircle2 size={80} strokeWidth={2.5} className="animate-pulse" />
     </div>
-    <h3 className="text-[#302782] font-black text-3xl sm:text-4xl tracking-tight">
+    
+    <h3 className="text-white font-black text-4xl sm:text-5xl tracking-tight leading-tight drop-shadow-sm">
       ตรวจพบข้อมูลห้อง
     </h3>
-    <p className="text-[#302782]/80 font-bold mt-3 text-lg">
+    
+    <p className="text-white/90 font-bold mt-5 text-xl tracking-wide opacity-90">
       กำลังนำคุณไปที่ปฏิทิน...
     </p>
 
     <style jsx>{`
-      @keyframes bounce-short {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.8; }
       }
-      .animate-bounce-short {
-        animation: bounce-short 1s ease-in-out infinite;
+      .animate-pulse {
+        animation: pulse 2s ease-in-out infinite;
       }
     `}</style>
   </div>

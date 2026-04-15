@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar'; 
 import { useSchedule } from '../hooks/useSchedule'; 
-import { Edit2, Trash2, UploadCloud, AlertCircle, CheckCircle, X, ChevronDown, BookOpen, Loader2, ChevronLeft } from 'lucide-react'; 
+import { Edit2, Trash2, UploadCloud, AlertCircle, CheckCircle, X, ChevronDown, BookOpen, Loader2, ChevronLeft, Clock } from 'lucide-react'; 
 import ActionModal from '../components/common/ActionModal'; 
 import PageReveal from '../components/common/PageReveal';
 
