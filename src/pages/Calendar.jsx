@@ -32,6 +32,7 @@ const Calendar = () => {
     setIsCancelMode,
     handleCancelSchedule,
     handleRestoreSchedule,
+    scope,
   } = useCalendarData(id);
 
   const userData = useMemo(() => {
@@ -213,6 +214,7 @@ const Calendar = () => {
               showHolidays={showHolidays}
               currentUserId={userData.id}
               currentUserRole={userData.role}
+              scope={scope}
               onLoading={(loading) => {
                 if (!loading) setIsCalendarBusy(false);
                 else setIsCalendarBusy(true);

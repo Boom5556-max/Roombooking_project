@@ -4,6 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import googleCalendarPlugin from "@fullcalendar/google-calendar";
+import { minsToTime } from "../../utils/timeUtils";
 
 const CalendarView = ({
   events,
@@ -13,6 +14,7 @@ const CalendarView = ({
   currentUserRole,
   onLoading,
   showHolidays = false,
+  scope = { opening_mins: 480, closing_mins: 1200 },
 }) => {
   const renderEventContent = (eventInfo) => {
     // ✨ Handle Google Calendar Holidays
@@ -180,8 +182,8 @@ const CalendarView = ({
           eventDisplay="block"
           allDaySlot={true}
           allDayText="ทั้งวัน"
-          slotMinTime="08:00:00"
-          slotMaxTime="20:00:00"
+          slotMinTime={`${minsToTime(scope.opening_mins)}:00`}
+          slotMaxTime={`${minsToTime(scope.closing_mins)}:00`}
           expandRows={true}
           headerToolbar={{
             left: "prev,next today",

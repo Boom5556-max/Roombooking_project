@@ -1,19 +1,94 @@
-import React from "react";
-import { Calendar, Clock, Users, ArrowRight, Search } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Calendar, Clock, Users, ArrowRight, Search, Settings } from "lucide-react";
+import { getBookingScope } from "../../api/bookingScope";
 
-const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
+const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenScope, scope }) => {
+  // Use a fallback scope while loading or if not provided
+  const currentScope = scope || {
+    opening_mins: 480,
+    closing_mins: 1200,
+    max_advance_days: 10,
+    min_advance_hours: 1
+  };
+
+  // คำนวณขอบเขตวันที่ (Min/Max)
+  const now = new Date();
+  
+  const formatDateForInput = (date) => {
+    const y = date.getFullYear();
+    const m = (date.getMonth() + 1).toString().padStart(2, "0");
+    const d = date.getDate().toString().padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
+  const minDate = new Date(now.getTime() + (currentScope.min_advance_hours || 0) * 60 * 60 * 1000);
+  const minDateStr = formatDateForInput(minDate);
+  
+  const maxDate = new Date(now.getTime() + (currentScope.max_advance_days || 0) * 24 * 60 * 60 * 1000);
+  const maxDateStr = formatDateForInput(maxDate);
+
+  const isStaffExempt = role === "staff";
+
+  const effectiveMinDateStr = isStaffExempt ? formatDateForInput(now) : minDateStr;
+  const effectiveMaxDateStr = isStaffExempt ? "" : maxDateStr;
+
+  // ตรวจสอบว่าวันที่เลือกอยู่ยัง Valid หรือไม่ ถ้าไม่ให้เลื่อนไปวันที่เร็วที่สุดที่เลือกได้
+  useEffect(() => {
+    if (!isStaffExempt) {
+      if (searchQuery.date && searchQuery.date < minDateStr) {
+        setSearchQuery(prev => ({ ...prev, date: minDateStr }));
+      } else if (searchQuery.date && searchQuery.date > maxDateStr) {
+        setSearchQuery(prev => ({ ...prev, date: maxDateStr }));
+      }
+    }
+  }, [minDateStr, maxDateStr, searchQuery.date, isStaffExempt]);
+
   const baseTimes = [];
-  for (let i = 8; i <= 20; i++) {
+  const startHour = Math.floor(currentScope.opening_mins / 60);
+  const endHour = Math.floor(currentScope.closing_mins / 60);
+  const startMin = currentScope.opening_mins % 60;
+
+  for (let i = startHour; i <= endHour; i++) {
     const h = i.toString().padStart(2, "0");
-    baseTimes.push(`${h}:00`);
-    if (i !== 20) baseTimes.push(`${h}:30`);
+    if (i === startHour) {
+      if (startMin === 0) {
+        baseTimes.push(`${h}:00`);
+        baseTimes.push(`${h}:30`);
+      } else if (startMin <= 30) {
+        baseTimes.push(`${h}:30`);
+      }
+    } else if (i === endHour) {
+      baseTimes.push(`${h}:00`);
+      if (currentScope.closing_mins % 60 >= 30) {
+        baseTimes.push(`${h}:30`);
+      }
+    } else {
+      baseTimes.push(`${h}:00`);
+      baseTimes.push(`${h}:30`);
+    }
   }
+  
 
   const renderTimeDropdown = (key) => {
     const label = key === "start_time" ? "เวลาเริ่ม" : "เวลาสิ้นสุด";
     const availableTimes = baseTimes.filter((t) => {
-      if (key === "end_time" && t === "08:00") return false;
-      if (key === "start_time" && t === "20:00") return false;
+      // Basic boundaries
+      if (key === "end_time" && t === baseTimes[0]) return false;
+      if (key === "start_time" && t === baseTimes[baseTimes.length - 1]) return false;
+
+      // กรองตาม min_advance_hours (เช็คทุกวัน ไม่ใช่แค่ Today) - ยกเว้นเฉพาะระดับ Staff/Admin
+      if (!isStaffExempt && searchQuery.date) {
+        const [h, m] = t.split(":").map(Number);
+        const bookingDateTime = new Date(searchQuery.date);
+        bookingDateTime.setHours(h, m, 0, 0);
+        
+        const diffMs = bookingDateTime - now;
+        const diffHours = diffMs / (1000 * 60 * 60);
+
+        if (diffHours < (currentScope.min_advance_hours || 0)) return false;
+      }
+
+      // Range validation
       if (key === "end_time" && searchQuery.start_time) return t > searchQuery.start_time;
       if (key === "start_time" && searchQuery.end_time) return t < searchQuery.end_time;
       return true;
@@ -46,8 +121,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
     );
   };
 
-  const today = new Date().toLocaleDateString('en-CA'); 
-  const maxDate = new Date(new Date().setDate(new Date().getDate() + 10)).toLocaleDateString('en-CA');
+
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-[32px] p-6 sm:p-8 shadow-sm border border-gray-200 dark:border-gray-700 h-full flex flex-col justify-between transition-colors">
@@ -58,8 +132,21 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
           </div>
           <div>
             <h3 className="text-xl font-black text-[#302782] dark:text-white leading-tight">ค้นหาห้องว่าง</h3>
-            {/* แก้ไขคลาสที่พิมพ์ตกหล่น และปรับสี dark mode ให้อ่านง่าย */}
-            <p className="text-black dark:text-white text-xs font-medium mt-1">ระบุเวลาและจำนวนคนเพื่อกรองห้อง</p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-black dark:text-white text-xs font-medium">ระบุเวลาและจำนวนคนเพื่อกรองห้อง</p>
+              
+              {/* Settings Button for Admin/Staff */}
+              {role === "staff" && (
+                <button 
+                  type="button"
+                  onClick={onOpenScope}
+                  className="flex items-center px-4 py-2 bg-[#B2BB1E]/10 dark:bg-[#B2BB1E]/20 hover:bg-[#B2BB1E] text-[#302782] dark:text-[#B2BB1E] hover:text-white dark:hover:text-white rounded-xl text-xs font-black transition-all active:scale-95 border border-[#B2BB1E]/30 shadow-sm ml-2"
+                  title="ตั้งค่าเงื่อนไขการจอง"
+                >
+                  ตั้งค่าเงื่อนไขการจอง
+                </button>
+              )}
+            </div>
           </div>
         </div>
         
@@ -72,12 +159,12 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
               <div className="relative">
                 <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-white" size={20} />
                 <input 
-                  type="date" 
-                  required 
-                  min={today}
-                  max={maxDate}
-                  className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-4 text-[#302782] dark:text-white outline-none font-bold transition-all cursor-pointer"
+                  type="date"
+                  min={effectiveMinDateStr}
+                  max={effectiveMaxDateStr}
+                  value={searchQuery.date}
                   onChange={(e) => setSearchQuery({ ...searchQuery, date: e.target.value })}
+                  className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-5 text-[#302782] dark:text-white outline-none text-sm font-bold focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 transition-all [color-scheme:light] dark:[color-scheme:dark]"
                 />
               </div>
             </div>
@@ -90,6 +177,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit }) => {
                   type="number" 
                   min="1" 
                   max="200" 
+                  value={searchQuery.capacity}
                   placeholder="เช่น 50" 
                   className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-4 text-[#302782] dark:text-white outline-none font-bold transition-all placeholder:text-gray-400 dark:placeholder:text-white/30"
                   onKeyDown={(e) => {

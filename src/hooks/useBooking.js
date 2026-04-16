@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../api/axios";
+import { getBookingScope } from "../api/bookingScope";
 
 export const useBookingLogic = (initialId) => {
   const navigate = useNavigate();
@@ -10,6 +11,12 @@ export const useBookingLogic = (initialId) => {
   const [showStatus, setShowStatus] = useState(false);
   const [isRoomBusy, setIsRoomBusy] = useState(false);
   const [serverMessage, setServerMessage] = useState("");
+  const [scope, setScope] = useState({
+    opening_mins: 480,
+    closing_mins: 1200,
+    max_advance_days: 10,
+    min_advance_hours: 1
+  });
 
   const [formData, setFormData] = useState({
     room_id: initialId || "",
@@ -34,6 +41,18 @@ export const useBookingLogic = (initialId) => {
       }
     };
     fetchRooms();
+
+    const fetchScope = async () => {
+      try {
+        const result = await getBookingScope();
+        if (result.success && result.data) {
+          setScope(result.data);
+        }
+      } catch (err) {
+        console.error("Fetch scope error:", err);
+      }
+    };
+    fetchScope();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -122,5 +141,6 @@ export const useBookingLogic = (initialId) => {
     isRoomBusy,
     serverMessage,
     setShowStatus,
+    scope,
   };
 };

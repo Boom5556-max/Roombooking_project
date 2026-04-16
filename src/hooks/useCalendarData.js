@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import api from "../api/axios";
 import { formatCalendarEvents } from "../utils/calendarHelper.js";
+import { getBookingScope } from "../api/bookingScope";
 
 export const useCalendarData = (roomIdFromUrl) => {
   const [rooms, setRooms] = useState([]);
@@ -8,6 +9,12 @@ export const useCalendarData = (roomIdFromUrl) => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCancelMode, setIsCancelMode] = useState(false);
+  const [scope, setScope] = useState({
+    opening_mins: 480,
+    closing_mins: 1200,
+    max_advance_days: 10,
+    min_advance_hours: 1
+  });
 
   const fetchRooms = async () => {
     try {
@@ -83,6 +90,18 @@ export const useCalendarData = (roomIdFromUrl) => {
 
   useEffect(() => {
     fetchRooms();
+
+    const fetchScope = async () => {
+      try {
+        const result = await getBookingScope();
+        if (result.success && result.data) {
+          setScope(result.data);
+        }
+      } catch (err) {
+        console.error("Fetch scope error:", err);
+      }
+    };
+    fetchScope();
   }, []);
 
   useEffect(() => {
@@ -101,5 +120,6 @@ export const useCalendarData = (roomIdFromUrl) => {
     handleCancelSchedule: async (id, reason) => await updateStatus(id, true, reason),
     handleRestoreSchedule: async (id) => await updateStatus(id, false),
     refreshData: fetchData,
+    scope,
   };
 };

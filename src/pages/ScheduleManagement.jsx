@@ -225,7 +225,20 @@ const ScheduleManagement = () => {
   };
 
   const updateSubjectField = (field, value) => {
-    setEditingSubjectData((prev) => ({ ...prev, [field]: value }));
+    let finalValue = value;
+
+    // ดักจับฟิลด์ repeat ให้ไม่เกิน 20
+    if (field === "repeat" && value !== "") {
+      const num = parseInt(value);
+      if (num > 20) {
+        finalValue = 20;
+      } else if (num < 1 && value !== "0") {
+        // อนุญาตให้เป็นค่าว่างได้ตอนกำลังลบเพื่อพิมพ์ใหม่ แต่ตอนบันทึกจะถูกแปลงเป็น Number
+        finalValue = value;
+      }
+    }
+
+    setEditingSubjectData((prev) => ({ ...prev, [field]: finalValue }));
   };
 
   // ยืนยันลบรายวิชา

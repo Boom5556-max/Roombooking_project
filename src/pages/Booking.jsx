@@ -6,14 +6,6 @@ import Button from "../components/common/Button.jsx";
 import { useBookingLogic } from "../hooks/useBooking.js";
 import { FormField } from "../components/common/FormField.jsx";
 
-// 👇 1. สร้างช่วงเวลา 08:00 - 20:00 (ห่างกันทุก 30 นาที) ไว้ด้านนอก Component 👇
-const baseTimes = [];
-for (let i = 8; i <= 20; i++) {
-  const h = i.toString().padStart(2, "0");
-  baseTimes.push(`${h}:00`);
-  if (i !== 20) baseTimes.push(`${h}:30`);
-}
-
 const BookingRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,14 +19,57 @@ const BookingRoom = () => {
     isRoomBusy,
     serverMessage,
     setShowStatus,
+    scope,
   } = useBookingLogic(id);
+
+  // Generate baseTimes from scope
+  const baseTimes = [];
+  const startHour = Math.floor(scope.opening_mins / 60);
+  const endHour = Math.floor(scope.closing_mins / 60);
+  const startMin = scope.opening_mins % 60;
+
+  for (let i = startHour; i <= endHour; i++) {
+    const h = i.toString().padStart(2, "0");
+    if (i === startHour) {
+      if (startMin === 0) {
+        baseTimes.push(`${h}:00`);
+        baseTimes.push(`${h}:30`);
+      } else if (startMin <= 30) {
+        baseTimes.push(`${h}:30`);
+      }
+    } else if (i === endHour) {
+      baseTimes.push(`${h}:00`);
+      if (scope.closing_mins % 60 >= 30) {
+        baseTimes.push(`${h}:30`);
+      }
+    } else {
+      baseTimes.push(`${h}:00`);
+      baseTimes.push(`${h}:30`);
+    }
+  }
+
+  const today = new Date().toISOString().split("T")[0];
 
   // 👇 2. ฟังก์ชันสร้าง Dropdown เลือกเวลา 👇
   const renderTimeDropdown = (key, label) => {
     const availableTimes = baseTimes.filter((t) => {
-      if (key === "end_time" && t === "08:00") return false;
-      if (key === "start_time" && t === "20:00") return false;
-      // กรองเวลาไม่ให้เลือกขัดแย้งกัน
+      // Basic Boundaries
+      if (key === "end_time" && t === baseTimes[0]) return false;
+      if (key === "start_time" && t === baseTimes[baseTimes.length - 1]) return false;
+      
+      // Logic for Today: min_advance_hours
+      if (formData.date === today && key === "start_time") {
+        const now = new Date();
+        const [h, m] = t.split(":").map(Number);
+        const targetTime = new Date();
+        targetTime.setHours(h, m, 0, 0);
+        
+        const diffMs = targetTime - now;
+        const diffHours = diffMs / (1000 * 60 * 60);
+        if (diffHours < scope.min_advance_hours) return false;
+      }
+
+      // Range validation
       if (key === "end_time" && formData.start_time) return t > formData.start_time;
       if (key === "start_time" && formData.end_time) return t < formData.end_time;
       return true;
@@ -139,8 +174,8 @@ const BookingRoom = () => {
             <input
               type="date"
               required
-              min={new Date().toISOString().split("T")[0]}
-              max={new Date(new Date().setDate(new Date().getDate() + 10)).toISOString().split("T")[0]}
+              min={today}
+              max={new Date(new Date().setDate(new Date().getDate() + scope.max_advance_days)).toISOString().split("T")[0]}
               className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent dark:border-white/10 rounded-2xl py-4 px-5 outline-none focus:bg-white dark:focus:bg-white/10 focus:border-[#B2BB1E] focus:ring-4 focus:ring-[#B2BB1E]/5 text-[#302782] dark:text-white font-semibold transition-all text-base cursor-pointer"
               value={formData.date}
               onChange={(e) => {

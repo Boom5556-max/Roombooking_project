@@ -11,18 +11,52 @@ import PageReveal from "../components/common/PageReveal";
 
 // Import ส่วนที่แบ่งไป
 import SmartSearchForm from "../components/dashboard/SmartSearchForm";
+import BookingScopeModal from "../components/dashboard/BookingScopeModal";
 import DashboardFooter from "../components/dashboard/DashboardFooter";
 import { useReport } from "../hooks/useReport";
 import RoomReportSection from "../components/rooms/RoomReportSection";
 import StaffReportSection from "../components/rooms/StaffReportSection.jsx";
+import { getBookingScope } from "../api/bookingScope";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const [isScopeModalOpen, setIsScopeModalOpen] = useState(false);
+  const [scopeRefreshKey, setScopeRefreshKey] = useState(0);
+  const [scope, setScope] = useState({
+    opening_mins: 480, // 08:00
+    closing_mins: 1200, // 20:00
+    max_advance_days: 10,
+    min_advance_hours: 1
+  });
+  const [isLoadingScope, setIsLoadingScope] = useState(false);
+
   // ✨ Dashboard States & Hooks
   const { role, roomCount, pendingCount, approvedCount, isLoading: isDashboardLoading } = useDashboard();
   const { reportData, isLoading: isReportLoading, error: reportError } = useReport();
+
+  React.useEffect(() => {
+    // โหลดข้อมูลเมื่อคอมโพเนนต์ Mount หรือเมื่อ role เปลี่ยน (เพื่อให้แน่ใจว่า Token/Permissions พร้อม)
+    const fetchScope = async () => {
+      setIsLoadingScope(true);
+      try {
+        const result = await getBookingScope();
+        if (result.success && result.data) {
+          setScope(result.data);
+          console.log("Booking Scope loaded successfully for role:", role);
+        }
+      } catch (err) {
+        console.error("Dashboard fetch scope error (Using defaults):", err);
+      } finally {
+        setIsLoadingScope(false);
+      }
+    };
+    
+    // ดึงข้อมูลเมื่อ mount หรือเมื่อ role เปลี่ยนจาก null เป็นค่าอื่น
+    if (role) {
+      fetchScope();
+    }
+  }, [scopeRefreshKey, role]);
 
   const [alertModal, setAlertModal] = useState({ isOpen: false, title: "" });
   const [searchQuery, setSearchQuery] = useState({ date: "", start_time: "", end_time: "", capacity: "" });
@@ -99,6 +133,9 @@ const Dashboard = () => {
                   setSearchQuery={setSearchQuery} 
                   onSubmit={handleSmartSearch}
                   isDesktopView={true} 
+                  role={role}
+                  onOpenScope={() => setIsScopeModalOpen(true)}
+                  scope={scope}
                 />
               )}
               
@@ -133,7 +170,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <DashboardFooter />
+          <DashboardFooter scope={scope} />
         </div>
       </PageReveal>
 
@@ -147,6 +184,12 @@ const Dashboard = () => {
           onClose={() => setAlertModal({ ...alertModal, isOpen: false })}
         />
       )}
+
+      <BookingScopeModal 
+        isOpen={isScopeModalOpen} 
+        onClose={() => setIsScopeModalOpen(false)} 
+        onUpdate={() => setScopeRefreshKey(prev => prev + 1)}
+      />
     </div>
   );
 };
