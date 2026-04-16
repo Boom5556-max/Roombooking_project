@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { X, Monitor, Save, Check, AlertCircle, Trash2 } from "lucide-react";
+import { X, Monitor, Save, Check, AlertCircle, Plus, CornerUpLeft } from "lucide-react";
 import Button from "../common/Button.jsx";
 import InputField from "../common/InputField.jsx";
 
-const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
+const RoomFormModal = ({ room, onClose, onSave, showAlert, buildings = [] }) => {
+  const [isCustomLocation, setIsCustomLocation] = useState(false);
   const [formData, setFormData] = useState({
     room_id: room?.room_id || "",
     room_type: room?.room_type || "",
-    location: room?.location || "อาคาร 26 คณะวิทยาศาสตร์ ศรีราชา",
+    location: room?.location || (buildings.length > 0 ? buildings[0] : ""),
     capacity: room?.capacity ?? 0,
     room_characteristics: room?.room_characteristics || "",
     repair: room?.repair ?? false,
@@ -113,23 +114,66 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
 
           {/* Location Select */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-black dark:text-white ml-1">
-              สถานที่ตั้ง / อาคาร
-            </label>
-            <select
-              className="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-[20px] border-2 border-transparent focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-gray-600 outline-none font-bold text-[#302782] dark:text-white transition-all cursor-pointer appearance-none text-sm"
-              value={formData.location}
-              onChange={(e) =>
-                setFormData({ ...formData, location: e.target.value })
-              }
-            >
-              <option value="อาคาร 26 คณะวิทยาศาสตร์ ศรีราชา">
-                อาคาร 26 คณะวิทยาศาสตร์ ศรีราชา
-              </option>
-              <option value="อาคาร 15 ปฏิบัติการวิทยาศาสตร์และเทคโนโลยี">
-                อาคาร 15 ปฏิบัติการวิทยาศาสตร์และเทคโนโลยี
-              </option>
-            </select>
+            <div className="flex justify-between items-center px-1">
+              <label className="text-xs font-black text-[#302782] dark:text-white uppercase tracking-wider">
+                สถานที่ตั้ง / อาคาร
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsCustomLocation(!isCustomLocation)}
+                className={`text-[10px] font-bold px-3 py-1.5 rounded-full transition-all flex items-center gap-1 shadow-sm ${
+                  isCustomLocation 
+                    ? "bg-gray-100 dark:bg-gray-700 text-gray-600 hover:bg-gray-200"
+                    : "bg-[#B2BB1E]/10 text-[#B2BB1E] hover:bg-[#B2BB1E] hover:text-white"
+                }`}
+              >
+                {isCustomLocation ? (
+                  <>
+                    <CornerUpLeft size={12} /> กลับไปเลือกรายการเดิม
+                  </>
+                ) : (
+                  <>
+                    <Plus size={12} /> เพิ่มอาคารใหม่
+                  </>
+                )}
+              </button>
+            </div>
+
+            {isCustomLocation ? (
+              <div className="animate-in fade-in slide-in-from-top-1 duration-300">
+                <InputField
+                  placeholder="ระบุชื่ออาคาร เช่น อาคาร 50 ปี"
+                  value={formData.location}
+                  onChange={(e) =>
+                    setFormData({ ...formData, location: e.target.value })
+                  }
+                  required
+                />
+              </div>
+            ) : (
+              <div className="relative group animate-in fade-in duration-300">
+                <select
+                  className="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-[20px] border-2 border-transparent focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-gray-600 outline-none font-bold text-[#302782] dark:text-white transition-all cursor-pointer appearance-none text-sm shadow-sm"
+                  value={formData.location}
+                  onChange={(e) =>
+                    setFormData({ ...formData, location: e.target.value })
+                  }
+                  required
+                >
+                  <option value="" disabled>
+                    -- เลือกอาคาร --
+                  </option>
+                  {buildings.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-[#B2BB1E] transition-colors">
+                  <Plus size={16} className="rotate-45" />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -190,7 +234,7 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert }) => {
             </label>
             <textarea
               rows="3"
-              className="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-[24px] border-2 border-transparent focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-gray-600 outline-none font-bold text-[#302782] dark:text-white resize-none transition-all placeholder:text-black dark:placeholder:text-white/30"
+              className="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-[24px] border-2 border-transparent focus:border-[#B2BB1E] focus:bg-white dark:focus:bg-gray-600 outline-none font-bold text-[#302782] dark:text-white resize-none transition-all placeholder:text-black/30 dark:placeholder:text-white/30"
               value={formData.room_characteristics}
               onChange={(e) =>
                 setFormData({

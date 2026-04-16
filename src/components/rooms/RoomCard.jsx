@@ -42,7 +42,7 @@ const RoomCard = ({ room, onEdit, onDelete }) => {
   return (
     <div
       onClick={handleCardClick}
-      className={`bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-[30px] sm:rounded-[35px] shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group ${
+      className={`bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-[30px] sm:rounded-[35px] shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group overflow-hidden ${
         isDisabledForUser ? "opacity-60 grayscale cursor-not-allowed" : "cursor-pointer"
       }`}
     >
@@ -64,12 +64,12 @@ const RoomCard = ({ room, onEdit, onDelete }) => {
         </div>
 
         {/* Info Section */}
-        <div className="flex-grow min-w-0">
-          <div className="flex flex-wrap items-center gap-x-2">
-            <h3 className={`text-lg sm:text-xl font-black truncate ${isDisabledForUser ? "text-black dark:text-white" : "text-[#302782] dark:text-white"}`}>
+        <div className="flex-grow min-w-0 space-y-0.5">
+          <div className="flex items-center gap-x-2 overflow-hidden">
+            <h3 className={`text-base sm:text-lg font-black truncate ${isDisabledForUser ? "text-black dark:text-white" : "text-[#302782] dark:text-white"}`}>
               {room.room_id}
             </h3>
-            <span className="text-black dark:text-white text-sm font-light">|</span>
+            <span className="text-black/20 dark:text-white/20 text-xs">|</span>
             <p className={`text-sm sm:text-base font-bold truncate ${isDisabledForUser ? "text-black dark:text-white" : "text-black dark:text-white"}`}>
               {room.room_type}
             </p>
@@ -97,7 +97,7 @@ const RoomCard = ({ room, onEdit, onDelete }) => {
 
       {/* Actions Section */}
       {isStaff && (
-        <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50 dark:border-gray-700 mt-1 sm:mt-0">
+        <div className="flex gap-2 w-full sm:w-auto shrink-0 justify-end sm:justify-start pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50 dark:border-gray-700 mt-1 sm:mt-0">
           <button
             onClick={(e) => {
               e.stopPropagation();

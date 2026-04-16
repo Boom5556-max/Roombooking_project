@@ -4,7 +4,9 @@ import { data } from "react-router-dom";
 
 export const useRooms = () => {
   const [rooms, setRooms] = useState([]);
+  const [buildings, setBuildings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isBuildingsLoading, setIsBuildingsLoading] = useState(false);
 
   // 1. ดึงข้อมูลห้องทั้งหมด
   const fetchRooms = useCallback(async () => {
@@ -23,6 +25,26 @@ export const useRooms = () => {
     }
   }, []);
 
+  // 1.1 ดึงข้อมูลอาคารทั้งหมด
+  const fetchBuildings = useCallback(async () => {
+    setIsBuildingsLoading(true);
+    try {
+      const response = await api.get("/rooms/buildings");
+      if (response.data.success) {
+        // 🚩 ทำความสะอาดข้อมูล: ตัดช่องว่าง และกรองรายการที่ซ้ำกันออก
+        const rawBuildings = response.data.data || [];
+        const uniqueBuildings = [...new Set(rawBuildings.map(b => String(b).trim()))]
+          .filter(b => b !== "");
+        
+        setBuildings(uniqueBuildings);
+      }
+    } catch (error) {
+      console.error("Error fetching buildings:", error);
+    } finally {
+      setIsBuildingsLoading(false);
+    }
+  }, []);
+
   // 2. เพิ่มห้องใหม่ (POST /rooms)
   // แก้ไขบรรทัดที่ 20
   const addRoom = async (roomId, roomData) => {
@@ -31,6 +53,7 @@ export const useRooms = () => {
       // ส่ง roomData ไปที่ Backend
       await api.post("/rooms/", roomData);
       await fetchRooms();
+      await fetchBuildings();
       return { success: true };
     } catch (error) {
       return {
@@ -49,6 +72,7 @@ export const useRooms = () => {
         is_active: roomData.is_active ?? true,
       });
       await fetchRooms();
+      await fetchBuildings();
       return { success: true, message: response.data.message };
     } catch (error) {
       return {
@@ -66,6 +90,7 @@ export const useRooms = () => {
     const response = await api.patch(`/rooms/${roomId}/delete`); 
     
     await fetchRooms();
+    await fetchBuildings();
     return { success: true, message: response.data.message };
   } catch (error) {
     console.error("Delete error:", error);
@@ -89,12 +114,16 @@ export const useRooms = () => {
 
   useEffect(() => {
     fetchRooms();
-  }, [fetchRooms]);
+    fetchBuildings();
+  }, [fetchRooms, fetchBuildings]);
 
   return {
     rooms,
+    buildings,
     isLoading,
+    isBuildingsLoading,
     fetchRooms,
+    fetchBuildings,
     addRoom,
     updateRoom,
     deleteRoom,

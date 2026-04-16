@@ -21,11 +21,12 @@ import PageReveal from "../components/common/PageReveal";
 
 const Rooms = () => {
   const navigate = useNavigate();
-  const { rooms, isLoading, addRoom, updateRoom, deleteRoom } = useRooms();
+  const { rooms, buildings, isLoading, addRoom, updateRoom, deleteRoom } = useRooms();
 
   const [userRole, setUserRole] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
+  const [selectedBuilding, setSelectedBuilding] = useState("all");
 
   const [alertConfig, setAlertConfig] = useState({
     isOpen: false,
@@ -84,8 +85,11 @@ const Rooms = () => {
         return String(a.room_id).localeCompare(String(b.room_id));
       });
       return { building, rooms: sorted };
+    }).filter(group => {
+      if (selectedBuilding === "all") return true;
+      return group.building.trim() === selectedBuilding.trim();
     });
-  }, [rooms]);
+  }, [rooms, selectedBuilding]);
 
   const openModal = (room = null) => {
     setEditingRoom(room);
@@ -189,6 +193,39 @@ const Rooms = () => {
                 )}
               </div>
 
+              {/* 🚩 Building Filter Sidebar Card */}
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-4 opacity-80">
+                  <LayoutGrid size={18} className="text-[#302782] dark:text-[#B2BB1E]" />
+                  <span className="font-bold uppercase tracking-wider text-[10px] text-gray-500">กรองตามอาคาร</span>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => setSelectedBuilding("all")}
+                    className={`text-left px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
+                      selectedBuilding === "all"
+                        ? "bg-[#302782] text-white shadow-md translate-x-1"
+                        : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                    }`}
+                  >
+                    ทั้งหมด
+                  </button>
+                  {buildings.map((b) => (
+                    <button
+                      key={b}
+                      onClick={() => setSelectedBuilding(b)}
+                      className={`text-left px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
+                        selectedBuilding === b
+                          ? "bg-[#302782] text-white shadow-md translate-x-1"
+                          : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                      }`}
+                    >
+                      {b}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="bg-[#302782] text-white p-6 rounded-[32px] shadow-xl">
                 <div className="flex items-center gap-2 mb-6 opacity-80">
                   <PieChart size={20} />
@@ -231,7 +268,7 @@ const Rooms = () => {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-6">
                         {buildingRooms.map((room) => (
                           <RoomCard key={room.room_id} room={room} onEdit={openModal} onDelete={confirmDelete} />
                         ))}
@@ -253,6 +290,7 @@ const Rooms = () => {
       {isModalOpen && (
         <RoomFormModal
           room={editingRoom}
+          buildings={buildings}
           onClose={() => setIsModalOpen(false)}
           onSave={editingRoom ? updateRoom : addRoom}
           showAlert={showAlert}
