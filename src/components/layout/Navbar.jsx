@@ -5,7 +5,7 @@ import { Home, Calendar as CalendarIcon, Contact, QrCode, LogOut, Users, FileTex
 import { jwtDecode } from "jwt-decode";
 import ActionModal from "../common/ActionModal";
 import ProfileDropdown from "./ProfileDropdown";
-import api from '../../api/axios';
+import api, { setIsApiRedirecting } from '../../api/axios';
 import logo from "../../assets/image/sci ku src.png";
 
 const Navbar = () => {
@@ -88,6 +88,7 @@ const Navbar = () => {
       "คุณแน่ใจหรือไม่ที่จะออกจากระบบ?",
       <LogOut size={50} className="text-red-500" />,
       async () => { 
+        setIsApiRedirecting(true); // 🚨 บอก axios ว่ากำลังออกจากระบบ ห้ามโชว์ Alert เซสชันหมดอายุ
         
         try {
           // ยิง API ไปบอก Backend ให้ลบ HttpOnly Cookie (Refresh Token) ทิ้ง

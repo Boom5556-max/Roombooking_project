@@ -14,19 +14,40 @@ const api = axios.create({
 
 let isRedirecting = false;
 
+/**
+ * ฟังก์ชันสำหรับตั้งค่าสถานะการ Redirect/Logout (ใช้ป้องกัน Alert ซ้อน)
+ */
+export const setIsApiRedirecting = (val) => {
+  isRedirecting = val;
+};
+
+// ตรวจสอบว่า Path ปัจจุบันเป็นหน้าสาธารณะ (Public Page) หรือไม่
+const checkIsPublicPath = () => {
+  const path = window.location.pathname;
+  return path === "/" || path === "/login" || path.startsWith("/room-status/");
+};
+
+
 // ==========================================
 // 1. Request Interceptor: แนบ Token ไปทุกครั้ง
 // ==========================================
 api.interceptors.request.use(async (config) => {
   const token = localStorage.getItem("token");
 
-  // ไม่ทำ proactive check ตอนกำลัง Auth และทำเฉพาะ "คนที่มี Token (ล็อกอินแล้ว)" เท่านั้น
-  if (token && !config.url.includes('/refresh-token') && !config.url.includes('/login') && !config.url.includes('/otp')) {
+  // ไม่ทำ proactive check ตอนกำลัง Auth, Logout และทำเฉพาะ "คนที่มี Token (ล็อกอินแล้ว)" เท่านั้น
+  if (token && 
+      !config.url.includes('/refresh-token') && 
+      !config.url.includes('/login') && 
+      !config.url.includes('/otp') &&
+      !config.url.includes('/logout')
+  ) {
     const isValid = await verifyAndRefreshToken(); // วิ่งไปเช็ค ถ้าหมดก็นำไปต่ออายุแล้วกลับมาทำ Request ต่อ
     
     // ถ้าระบบบอกว่าตายสนิท หรือต่ออายุไม่สำเร็จ ให้หยุดยิง API เส้นนี้ทันที
     if (!isValid) {
-      if (!isRedirecting) {
+      const isPublic = checkIsPublicPath();
+      
+      if (!isRedirecting && !isPublic) {
         isRedirecting = true;
         Swal.fire({
           icon: 'info',
@@ -47,6 +68,13 @@ api.interceptors.request.use(async (config) => {
           window.location.href = '/login';
         });
       }
+
+      // ถ้าเป็นหน้าสาธารณะ ให้เคลียร์ Token เงียบๆ ไม่ต้องแสดง Popup
+      if (isPublic) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+
       return Promise.reject(new axios.Cancel('Session Expired: Token is physically dead or refresh failed.'));
     }
   }
@@ -120,7 +148,9 @@ api.interceptors.response.use(
       }
 
       // 🚨 ถ้ามาถึงตรงนี้แสดงว่า Refresh ไม่ผ่าน หรือ Retry แล้วก็ยัง 401 อยู่ (ล้มเหลวโดยสิ้นเชิง)
-      if (!isRedirecting) {
+      // ยกเว้น: ถ้าเป็น path /logout หรือกำลัง Redirect หรืออยู่หน้าสาธารณะ ไม่ต้องโชว์ Alert
+      const isPublic = checkIsPublicPath();
+      if (!isRedirecting && !originalRequest.url?.includes('/logout') && !isPublic) {
         isRedirecting = true;
         
         Swal.fire({
@@ -137,6 +167,10 @@ api.interceptors.response.use(
           localStorage.removeItem("user");
           window.location.href = '/login';
         });
+      } else if (isPublic) {
+        // ถ้าเป็นหน้าสาธารณะ เคลียร์ Token เงียบๆ
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
       }
       return Promise.reject(error);
     }
