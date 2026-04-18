@@ -100,27 +100,17 @@ const TermManagement = () => {
   useEffect(() => {
     const fetchTerms = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${API_BASE_URL}/terms/showTerm`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "ngrok-skip-browser-warning": "true",
-          },
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          const dates = { first: "", end: "", summer: "" };
-          if (result.data && Array.isArray(result.data)) {
-            result.data.forEach((item) => {
-              if (dates.hasOwnProperty(item.term)) {
-                dates[item.term] = item.date || "";
-              }
-            });
-          }
-          setTermDates(dates);
+        const response = await api.get("/terms/showTerm");
+        const result = response.data;
+        const dates = { first: "", end: "", summer: "" };
+        if (result.data && Array.isArray(result.data)) {
+          result.data.forEach((item) => {
+            if (dates.hasOwnProperty(item.term)) {
+              dates[item.term] = item.date || "";
+            }
+          });
         }
+        setTermDates(dates);
       } catch (err) {
         console.error("Fetch terms error:", err);
       } finally {
@@ -183,26 +173,15 @@ const TermManagement = () => {
 
     setIsLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/terms/fillInTerm`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "ngrok-skip-browser-warning": "true",
-        },
-        body: JSON.stringify({ terms }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        showFeedback("success", result.message || "บันทึกข้อมูลเทอมสำเร็จ!");
-      } else {
-        showFeedback("error", result.message || "เกิดข้อผิดพลาดในการบันทึก");
-      }
+      const response = await api.post("/terms/fillInTerm", { terms });
+      const result = response.data;
+      showFeedback("success", result.message || "บันทึกข้อมูลเทอมสำเร็จ!");
     } catch (err) {
-      showFeedback("error", "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      if (err.response) {
+        showFeedback("error", err.response.data?.message || "เกิดข้อผิดพลาดในการบันทึก");
+      } else {
+        showFeedback("error", "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -337,7 +316,6 @@ const TermManagement = () => {
           {/* Academic Year (B.E.) Display */}
           {termDates.first && !isNaN(new Date(termDates.first).getFullYear()) && (
             <div className="flex flex-col items-end">
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#B2BB1E] opacity-70">ACADEMIC YEAR</span>
               <div className="text-lg sm:text-xl font-black text-[#302782] dark:text-white flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#B2BB1E]"></span>
                 ปีการศึกษา {new Date(termDates.first).getFullYear() + 543}

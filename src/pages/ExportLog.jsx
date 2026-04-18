@@ -134,34 +134,24 @@ const ExportLog = () => {
   useEffect(() => {
     const fetchTerms = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${API_BASE_URL}/terms/showTerm`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "ngrok-skip-browser-warning": "true",
-          },
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          const dates = {
-            first: { start_date: "", end_date: "" },
-            end: { start_date: "", end_date: "" },
-            summer: { start_date: "", end_date: "" },
-          };
-          if (result.data && Array.isArray(result.data)) {
-            result.data.forEach((item) => {
-              if (dates.hasOwnProperty(item.term)) {
-                dates[item.term] = {
-                  start_date: item.start_date || "",
-                  end_date: item.end_date || "",
-                };
-              }
-            });
-          }
-          setTermDates(dates);
+        const response = await api.get("/terms/showTerm");
+        const result = response.data;
+        const dates = {
+          first: { start_date: "", end_date: "" },
+          end: { start_date: "", end_date: "" },
+          summer: { start_date: "", end_date: "" },
+        };
+        if (result.data && Array.isArray(result.data)) {
+          result.data.forEach((item) => {
+            if (dates.hasOwnProperty(item.term)) {
+              dates[item.term] = {
+                start_date: item.start_date || "",
+                end_date: item.end_date || "",
+              };
+            }
+          });
         }
+        setTermDates(dates);
       } catch (err) {
         console.error("Fetch terms error:", err);
       } finally {
@@ -186,25 +176,12 @@ const ExportLog = () => {
 
     setIsLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${API_BASE_URL}/schedules/export-excel?startDate=${startDate}&endDate=${endDate}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "ngrok-skip-browser-warning": "true",
-          },
-        }
+      const response = await api.get(
+        `/schedules/export-excel?startDate=${startDate}&endDate=${endDate}`,
+        { responseType: "blob" }
       );
 
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        showFeedback("error", errData.message || `เกิดข้อผิดพลาด (${response.status})`);
-        return;
-      }
-
-      const blob = await response.blob();
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -216,7 +193,12 @@ const ExportLog = () => {
 
       showFeedback("success", "ดาวน์โหลดรายงานสำเร็จ!");
     } catch (err) {
-      showFeedback("error", "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      if (err.response) {
+        // จัดการกรณี Error ที่ส่งมาจาก Server
+        showFeedback("error", err.response.data?.message || `เกิดข้อผิดพลาด (${err.response.status})`);
+      } else {
+        showFeedback("error", "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -253,22 +235,15 @@ const ExportLog = () => {
 
     setIsTermLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/terms/fillInTerm`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "ngrok-skip-browser-warning": "true",
-        },
-        body: JSON.stringify({ terms }),
-      });
-
-      const result = await response.json();
-      if (response.ok) showTermFeedback("success", result.message || "บันทึกข้อมูลเทอมสำเร็จ!");
-      else showTermFeedback("error", result.message || "เกิดข้อผิดพลาดในการบันทึก");
+      const response = await api.post("/terms/fillInTerm", { terms });
+      const result = response.data;
+      showTermFeedback("success", result.message || "บันทึกข้อมูลเทอมสำเร็จ!");
     } catch (err) {
-      showTermFeedback("error", "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      if (err.response) {
+        showTermFeedback("error", err.response.data?.message || "เกิดข้อผิดพลาดในการบันทึก");
+      } else {
+        showTermFeedback("error", "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      }
     } finally {
       setIsTermLoading(false);
     }
@@ -355,7 +330,6 @@ const ExportLog = () => {
                 {/* Academic Year (B.E.) Display */}
                 {termDates.first.start_date && !isNaN(new Date(termDates.first.start_date).getFullYear()) && (
                   <div className="flex flex-col items-end">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-[#B2BB1E] opacity-70">ACADEMIC YEAR</span>
                     <div className="text-base sm:text-lg font-black text-[#302782] dark:text-white flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full bg-[#B2BB1E]"></span>
                       ปีการศึกษา {new Date(termDates.first.start_date).getFullYear() + 543}

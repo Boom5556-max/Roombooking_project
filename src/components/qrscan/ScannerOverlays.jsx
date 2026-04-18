@@ -1,15 +1,10 @@
 import React from 'react';
-import { QrCode, Loader2, AlertCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { QrCode, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import Button from "../common/Button.jsx";
 
 // 1. SuccessOverlay: แสดงเมื่อสแกนสำเร็จ
 export const SuccessOverlay = () => (
   <div className="absolute inset-0 bg-[#B2BB1E] flex flex-col items-center justify-center p-8 text-center z-[100] animate-in fade-in duration-500">
-    {/* Icon Container with Glassmorphism effect instead of heavy shadow */}
-    <div className="bg-white/20 backdrop-blur-md p-8 rounded-[40px] mb-10 text-white border border-white/30 animate-in zoom-in duration-700 delay-200">
-      <CheckCircle2 size={80} strokeWidth={2.5} className="animate-pulse" />
-    </div>
-    
     <h3 className="text-white font-black text-4xl sm:text-5xl tracking-tight leading-tight drop-shadow-sm">
       ตรวจพบข้อมูลห้อง
     </h3>
@@ -19,13 +14,7 @@ export const SuccessOverlay = () => (
     </p>
 
     <style jsx>{`
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.05); opacity: 0.8; }
-      }
-      .animate-pulse {
-        animation: pulse 2s ease-in-out infinite;
-      }
+      /* No additional success styles needed */
     `}</style>
   </div>
 );

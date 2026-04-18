@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_BASE_URL } from "../api/config.js";
+import api from "../api/axios.js";
 
 export const useCalendarData = (roomIdFromUrl) => {
   const [rooms, setRooms] = useState([]);
@@ -11,8 +12,8 @@ export const useCalendarData = (roomIdFromUrl) => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/rooms/`, { headers: { "ngrok-skip-browser-warning": "true" } });
-        const data = await res.json();
+        const res = await api.get("/rooms/");
+        const data = res.data;
         if (data?.length > 0) {
           setRooms(data);
           setSelectedRoom(roomIdFromUrl || data[0].room_id);
@@ -29,15 +30,14 @@ export const useCalendarData = (roomIdFromUrl) => {
       const token = localStorage.getItem("token");
       if (!selectedRoom || !token) return;
 
-      const headers = { "ngrok-skip-browser-warning": "true", Authorization: `Bearer ${token}` };
       try {
         const [bookRes, schedRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/bookings/allBooking/${selectedRoom}?status=approved`, { headers }),
-          fetch(`${API_BASE_URL}/schedule/${selectedRoom}`, { headers })
+          api.get(`/bookings/allBooking/${selectedRoom}?status=approved`),
+          api.get(`/schedule/${selectedRoom}`)
         ]);
 
-        const bookingData = bookRes.ok ? await bookRes.json() : [];
-        const scheduleData = schedRes.ok ? await schedRes.json() : { schedules: [] };
+        const bookingData = bookRes.data || [];
+        const scheduleData = schedRes.data || { schedules: [] };
 
         // Formatting Logic ... (ยกมาจากโค้ดเดิมของนาย)
         const formattedEvents = [
