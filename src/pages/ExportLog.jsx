@@ -341,14 +341,27 @@ const ExportLog = () => {
 
             {/* RIGHT: Term Management */}
             <div className="bg-white dark:bg-gray-800 rounded-[28px] shadow-sm border border-gray-100 dark:border-gray-700 p-6 text-black dark:text-white">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 bg-[#302782]/8 dark:bg-[#302782]/30 rounded-2xl flex items-center justify-center shrink-0">
-                  <GraduationCap size={28} className="text-[#302782] dark:text-[#B2BB1E]" />
+              <div className="flex items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-[#302782]/8 dark:bg-[#302782]/30 rounded-2xl flex items-center justify-center shrink-0">
+                    <GraduationCap size={28} className="text-[#302782] dark:text-[#B2BB1E]" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-black text-[#302782] dark:text-white">กำหนดวันที่ของแต่ละเทอม</h2>
+                    <p className="text-xs text-black dark:text-white leading-relaxed mt-0.5">ระบุวันที่เริ่มต้นและสิ้นสุดของแต่ละภาคเรียน</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-base font-black text-[#302782] dark:text-white">กำหนดวันที่ของแต่ละเทอม</h2>
-                  <p className="text-xs text-black dark:text-white leading-relaxed mt-0.5">ระบุวันที่เริ่มต้นและสิ้นสุดของแต่ละภาคเรียน</p>
-                </div>
+
+                {/* Academic Year (B.E.) Display */}
+                {termDates.first.start_date && !isNaN(new Date(termDates.first.start_date).getFullYear()) && (
+                  <div className="flex flex-col items-end">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-[#B2BB1E] opacity-70">ACADEMIC YEAR</span>
+                    <div className="text-base sm:text-lg font-black text-[#302782] dark:text-white flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-[#B2BB1E]"></span>
+                      ปีการศึกษา {new Date(termDates.first.start_date).getFullYear() + 543}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-3 mb-5">

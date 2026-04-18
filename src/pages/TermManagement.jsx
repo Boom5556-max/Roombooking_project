@@ -320,7 +320,8 @@ const TermManagement = () => {
       <div className="p-4 sm:p-6 md:p-10 pb-28 flex-grow max-w-2xl mx-auto w-full">
         {/* Main Card */}
         <div className="bg-white dark:bg-gray-800 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
               className="p-2.5 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl text-[#302782] dark:text-[#B2BB1E] transition-all active:scale-90 shadow-sm flex items-center justify-center group"
@@ -332,6 +333,18 @@ const TermManagement = () => {
               จัดการวันที่เทอม
             </h1>
           </div>
+          
+          {/* Academic Year (B.E.) Display */}
+          {termDates.first && !isNaN(new Date(termDates.first).getFullYear()) && (
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#B2BB1E] opacity-70">ACADEMIC YEAR</span>
+              <div className="text-lg sm:text-xl font-black text-[#302782] dark:text-white flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#B2BB1E]"></span>
+                ปีการศึกษา {new Date(termDates.first).getFullYear() + 543}
+              </div>
+            </div>
+          )}
+        </div>
           {/* Icon + Description */}
           <div className="flex flex-col items-center text-center mb-8">
             <div className="w-20 h-20 bg-[#302782]/8 dark:bg-[#302782]/30 rounded-3xl flex items-center justify-center mb-4">
