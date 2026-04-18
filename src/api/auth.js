@@ -28,7 +28,8 @@ export const verifyAndRefreshToken = async (forceRefresh = false) => {
     }
 
     // 🔄 เงื่อนไขที่ 2: Access Token หมดอายุแล้ว หรือ โดนบังคับให้ต้อง Refresh (จาก 401 Interceptor)
-    if (forceRefresh || currentTime > decoded.exp) {
+    // เพิ่ม Leeway 60 วินาที เพื่อกันปัญหาเวลาเครื่องผู้ใช้ช้า/เร็วไม่เท่ากับ Server
+    if (forceRefresh || (currentTime + 60) > decoded.exp) {
       if (forceRefresh) console.log('🔄 Forced Refresh: ได้รับ 401 จาก Server -> กำลังลองต่ออายุ...');
       else console.log('🔄 Access Token หมดอายุ -> กำลังลองต่ออายุ...');
       

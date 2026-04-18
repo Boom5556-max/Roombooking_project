@@ -49,6 +49,7 @@ api.interceptors.request.use(async (config) => {
       
       if (!isRedirecting && !isPublic) {
         isRedirecting = true;
+        setTimeout(() => { isRedirecting = false; }, 10000); // Safety Reset: กันค้างถ้าไม่ได้ Redirect จริง
         Swal.fire({
           icon: 'info',
           title: 'เซสชันหมดอายุ',
@@ -110,6 +111,7 @@ api.interceptors.response.use(
       if (error.response.data && error.response.data.code === 'SESSION_SUPERSEDED') {
         if (!isRedirecting) {
           isRedirecting = true;
+          setTimeout(() => { isRedirecting = false; }, 10000);
           Swal.fire({
             icon: 'warning',
             title: 'ถูกออกจากระบบ',
@@ -152,6 +154,7 @@ api.interceptors.response.use(
       const isPublic = checkIsPublicPath();
       if (!isRedirecting && !originalRequest.url?.includes('/logout') && !isPublic) {
         isRedirecting = true;
+        setTimeout(() => { isRedirecting = false; }, 10000);
         
         Swal.fire({
           icon: 'info',

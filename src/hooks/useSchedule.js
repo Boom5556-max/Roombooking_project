@@ -110,9 +110,7 @@ export const useSchedule = () => {
     formData.append('file', file);
 
     try {
-      const res = await api.post(`/schedules/reupload/${currentReuploadId}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const res = await api.post(`/schedules/reupload/${currentReuploadId}`, formData);
 
       setPreviewData(res.data.previewData || []);
       setPreviewErrors(res.data.errors || []);

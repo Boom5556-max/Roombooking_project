@@ -67,9 +67,7 @@ const UploadModal = ({ isOpen, onClose }) => {
     formData.append("program_type", globalInfo.program_type);
 
     try {
-      const response = await api.post("/schedules/import", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await api.post("/schedules/import", formData);
       const result = response.data;
       
       // นำข้อมูล department, study_year, program_type ไปรวมใน previewData (ถ้า Backend ยังไม่รวมมาให้)
