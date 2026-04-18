@@ -103,6 +103,8 @@ const UserFormModal = ({ user, onClose, onSave, showAlert }) => {
                   <option value="อาจารย์">อาจารย์</option>
                   <option value="ดร.">ดร.</option>
                   <option value="ผศ.ดร.">ผศ.ดร.</option>
+                  <option value="รศ.ดร.">รศ.ดร.</option>
+                  <option value="ศ.ดร.">ศ.ดร.</option>
                 </select>
                 <ChevronDown
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-black dark:text-white pointer-events-none"

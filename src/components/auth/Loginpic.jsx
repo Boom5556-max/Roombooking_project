@@ -38,7 +38,7 @@ const Loginpic = () => {
                 2. เพิ่ม &view=FitH ต่อท้าย URL เพื่อบังคับให้ PDF ขยายเต็มความกว้าง (อ่านง่ายขึ้นมาก) 
             */}
             <iframe
-              src="/Manual1.pdf#toolbar=0&navpanes=0&view=FitH" 
+              src="/manual1.pdf#toolbar=0&navpanes=0&view=FitH" 
               className="w-full h-full border-none rounded-b-[32px]"
               title="Manual PDF"
             />
