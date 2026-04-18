@@ -8,23 +8,14 @@ import {
   AlertCircle,
   Trash2,
   Send,
-  Info,
-  ChevronRight,
 } from "lucide-react";
 import Button from "../common/Button.jsx";
 import ActionModal from "../common/ActionModal.jsx";
 
 const UploadModal = ({ isOpen, onClose }) => {
-  const [step, setStep] = useState("upload"); // upload -> info -> preview
+  const [step, setStep] = useState("upload"); // upload -> preview
   const [isProcessing, setIsProcessing] = useState(false);
   const [file, setFile] = useState(null);
-  
-  // ฟอร์มสำหรับข้อมูลส่วนกลาง
-  const [globalInfo, setGlobalInfo] = useState({
-    department: "",
-    study_year: "1",
-    program_type: "ปกติ",
-  });
 
   const [validData, setValidData] = useState([]);
   const [invalidData, setInvalidData] = useState([]);
@@ -40,7 +31,6 @@ const UploadModal = ({ isOpen, onClose }) => {
     setInvalidData([]);
     setIsProcessing(false);
     setImportResult(null);
-    setGlobalInfo({ department: "", study_year: "1", program_type: "ปกติ" });
     onClose();
   };
 
@@ -48,44 +38,42 @@ const UploadModal = ({ isOpen, onClose }) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      setStep("info"); // เมื่อเลือกไฟล์เสร็จ ให้ไปหน้ากรอกข้อมูล
+      handleProcessFile(selectedFile); // 👈 โยนไฟล์เข้าฟังก์ชันตรงๆ เพื่อเลี่ยงปัญหา State อัปเดตไม่ทัน
     }
   };
 
-  const handleProcessFile = async () => {
-    if (!file || !globalInfo.department) {
-      alert("กรุณากรอกสาขาวิชา");
+  const handleProcessFile = async (uploadedFile) => {
+    // ใช้ uploadedFile ที่รับมาจาก onFileChange โดยตรง
+    if (!uploadedFile) {
+      alert("กรุณาเลือกไฟล์ Excel ก่อนครับ");
       return;
     }
 
     setIsProcessing(true);
+    
+    // 1. สร้าง FormData และแนบแค่ไฟล์
     const formData = new FormData();
-    formData.append("file", file);
-    // ส่งข้อมูลฟอร์มพ่วงไปด้วย
-    formData.append("department", globalInfo.department);
-    formData.append("study_year", globalInfo.study_year);
-    formData.append("program_type", globalInfo.program_type);
+    formData.append("file", uploadedFile); 
 
     try {
+      // 2. ยิง API โยนไฟล์ไปให้ Backend (Axios จะจัดการ Header Multipart และ Boundary ให้เองอัตโนมัติ)
       const response = await api.post("/schedules/import", formData);
       const result = response.data;
-      
-      // นำข้อมูล department, study_year, program_type ไปรวมใน previewData (ถ้า Backend ยังไม่รวมมาให้)
-      const augmentedData = (result.previewData || []).map(item => ({
-        ...item,
-        department: globalInfo.department,
-        study_year: globalInfo.study_year,
-        program_type: globalInfo.program_type
-      }));
 
-      setValidData(augmentedData);
+      // 3. นำข้อมูลที่ Backend ตอบกลับมาใช้งานได้ทันที
+      setValidData(result.previewData || []);
       setInvalidData(result.errors || []);
       setSummary({ total: result.total_rows_excel || 0 });
       setStep("preview");
+
     } catch (error) {
+      console.error("Upload Error:", error.response?.data || error.message); 
       setImportResult("error");
     } finally {
       setIsProcessing(false);
+      // ✅ เคลียร์ input file เพื่อให้เลือกไฟล์เดิมซ้ำได้ในครั้งต่อไปตามคำแนะนำ
+      const fileInput = document.getElementById('file-upload');
+      if (fileInput) fileInput.value = '';
     }
   };
 
@@ -125,110 +113,48 @@ const UploadModal = ({ isOpen, onClose }) => {
             <header className="mb-4 sm:mb-6 pr-8">
               <h2 className="text-lg sm:text-xl font-bold text-[#302782] dark:text-white">
                 {step === "upload" && "นำเข้าตารางเรียน"}
-                {step === "info" && "ระบุรายละเอียดหลักสูตร"}
                 {step === "preview" && "ตรวจสอบความถูกต้อง"}
               </h2>
               <div className="flex items-center gap-2 mt-1">
-                <div className={`h-1.5 w-8 rounded-full ${step === 'upload' ? 'bg-[#302782]' : 'bg-gray-200'}`} />
-                <div className={`h-1.5 w-8 rounded-full ${step === 'info' ? 'bg-[#302782]' : 'bg-gray-200'}`} />
-                <div className={`h-1.5 w-8 rounded-full ${step === 'preview' ? 'bg-[#302782]' : 'bg-gray-200'}`} />
+                <div className={`h-1.5 w-12 rounded-full ${step === 'upload' ? 'bg-[#302782]' : 'bg-gray-200'}`} />
+                <div className={`h-1.5 w-12 rounded-full ${step === 'preview' ? 'bg-[#302782]' : 'bg-gray-200'}`} />
               </div>
             </header>
 
             {/* STEP 1: Upload File */}
             {step === "upload" && (
               <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-100 dark:border-gray-600 rounded-[24px] p-8 sm:p-12 bg-gray-50/50 dark:bg-gray-700/50">
-                <input
-                  type="file"
-                  id="file-upload"
-                  className="hidden"
-                  onChange={onFileChange}
-                  accept=".xlsx, .xls"
-                />
-                <label
-                  htmlFor="file-upload"
-                  className="cursor-pointer bg-[#302782] text-white px-8 py-3.5 rounded-[16px] font-bold text-sm sm:text-base flex items-center gap-2 shadow-lg hover:-translate-y-px active:scale-[0.98] transition-all"
-                >
-                  <FilePlus size={20} /> เลือกไฟล์ Excel
-                </label>
-                <p className="mt-4 text-[10px] text-black dark:text-white text-center uppercase tracking-widest font-bold">
-                  รองรับเฉพาะ .xlsx หรือ .xls
-                </p>
-              </div>
-            )}
-
-            {/* STEP 2: Fill Global Info */}
-            {step === "info" && (
-              <div className="space-y-4">
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl flex gap-3 mb-2">
-                  <Info className="text-blue-500 shrink-0" size={20} />
-                  <p className="text-xs text-blue-700 dark:text-blue-300">
-                    ระบุข้อมูลของตารางเรียนชุดนี้ ข้อมูลจะถูกบันทึกลงในทุกรายการที่คุณอัปโหลด
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs font-bold text-black dark:text-white mb-1 block">สาขาวิชา</label>
+                {isProcessing ? (
+                  <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="animate-spin text-[#302782] dark:text-white" size={48} />
+                    <p className="text-sm font-bold text-[#302782] dark:text-white">กำลังประมวลผลไฟล์...</p>
+                  </div>
+                ) : (
+                  <>
                     <input
-                      type="text"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-2 focus:ring-[#302782] outline-none text-sm transition-all"
-                      value={globalInfo.department}
-                      onChange={(e) => setGlobalInfo({...globalInfo, department: e.target.value})}
+                      type="file"
+                      id="file-upload"
+                      className="hidden"
+                      onChange={onFileChange}
+                      accept=".xlsx, .xls"
                     />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs font-bold text-black dark:text-white mb-1 block">ชั้นปี</label>
-                      <select 
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 outline-none text-sm"
-                        value={globalInfo.study_year}
-                        onChange={(e) => setGlobalInfo({...globalInfo, study_year: e.target.value})}
-                      >
-                        {[1,2,3,4].map(y => <option key={y} value={y}>ชั้นปีที่ {y}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-black dark:text-white mb-1 block">ภาคการศึกษา</label>
-                      <select 
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 outline-none text-sm"
-                        value={globalInfo.program_type}
-                        onChange={(e) => setGlobalInfo({...globalInfo, program_type: e.target.value})}
-                      >
-                        <option value="ปกติ">ภาคปกติ</option>
-                        <option value="พิเศษ">ภาคพิเศษ</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 flex gap-2">
-                  <Button variant="danger" className="flex-1 rounded-xl py-3" onClick={() => setStep("upload")}>
-                    ย้อนกลับ
-                  </Button>
-                  <Button 
-                    className="flex-[2] rounded-xl py-3 bg-[#302782] text-white flex items-center justify-center gap-2 font-bold"
-                    onClick={handleProcessFile}
-                    disabled={isProcessing || !globalInfo.department}
-                  >
-                    {isProcessing ? <Loader2 className="animate-spin" size={20} /> : "ดำเนินการต่อ"}
-                    {!isProcessing && <ChevronRight size={18} />}
-                  </Button>
-                </div>
+                    <label
+                      htmlFor="file-upload"
+                      className="cursor-pointer bg-[#302782] text-white px-8 py-3.5 rounded-[16px] font-bold text-sm sm:text-base flex items-center gap-2 shadow-lg hover:-translate-y-px active:scale-[0.98] transition-all"
+                    >
+                      <FilePlus size={20} /> เลือกไฟล์ Excel
+                    </label>
+                    <p className="mt-4 text-[10px] text-black dark:text-white text-center uppercase tracking-widest font-bold">
+                      รองรับเฉพาะ .xlsx หรือ .xls
+                    </p>
+                  </>
+                )}
               </div>
             )}
 
-            {/* STEP 3: Preview */}
+            {/* STEP 2: Preview */}
             {step === "preview" && (
               <div className="flex flex-col overflow-hidden">
-                {/* Stats & Global Info Badge */}
-                <div className="flex flex-wrap items-center gap-2 mb-4 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-2xl">
-                    <span className="text-[10px] font-bold px-2 py-1 bg-[#302782] text-white rounded-lg">{globalInfo.department}</span>
-                    <span className="text-[10px] font-bold px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-lg">ปี {globalInfo.study_year}</span>
-                    <span className="text-[10px] font-bold px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-lg">ภาค{globalInfo.program_type}</span>
-                </div>
-
                 <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
                   <StatCard label="ในไฟล์" value={summary.total} color="text-[#302782]" />
                   <StatCard label="ผ่าน" value={validData.length} color="text-[#B2BB1E]" />
@@ -236,7 +162,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-y-auto pr-1 custom-scrollbar mb-4">
-                  {/* Valid Data Table */}
+                  {/* รายการที่ถูกต้อง */}
                   <div className="flex flex-col gap-2">
                     <h3 className="font-bold text-[#B2BB1E] text-xs sm:text-xs flex items-center gap-1.5 px-1 sticky top-0 bg-white dark:bg-gray-800 py-1 z-10">
                       <CheckCircle2 size={16} /> รายการที่ถูกต้อง ({validData.length})
@@ -268,37 +194,36 @@ const UploadModal = ({ isOpen, onClose }) => {
                     </div>
                   </div>
 
-                  {/* Invalid Data Table */}
+                  {/* รายการที่มีปัญหา */}
                   <div className="flex flex-col gap-2">
                     <h3 className="font-bold text-red-500 text-xs sm:text-xs flex items-center gap-1.5 px-1 sticky top-0 bg-white dark:bg-gray-800 py-1 z-10">
                       <AlertCircle size={16} /> รายการที่มีปัญหา ({invalidData.length})
                     </h3>
                     <div className="border border-red-50 dark:border-gray-700 rounded-2xl bg-red-50/10 dark:bg-gray-800 shadow-sm overflow-hidden text-xs">
-                         {/* ... (ตาราง Error เหมือนเดิม) ... */}
-                         <table className="w-full text-left">
-                            <thead className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 font-bold border-b dark:border-gray-600">
-                                <tr>
-                                    <th className="p-2 w-10 text-center">แถว</th>
-                                    <th className="p-2">สาเหตุ</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {invalidData.map((item, idx) => (
-                                    <tr key={idx}>
-                                        <td className="p-2 text-center text-black dark:text-white">{item.row}</td>
-                                        <td className="p-2">
-                                            <span className="font-bold text-red-600 text-[10px] block">{item.message}</span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                         </table>
+                      <table className="w-full text-left">
+                        <thead className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 font-bold border-b dark:border-gray-600">
+                          <tr>
+                            <th className="p-2 w-10 text-center">แถว</th>
+                            <th className="p-2">สาเหตุ</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                          {invalidData.map((item, idx) => (
+                            <tr key={idx}>
+                              <td className="p-2 text-center text-black dark:text-white">{item.row}</td>
+                              <td className="p-2">
+                                <span className="font-bold text-red-600 text-[10px] block">{item.message}</span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
-                  <Button onClick={() => setStep("info")} variant="danger" className="order-2 sm:order-1 flex-1 py-3 rounded-[14px]">
+                  <Button onClick={() => setStep("upload")} variant="danger" className="order-2 sm:order-1 flex-1 py-3 rounded-[14px]">
                     ย้อนกลับ
                   </Button>
                   <Button

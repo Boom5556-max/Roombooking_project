@@ -83,6 +83,14 @@ api.interceptors.request.use(async (config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // 🚨 ตรวจจับ FormData: ถ้าข้อมูลที่ส่งเป็นไฟล์ (FormData) ให้ลบ Content-Type ออก
+  // เพื่อให้ Axios สร้าง multipart/form-data พร้อม boundary ที่ถูกต้องให้เองอัตโนมัติ
+  // (ถ้าไม่ลบ Default "application/json" จะไปทับ ทำให้ Backend/Multer อ่านไฟล์ไม่ออก)
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
+  }
+
   return config;
 });
 
