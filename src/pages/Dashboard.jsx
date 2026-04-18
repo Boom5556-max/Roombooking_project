@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutGrid, FilePlus, AlertCircle } from "lucide-react";
+import { LayoutGrid, FilePlus, AlertCircle, Download } from "lucide-react";
 import { useDashboard } from "../hooks/useDashboard";
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
@@ -43,7 +43,6 @@ const Dashboard = () => {
         const result = await getBookingScope();
         if (result.success && result.data) {
           setScope(result.data);
-          console.log("Booking Scope loaded successfully for role:", role);
         }
       } catch (err) {
         console.error("Dashboard fetch scope error (Using defaults):", err);
@@ -165,6 +164,20 @@ const Dashboard = () => {
                       <p className="text-black dark:text-white text-sm font-medium mt-1">อัปโหลดตารางเรียน (.xlsx, .csv)</p>
                     </div>
                   </div>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const link = document.createElement('a');
+                      link.href = '/format_upload.xlsx';
+                      link.download = 'format_upload.xlsx';
+                      link.click();
+                    }}
+                    className="p-3 bg-[#302782] text-white rounded-2xl hover:bg-[#302782]/90 transition-all flex items-center gap-2 shadow-sm active:scale-95"
+                    title="ดาวน์โหลดไฟล์ฟอร์แมต"
+                  >
+                    <Download size={20} />
+                    <span className="hidden sm:inline text-xs font-bold whitespace-nowrap">ดาวน์โหลดฟอร์แมต</span>
+                  </button>
                 </div>
               )}
             </div>

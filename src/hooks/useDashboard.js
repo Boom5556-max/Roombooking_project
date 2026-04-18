@@ -29,27 +29,44 @@ export const useDashboard = () => {
       // 2. ฟังก์ชันดึงข้อมูลแบบ Axios
       const fetchData = async () => {
         setIsLoading(true);
+        const currentRole = decoded.role ? decoded.role.toLowerCase().trim() : "student";
+        
         try {
-          // ใช้ Promise.all ยิงพร้อมกัน 3 API เพื่อความเร็ว
-          const [roomRes, pendingRes, approvedRes] = await Promise.all([
-            api.get("/rooms"),
-            api.get("/bookings/pending"),
-            api.get("/bookings/approved"),
-          ]);
+          if (currentRole === "staff") {
+            // ดึงข้อมูลภาพรวมทั้งระบบ (เฉพาะ Staff)
+            const [roomRes, pendingRes, approvedRes] = await Promise.all([
+              api.get("/rooms"),
+              api.get("/bookings/pending"),
+              api.get("/bookings/approved"),
+            ]);
 
-          // Helper ในการนับจำนวน (Axios จะเก็บข้อมูลไว้ใน res.data)
-          const getCount = (res) => {
-            const result = res.data;
-            return Array.isArray(result) ? result.length : result.data?.length || 0;
-          };
+            const getCount = (res) => {
+              const result = res.data;
+              return Array.isArray(result) ? result.length : result.data?.length || 0;
+            };
 
-          setData({
-            roomCount: getCount(roomRes),
-            pendingCount: getCount(pendingRes),
-            approvedCount: getCount(approvedRes),
-          });
+            setData({
+              roomCount: getCount(roomRes),
+              pendingCount: getCount(pendingRes),
+              approvedCount: getCount(approvedRes),
+            });
+          } else {
+            // ดึงข้อมูลเฉพาะของตัวเอง (Teacher/Student)
+            const [roomRes, activeRes] = await Promise.all([
+              api.get("/rooms"),
+              api.get("/bookings/my-bookings/active"),
+            ]);
+
+            const active = activeRes.data || [];
+            
+            setData({
+              roomCount: roomRes.data?.length || 0,
+              pendingCount: active.filter(i => i.status === 'pending').length,
+              approvedCount: active.filter(i => i.status === 'approved').length,
+            });
+          }
         } catch (err) {
-          if (!err.response || err.response.status !== 401) {
+          if (err.response?.status !== 401 && err.response?.status !== 403) {
             console.error("Dashboard Fetch Error:", err);
           }
         } finally {
