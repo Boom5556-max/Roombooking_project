@@ -11,6 +11,7 @@ export const useSchedule = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [previewData, setPreviewData] = useState([]);
   const [previewErrors, setPreviewErrors] = useState([]);
+  const [previewWarnings, setPreviewWarnings] = useState([]);
   const [currentReuploadId, setCurrentReuploadId] = useState(null);
   
   const fileInputRef = useRef(null);
@@ -104,6 +105,7 @@ export const useSchedule = () => {
 
       setPreviewData(res.data.previewData || []);
       setPreviewErrors(res.data.errors || []);
+      setPreviewWarnings(res.data.warnings || []);
       setIsPreviewModalOpen(true);
 
     } catch (error) {
@@ -175,7 +177,7 @@ export const useSchedule = () => {
   return {
     schedules, isLoading,
     isMoveModalOpen, setIsMoveModalOpen, moveRoomData, setMoveRoomData, openMoveModal, handleMoveRoom,
-    isPreviewModalOpen, setIsPreviewModalOpen, isUploading, previewData, previewErrors, fileInputRef,
+    isPreviewModalOpen, setIsPreviewModalOpen, isUploading, previewData, previewErrors, previewWarnings, fileInputRef,
     handleDelete, triggerFileInput, handleFileChange, handleConfirmReupload,
     fetchSubjects, editSubjectSchedule, deleteSubjectSchedule
   };

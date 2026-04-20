@@ -41,6 +41,7 @@ const ScheduleManagement = () => {
     isUploading,
     previewData,
     previewErrors,
+    previewWarnings,
     fileInputRef,
     handleDelete,
     triggerFileInput,
@@ -855,7 +856,7 @@ const ScheduleManagement = () => {
             <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[#302782] dark:text-[#B2BB1E]">
               ตรวจสอบข้อมูลก่อนอัปเดต
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6">
+            <div className={`grid grid-cols-1 gap-4 mb-4 sm:mb-6 ${previewWarnings?.length > 0 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
               <div className="bg-green-50 dark:bg-green-900/20 p-4 sm:p-5 rounded-xl border border-green-200 dark:border-green-800 flex items-center gap-4">
                 <CheckCircle className="text-green-500 w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" />
                 <div>
@@ -867,6 +868,21 @@ const ScheduleManagement = () => {
                   </p>
                 </div>
               </div>
+
+              {previewWarnings?.length > 0 && (
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 sm:p-5 rounded-xl border border-yellow-200 dark:border-yellow-800 flex items-center gap-4">
+                  <AlertCircle className="text-yellow-500 w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-yellow-800 dark:text-yellow-400">
+                      พบข้อสังเกต
+                    </p>
+                    <p className="text-2xl sm:text-3xl font-bold text-yellow-700 dark:text-yellow-500">
+                      {previewWarnings.length}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div
                 className={`p-4 sm:p-5 rounded-xl border flex items-center gap-4 ${previewErrors.length > 0 ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800" : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600"}`}
               >
@@ -888,6 +904,27 @@ const ScheduleManagement = () => {
               </div>
             </div>
 
+            {/* ส่วนแสดงรายการข้อสังเกต (Warnings) */}
+            {previewWarnings?.length > 0 && (
+              <div className="mb-4 sm:mb-6 border border-yellow-200 dark:border-yellow-800 rounded-xl overflow-hidden bg-yellow-50/50 dark:bg-yellow-900/10">
+                <div className="bg-yellow-100 dark:bg-yellow-900/30 px-4 py-3 border-b border-yellow-200 dark:border-yellow-800 font-bold text-sm text-yellow-800 dark:text-yellow-400 flex items-center gap-2">
+                  <AlertCircle size={16} /> รายละเอียดข้อสังเกต (ระบบจัดการให้แล้ว)
+                </div>
+                <div className="max-h-48 overflow-y-auto p-3">
+                  <ul className="space-y-2">
+                    {previewWarnings.map((warn, idx) => (
+                      <li key={idx} className="text-sm text-yellow-700 dark:text-yellow-400 bg-white dark:bg-gray-800 p-3 rounded-lg border border-yellow-100 dark:border-yellow-800/50 shadow-sm flex items-start gap-2.5">
+                        <AlertCircle size={16} className="mt-0.5 flex-shrink-0 text-yellow-500" />
+                        <div>
+                          <span className="font-bold">วิชาที่ {warn.row || '-'}:</span> {warn.message || 'พบข้อสังเกตบางอย่าง'}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+
             {/* ส่วนแสดงรายการข้อผิดพลาด */}
             {previewErrors.length > 0 && (
               <div className="mb-4 sm:mb-6 border border-red-200 dark:border-red-800 rounded-xl overflow-hidden bg-red-50/50 dark:bg-red-900/10">
@@ -900,7 +937,7 @@ const ScheduleManagement = () => {
                       <li key={idx} className="text-sm text-red-700 dark:text-red-400 bg-white dark:bg-gray-800 p-3 rounded-lg border border-red-100 dark:border-red-800/50 shadow-sm flex items-start gap-2.5">
                         <X size={16} className="mt-0.5 flex-shrink-0 text-red-500" />
                         <div>
-                          <span className="font-bold">แถวที่ {err.row || '-'}:</span> {err.message || 'ข้อผิดพลาดไม่ทราบสาเหตุ'}
+                          <span className="font-bold">วิชาที่ {err.row || '-'}:</span> {err.message || 'ข้อผิดพลาดไม่ทราบสาเหตุ'}
                         </div>
                       </li>
                     ))}
