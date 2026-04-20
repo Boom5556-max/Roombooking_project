@@ -20,6 +20,7 @@ import {
   Calendar,
   Hash,
   ArrowRight,
+  ArrowRightLeft,
 } from "lucide-react";
 import ActionModal from "../components/common/ActionModal";
 import PageReveal from "../components/common/PageReveal";
@@ -29,10 +30,12 @@ const ScheduleManagement = () => {
   const {
     schedules,
     isLoading,
-    isEditModalOpen,
-    setIsEditModalOpen,
-    editingSchedule,
-    setEditingSchedule,
+    isMoveModalOpen,
+    setIsMoveModalOpen,
+    moveRoomData,
+    setMoveRoomData,
+    openMoveModal,
+    handleMoveRoom,
     isPreviewModalOpen,
     setIsPreviewModalOpen,
     isUploading,
@@ -40,8 +43,6 @@ const ScheduleManagement = () => {
     previewErrors,
     fileInputRef,
     handleDelete,
-    openEditModal,
-    handleSaveEdit,
     triggerFileInput,
     handleFileChange,
     handleConfirmReupload,
@@ -52,9 +53,9 @@ const ScheduleManagement = () => {
   const { rooms: allRooms } = useRooms();
 
   // State สำหรับ Dropdown รายวิชา
-  const [expandedRow, setExpandedRow] = useState(null); // unique_schedules ของแถวที่ขยายอยู่
-  const [subjectsMap, setSubjectsMap] = useState({}); // cache: { [unique_schedules]: subjects[] }
-  const [loadingSubjects, setLoadingSubjects] = useState(null); // id ที่กำลังโหลดอยู่
+  const [expandedRow, setExpandedRow] = useState(null); // room_id ของแถวที่ขยายอยู่
+  const [subjectsMap, setSubjectsMap] = useState({}); // cache: { [room_id]: subjects[] }
+  const [loadingSubjects, setLoadingSubjects] = useState(null); // room_id ที่กำลังโหลดอยู่
 
   const toggleSubjects = async (id) => {
     // ถ้ากดซ้ำ -> ปิด
@@ -154,11 +155,13 @@ const ScheduleManagement = () => {
   const openSubjectEditModal = (scheduleId, subj) => {
     setSubjectEditScheduleId(scheduleId);
     setEditingSubjectData({
+      old_course_code: subj.course_code || "",
       old_subject_name: subj.subject_name,
       old_sec: String(subj.sec),
+      course_code: subj.course_code || "",
       subject_name: subj.subject_name,
       sec: String(subj.sec),
-      room_id: subj.room_id || "",
+      room_id: subj.room_id || scheduleId,
       date: formatDateForInput(subj.date),
       start_time: subj.start_time || "",
       end_time: subj.end_time || "",
@@ -179,17 +182,34 @@ const ScheduleManagement = () => {
         force_cancel: force_cancel,
       });
       setIsSubjectEditModalOpen(false);
-      // ล้าง Cache แล้วโหลดข้อมูลรายวิชาใหม่
-      setLoadingSubjects(subjectEditScheduleId);
+
+      // หลังแก้ไข ห้องอาจเปลี่ยนไป -> reload ทั้งห้องเดิมและห้องใหม่
+      const oldRoomId = subjectEditScheduleId;
+      const newRoomId = editingSubjectData.room_id;
+
+      // reload ห้องเดิม
+      setLoadingSubjects(oldRoomId);
       try {
-        const updated = await fetchSubjects(subjectEditScheduleId);
+        const updatedOld = await fetchSubjects(oldRoomId);
         setSubjectsMap((prev) => ({
           ...prev,
-          [subjectEditScheduleId]: updated,
+          [oldRoomId]: updatedOld,
         }));
       } finally {
         setLoadingSubjects(null);
       }
+
+      // ถ้าย้ายไปห้องอื่น -> reload ห้องใหม่ด้วย
+      if (newRoomId && newRoomId !== oldRoomId) {
+        try {
+          const updatedNew = await fetchSubjects(newRoomId);
+          setSubjectsMap((prev) => ({
+            ...prev,
+            [newRoomId]: updatedNew,
+          }));
+        } catch { /* ห้องใหม่อาจยังไม่เคยถูกขยาย ไม่ต้อง error */ }
+      }
+
       showResultAlert(true, "แก้ไขรายวิชาสำเร็จ", "");
     } catch (error) {
       const isConflict =
@@ -254,7 +274,7 @@ const ScheduleManagement = () => {
       onConfirm: async () => {
         closeAlert();
         try {
-          await deleteSubjectSchedule(scheduleId, subj.subject_name, subj.sec);
+          const res = await deleteSubjectSchedule(scheduleId, subj.course_code, subj.subject_name, subj.sec);
           // รีโหลดรายวิชาหลังลบ
           setLoadingSubjects(scheduleId);
           try {
@@ -263,7 +283,7 @@ const ScheduleManagement = () => {
           } finally {
             setLoadingSubjects(null);
           }
-          showResultAlert(true, "ลบรายวิชาสำเร็จ", "");
+          showResultAlert(true, res?.message || "ลบรายวิชาสำเร็จ", "");
         } catch (error) {
           showResultAlert(
             false,
@@ -303,11 +323,11 @@ const ScheduleManagement = () => {
     });
   };
 
-  // จัดการเวลากดลบ
-  const confirmDelete = (id) => {
+  // จัดการเวลากดลบ (ลบตารางเรียนทั้งหมดของ room_id นั้น)
+  const confirmDelete = (roomId) => {
     setAlertConfig({
       isOpen: true,
-      title: "ยืนยันการลบตารางเรียน?",
+      title: `ยืนยันการลบตารางเรียนของห้อง ${roomId}?`,
       icon: <Trash2 size={50} />,
       variant: "danger",
       showConfirm: true,
@@ -316,34 +336,42 @@ const ScheduleManagement = () => {
       onConfirm: async () => {
         closeAlert();
         try {
-          const res = await handleDelete(id);
+          const res = await handleDelete(roomId);
           const isSuccess = res?.success !== false;
           showResultAlert(
             isSuccess,
-            "ลบข้อมูลสำเร็จ",
-            "เกิดข้อผิดพลาดในการลบข้อมูล",
+            res?.message || "ลบข้อมูลสำเร็จ",
+            res?.message || "เกิดข้อผิดพลาดในการลบข้อมูล",
           );
         } catch (error) {
-          showResultAlert(false, "", "เกิดข้อผิดพลาด ไม่สามารถลบข้อมูลได้");
+          const errMsg = error.response?.data?.message || "เกิดข้อผิดพลาด ไม่สามารถลบข้อมูลได้";
+          showResultAlert(false, "", errMsg);
         }
       },
     });
   };
 
-  // จัดการเวลาบันทึกการแก้ไข
-  const onSaveEdit = async (e) => {
-    e.preventDefault();
+  // ย้ายห้อง: ส่ง API ย้ายตารางเรียนไปห้องใหม่
+  const [isMoving, setIsMoving] = useState(false);
+  const onMoveRoom = async () => {
+    if (!moveRoomData.newRoomId) {
+      showResultAlert(false, "", "กรุณาเลือกห้องที่ต้องการย้ายไป");
+      return;
+    }
+    setIsMoving(true);
     try {
-      const res = await handleSaveEdit(e);
-      setIsEditModalOpen(false);
-      const isSuccess = res?.success !== false;
+      const res = await handleMoveRoom();
+      setIsMoveModalOpen(false);
       showResultAlert(
-        isSuccess,
-        "บันทึกการแก้ไขสำเร็จ",
-        "เกิดข้อผิดพลาดในการบันทึก",
+        true,
+        res?.message || `ย้ายห้องสำเร็จ (${res?.updatedRows || 0} รายการ)`,
+        "",
       );
     } catch (error) {
-      showResultAlert(false, "", "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+      const errMsg = error.response?.data?.message || "เกิดข้อผิดพลาดในการย้ายห้อง";
+      showResultAlert(false, "", errMsg);
+    } finally {
+      setIsMoving(false);
     }
   };
 
@@ -448,16 +476,7 @@ const ScheduleManagement = () => {
                 <thead className="bg-gray-50 dark:bg-gray-700/50 text-[#302782] dark:text-[#B2BB1E] uppercase text-xs font-bold tracking-wider">
                   <tr>
                     <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
-                      อัปโหลดไฟล์ล่าสุด
-                    </th>
-                    <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
-                      ภาควิชา
-                    </th>
-                    <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
-                      ชั้นปี
-                    </th>
-                    <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
-                      ภาค
+                      หมายเลขห้อง
                     </th>
                     <th className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-center">
                       จัดการ
@@ -468,7 +487,7 @@ const ScheduleManagement = () => {
                   {schedules.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="5"
+                        colSpan="2"
                         className="text-center py-8 text-black dark:text-white"
                       >
                         ไม่มีประวัติตารางเรียนในระบบ
@@ -476,16 +495,16 @@ const ScheduleManagement = () => {
                     </tr>
                   ) : (
                     schedules.map((schedule) => {
-                      const id = schedule.unique_schedules;
-                      const isExpanded = expandedRow === id;
-                      const subjects = subjectsMap[id] || [];
-                      const isLoadingThis = loadingSubjects === id;
+                      const roomId = schedule.room_id;
+                      const isExpanded = expandedRow === roomId;
+                      const subjects = subjectsMap[roomId] || [];
+                      const isLoadingThis = loadingSubjects === roomId;
 
                       return (
-                        <React.Fragment key={id}>
+                        <React.Fragment key={roomId}>
                           {/* แถวหลัก */}
                           <tr
-                            onClick={() => toggleSubjects(id)}
+                            onClick={() => toggleSubjects(roomId)}
                             className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer select-none"
                           >
                             <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
@@ -495,17 +514,9 @@ const ScheduleManagement = () => {
                                 >
                                   <ChevronDown size={16} />
                                 </span>
-                                {formatDate(schedule.date_create)}
+                                <MapPin size={16} className="text-[#302782] dark:text-[#B2BB1E]" />
+                                <span className="font-semibold">ห้อง {roomId}</span>
                               </div>
-                            </td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
-                              {schedule.department}
-                            </td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
-                              ปี {schedule.study_year}
-                            </td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
-                              {schedule.program_type}
                             </td>
                             <td
                               className="px-4 py-3 sm:px-6 sm:py-4 align-middle"
@@ -513,7 +524,7 @@ const ScheduleManagement = () => {
                             >
                               <div className="flex justify-center gap-2">
                                 <button
-                                  onClick={() => triggerFileInput(id)}
+                                  onClick={() => triggerFileInput(roomId)}
                                   disabled={isUploading}
                                   className="flex items-center justify-center gap-1.5 bg-[#302782] hover:bg-[#4338ca] text-white px-3 py-2 rounded-lg text-xs font-medium transition-all disabled:opacity-50 shadow-sm hover:-translate-y-px active:scale-[0.98] w-full sm:w-auto"
                                   title="อัปโหลดไฟล์ Excel ทับข้อมูลเดิม"
@@ -524,14 +535,14 @@ const ScheduleManagement = () => {
                                   </span>
                                 </button>
                                 <button
-                                  onClick={() => openEditModal(schedule)}
+                                  onClick={() => openMoveModal(roomId)}
                                   className="flex items-center justify-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all shadow-sm shrink-0"
-                                  title="แก้ไขรายละเอียด"
+                                  title="ย้ายไปห้องอื่น"
                                 >
-                                  <Edit2 size={16} />
+                                  <ArrowRightLeft size={16} />
                                 </button>
                                 <button
-                                  onClick={() => confirmDelete(id)}
+                                  onClick={() => confirmDelete(roomId)}
                                   className="flex items-center justify-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all shadow-sm shrink-0"
                                   title="ลบข้อมูลชุดนี้"
                                 >
@@ -545,13 +556,13 @@ const ScheduleManagement = () => {
                           {isExpanded && (
                             <tr>
                               <td
-                                colSpan="5"
+                                colSpan="2"
                                 className="px-0 py-0 bg-indigo-50/60 dark:bg-indigo-950/30 border-b border-indigo-100 dark:border-indigo-900"
                               >
                                 <div className="px-6 py-4">
                                   <div className="flex items-center gap-2 mb-3 text-[#302782] dark:text-[#B2BB1E] font-semibold text-sm">
                                     <BookOpen size={16} />
-                                    รายวิชาในชุดนี้
+                                    รายวิชาในห้อง {roomId}
                                   </div>
 
                                   {isLoadingThis ? (
@@ -566,13 +577,16 @@ const ScheduleManagement = () => {
                                     </div>
                                   ) : subjects.length === 0 ? (
                                     <p className="text-center text-sm text-black dark:text-white py-4">
-                                      ไม่พบรายวิชาในชุดนี้
+                                      ไม่พบรายวิชาในห้องนี้
                                     </p>
                                   ) : (
                                     <div className="overflow-x-auto rounded-xl border border-indigo-200 dark:border-indigo-800 text-sm">
                                       <table className="min-w-full text-sm text-left">
                                         <thead className="bg-[#302782] text-white">
                                           <tr>
+                                            <th className="px-4 py-3 font-semibold whitespace-nowrap">
+                                              รหัสวิชา
+                                            </th>
                                             <th className="px-4 py-3 font-semibold whitespace-nowrap">
                                               วิชา
                                             </th>
@@ -585,9 +599,6 @@ const ScheduleManagement = () => {
                                             <th className="px-4 py-3 font-semibold whitespace-nowrap">
                                               ช่วงเวลา
                                             </th>
-                                            <th className="px-4 py-3 font-semibold whitespace-nowrap">
-                                              ห้อง
-                                            </th>
                                             <th className="px-4 py-3 font-semibold whitespace-nowrap text-center"></th>
                                           </tr>
                                         </thead>
@@ -597,6 +608,11 @@ const ScheduleManagement = () => {
                                               key={idx}
                                               className="bg-white dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
                                             >
+                                              <td
+                                                className="px-4 py-3 font-mono text-xs text-[#302782] dark:text-[#B2BB1E] whitespace-nowrap"
+                                              >
+                                                {subj.course_code || "-"}
+                                              </td>
                                               <td
                                                 className="px-4 py-3 font-medium text-black dark:text-white whitespace-nowrap max-w-[240px] truncate"
                                                 title={subj.subject_name}
@@ -615,16 +631,13 @@ const ScheduleManagement = () => {
                                                 {subj.start_time} –{" "}
                                                 {subj.end_time}
                                               </td>
-                                              <td className="px-4 py-3 text-black dark:text-white whitespace-nowrap">
-                                                {subj.room_id || "-"}
-                                              </td>
                                               <td className="px-4 py-3 text-center">
                                                 <div className="flex items-center justify-center gap-1.5">
                                                   <button
                                                     onClick={(e) => {
                                                       e.stopPropagation();
                                                       openSubjectEditModal(
-                                                        id,
+                                                        roomId,
                                                         subj,
                                                       );
                                                     }}
@@ -637,7 +650,7 @@ const ScheduleManagement = () => {
                                                     onClick={(e) => {
                                                       e.stopPropagation();
                                                       confirmDeleteSubject(
-                                                        id,
+                                                        roomId,
                                                         subj,
                                                       );
                                                     }}
@@ -674,28 +687,26 @@ const ScheduleManagement = () => {
                 </div>
               ) : (
                 schedules.map((schedule) => {
-                  const id = schedule.unique_schedules;
-                  const isExpanded = expandedRow === id;
-                  const subjects = subjectsMap[id] || [];
-                  const isLoadingThis = loadingSubjects === id;
+                  const roomId = schedule.room_id;
+                  const isExpanded = expandedRow === roomId;
+                  const subjects = subjectsMap[roomId] || [];
+                  const isLoadingThis = loadingSubjects === roomId;
 
                   return (
                     <div
-                      key={id}
+                      key={roomId}
                       className="flex flex-col bg-white dark:bg-gray-800"
                     >
-                      {/* Card Header (Main Info) */}
+                      {/* Card Header */}
                       <div
-                        onClick={() => toggleSubjects(id)}
+                        onClick={() => toggleSubjects(roomId)}
                         className="p-5 flex flex-col gap-4 active:bg-gray-50 dark:active:bg-gray-700 transition-colors cursor-pointer"
                       >
-                        <div className="flex justify-between items-start">
-                          <div className="flex flex-col gap-1">
-                            <span className="text-xs font-bold text-[#302782] dark:text-[#B2BB1E] uppercase tracking-wider">
-                              อัปโหลดล่าสุด
-                            </span>
-                            <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                              {formatDate(schedule.date_create)}
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-3">
+                            <MapPin size={18} className="text-[#302782] dark:text-[#B2BB1E]" />
+                            <span className="text-base font-bold text-gray-900 dark:text-white">
+                              ห้อง {roomId}
                             </span>
                           </div>
                           <span
@@ -705,45 +716,26 @@ const ScheduleManagement = () => {
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-y-3 gap-x-4">
-                          <div className="flex flex-col">
-                            <span className="text-[11px] font-bold text-gray-400 uppercase">
-                              ภาควิชา
-                            </span>
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 line-clamp-1">
-                              {schedule.department}
-                            </span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[11px] font-bold text-gray-400 uppercase">
-                              ชั้นปี / ภาค
-                            </span>
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                              ปี {schedule.study_year} ({schedule.program_type})
-                            </span>
-                          </div>
-                        </div>
-
                         {/* Action Buttons in Card */}
                         <div
                           className="flex gap-2 pt-1"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <button
-                            onClick={() => triggerFileInput(id)}
+                            onClick={() => triggerFileInput(roomId)}
                             disabled={isUploading}
                             className="flex-1 flex items-center justify-center gap-2 bg-[#302782] hover:bg-[#4338ca] text-white px-4 py-3 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
                           >
                             <UploadCloud size={16} /> อัปโหลดทับ
                           </button>
                           <button
-                            onClick={() => openEditModal(schedule)}
+                            onClick={() => openMoveModal(roomId)}
                             className="p-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl shadow-sm active:scale-95"
                           >
-                            <Edit2 size={18} />
+                            <ArrowRightLeft size={18} />
                           </button>
                           <button
-                            onClick={() => confirmDelete(id)}
+                            onClick={() => confirmDelete(roomId)}
                             className="p-3 bg-red-500 hover:bg-red-600 text-white rounded-xl shadow-sm active:scale-95"
                           >
                             <Trash2 size={18} />
@@ -757,7 +749,7 @@ const ScheduleManagement = () => {
                           <div className="p-4 sm:p-5">
                             <div className="flex items-center gap-2 mb-4 text-[#302782] dark:text-[#B2BB1E] font-bold text-sm">
                               <BookOpen size={16} />
-                              รายวิชาในชุดนี้ ({subjects.length})
+                              รายวิชาในห้อง {roomId} ({subjects.length})
                             </div>
 
                             {isLoadingThis ? (
@@ -772,7 +764,7 @@ const ScheduleManagement = () => {
                               </div>
                             ) : subjects.length === 0 ? (
                               <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center text-sm text-gray-400 border border-dashed border-gray-200 dark:border-gray-700">
-                                ไม่พบรายวิชาในชุดนี้
+                                ไม่พบรายวิชาในห้องนี้
                               </div>
                             ) : (
                               <div className="space-y-3">
@@ -788,6 +780,11 @@ const ScheduleManagement = () => {
                                             {subj.subject_name}
                                           </h5>
                                           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                            {subj.course_code && (
+                                              <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-[11px] font-mono font-bold text-gray-600 dark:text-gray-300">
+                                                {subj.course_code}
+                                              </span>
+                                            )}
                                             <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/40 rounded text-[11px] font-bold text-[#302782] dark:text-[#B2BB1E]">
                                               Sec: {subj.sec}
                                             </span>
@@ -804,7 +801,7 @@ const ScheduleManagement = () => {
                                         >
                                           <button
                                             onClick={() =>
-                                              openSubjectEditModal(id, subj)
+                                              openSubjectEditModal(roomId, subj)
                                             }
                                             className="w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 flex items-center justify-center hover:bg-yellow-500 hover:text-white transition-all"
                                           >
@@ -812,7 +809,7 @@ const ScheduleManagement = () => {
                                           </button>
                                           <button
                                             onClick={() =>
-                                              confirmDeleteSubject(id, subj)
+                                              confirmDeleteSubject(roomId, subj)
                                             }
                                             className="w-8 h-8 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
                                           >
@@ -830,14 +827,6 @@ const ScheduleManagement = () => {
                                             {subj.teacher_name
                                               ? `${subj.teacher_name} ${subj.teacher_surname}`
                                               : "-"}
-                                          </span>
-                                        </div>
-                                        <div className="flex flex-col">
-                                          <span className="text-gray-400 font-bold uppercase text-[10px]">
-                                            ห้องเรียน
-                                          </span>
-                                          <span className="font-medium text-gray-700 dark:text-gray-300">
-                                            {subj.room_id || "-"}
                                           </span>
                                         </div>
                                       </div>
@@ -859,82 +848,7 @@ const ScheduleManagement = () => {
       </PageReveal>
 
       {/* Modals remain outside for higher z-index if needed, or inside PageReveal depending on preference */}
-      {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4 font-sans">
-          <div className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all overflow-y-auto max-h-[90vh]">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[#302782] dark:text-[#B2BB1E]">
-              แก้ไขรายละเอียด
-            </h2>
-            <form onSubmit={onSaveEdit}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1 text-black dark:text-white">
-                  ภาควิชา
-                </label>
-                <input
-                  required
-                  className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all"
-                  value={editingSchedule.department}
-                  onChange={(e) =>
-                    setEditingSchedule({
-                      ...editingSchedule,
-                      department: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1 text-black dark:text-white">
-                  ชั้นปี
-                </label>
-                <input
-                  required
-                  className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all"
-                  value={editingSchedule.study_year}
-                  onChange={(e) =>
-                    setEditingSchedule({
-                      ...editingSchedule,
-                      study_year: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="mb-6 sm:mb-8">
-                <label className="block text-sm font-medium mb-1 text-black dark:text-white">
-                  ภาค
-                </label>
-                <input
-                  required
-                  className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-black dark:text-white p-3 rounded-xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all"
-                  value={editingSchedule.program_type}
-                  onChange={(e) =>
-                    setEditingSchedule({
-                      ...editingSchedule,
-                      program_type: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 w-full">
-                <button
-                  type="button"
-                  onClick={() => setIsEditModalOpen(false)}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
-                >
-                  ยกเลิก
-                </button>
-                <button
-                  type="submit"
-                  className="w-full sm:w-auto px-5 py-2.5 bg-[#B2BB1E] text-white rounded-xl hover:bg-[#9fa719] transition-colors font-medium shadow-md"
-                >
-                  บันทึกข้อมูล
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ... Other modals should be similar ... */}
+      {/* Preview Modal & Subject Edit Modal */}
       {isPreviewModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4 font-sans">
           <div className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform transition-all">
@@ -973,6 +887,28 @@ const ScheduleManagement = () => {
                 </div>
               </div>
             </div>
+
+            {/* ส่วนแสดงรายการข้อผิดพลาด */}
+            {previewErrors.length > 0 && (
+              <div className="mb-4 sm:mb-6 border border-red-200 dark:border-red-800 rounded-xl overflow-hidden bg-red-50/50 dark:bg-red-900/10">
+                <div className="bg-red-100 dark:bg-red-900/30 px-4 py-3 border-b border-red-200 dark:border-red-800 font-bold text-sm text-red-800 dark:text-red-400 flex items-center gap-2">
+                  <AlertCircle size={16} /> รายละเอียดข้อผิดพลาด
+                </div>
+                <div className="max-h-48 overflow-y-auto p-3">
+                  <ul className="space-y-2">
+                    {previewErrors.map((err, idx) => (
+                      <li key={idx} className="text-sm text-red-700 dark:text-red-400 bg-white dark:bg-gray-800 p-3 rounded-lg border border-red-100 dark:border-red-800/50 shadow-sm flex items-start gap-2.5">
+                        <X size={16} className="mt-0.5 flex-shrink-0 text-red-500" />
+                        <div>
+                          <span className="font-bold">แถวที่ {err.row || '-'}:</span> {err.message || 'ข้อผิดพลาดไม่ทราบสาเหตุ'}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+
             <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 w-full border-t border-gray-100 dark:border-gray-700 pt-4">
               <button
                 onClick={() => setIsPreviewModalOpen(false)}
@@ -985,6 +921,93 @@ const ScheduleManagement = () => {
                 className="w-full sm:w-auto px-5 py-2.5 bg-[#B2BB1E] text-white rounded-xl hover:bg-[#9fa719] transition-colors font-medium shadow-md"
               >
                 ยืนยันอัปเดต
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal ย้ายห้อง */}
+      {isMoveModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4 font-sans">
+          <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-md transform transition-all overflow-y-auto max-h-[90vh] border border-white/20">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 bg-yellow-500/10 rounded-2xl text-yellow-500">
+                <ArrowRightLeft size={28} />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-[#302782] dark:text-[#B2BB1E]">
+                  ย้ายตารางเรียน
+                </h2>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  ย้ายรายวิชาทั้งหมดไปยังห้องใหม่
+                </p>
+              </div>
+            </div>
+
+            {/* Visual: From → To */}
+            <div className="flex items-center gap-3 mb-6 bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-4">
+              <div className="flex-1 text-center">
+                <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">ห้องเดิม</p>
+                <p className="text-lg font-black text-[#302782] dark:text-white">{moveRoomData.oldRoomId}</p>
+              </div>
+              <ArrowRight size={20} className="text-[#B2BB1E] shrink-0" />
+              <div className="flex-1 text-center">
+                <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">ห้องใหม่</p>
+                <p className="text-lg font-black text-[#302782] dark:text-white">
+                  {moveRoomData.newRoomId || "—"}
+                </p>
+              </div>
+            </div>
+
+            {/* Select new room */}
+            <div className="mb-6">
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-2 ml-1 flex items-center gap-1.5">
+                <MapPin size={14} /> เลือกห้องที่ต้องการย้ายไป
+              </label>
+              <select
+                value={moveRoomData.newRoomId}
+                onChange={(e) => setMoveRoomData((prev) => ({ ...prev, newRoomId: e.target.value }))}
+                className="w-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+              >
+                <option value="">-- เลือกห้องเรียน --</option>
+                {allRooms
+                  .filter((room) => room.room_id !== moveRoomData.oldRoomId)
+                  .map((room) => (
+                    <option key={room.room_id} value={room.room_id}>
+                      {room.room_id}{" "}
+                      {room.location ? `(${room.location})` : ""}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 w-full">
+              <button
+                type="button"
+                onClick={() => setIsMoveModalOpen(false)}
+                className="w-full sm:w-auto px-5 py-3 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-2xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-bold text-sm"
+              >
+                ยกเลิก
+              </button>
+              <button
+                onClick={onMoveRoom}
+                disabled={isMoving || !moveRoomData.newRoomId}
+                className="w-full sm:w-auto px-8 py-3 bg-[#B2BB1E] hover:bg-[#9fa719] disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-2xl transition-all font-bold text-sm shadow-lg shadow-lime-500/20 active:scale-95 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+              >
+                {isMoving ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    กำลังย้าย...
+                  </>
+                ) : (
+                  <>
+                    <ArrowRightLeft size={18} />
+                    ยืนยันย้ายห้อง
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -1072,6 +1095,20 @@ const ScheduleManagement = () => {
                   ข้อมูลรายวิชา
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1 flex items-center gap-1">
+                      <Hash size={12} /> รหัสวิชา
+                    </label>
+                    <input
+                      required
+                      value={editingSubjectData.course_code || ""}
+                      onChange={(e) =>
+                        updateSubjectField("course_code", e.target.value)
+                      }
+                      placeholder="เช่น CS101"
+                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all font-mono"
+                    />
+                  </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1">
                       ชื่อวิชา
@@ -1085,6 +1122,8 @@ const ScheduleManagement = () => {
                       className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all"
                     />
                   </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                   <div>
                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5 ml-1">
                       Section

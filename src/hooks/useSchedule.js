@@ -2,12 +2,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../api/axios.js'; 
 
 export const useSchedule = () => {
+  // เก็บรายการ room_id ที่ไม่ซ้ำกัน เช่น [{ room_id: '26504' }, { room_id: '26512' }]
   const [schedules, setSchedules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // State สำหรับ Modal แก้ไข Header
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingSchedule, setEditingSchedule] = useState({ id: '', department: '', study_year: '', program_type: '' });
 
   // State สำหรับระบบ Re-upload
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
@@ -47,52 +44,45 @@ export const useSchedule = () => {
     fetchSchedules().catch(() => {});
   }, [fetchSchedules]);
 
-  // 2. DELETE: ลบข้อมูลตารางเรียน
-  const handleDelete = async (id) => {
+  // 2. DELETE: ลบข้อมูลตารางเรียนทั้งหมดของ room_id นั้น
+  const handleDelete = async (roomId) => {
     try {
-      const res = await api.delete(`/schedules/${id}`);
+      const res = await api.delete(`/schedules/${roomId}`);
       if (res.data.success) {
         await fetchSchedules();
-        return { success: true }; 
+        return { success: true, message: res.data.message }; 
       }
-      return { success: false };
+      return { success: false, message: res.data.message };
     } catch (error) {
       console.error('Delete Error:', error);
       throw error; 
     }
   };
 
-  // 3. PUT: แก้ไขข้อมูล Header
-  const openEditModal = (schedule) => {
-    setEditingSchedule({
-      id: schedule.unique_schedules,
-      department: schedule.department,
-      study_year: schedule.study_year,
-      program_type: schedule.program_type,
-    });
-    setIsEditModalOpen(true);
+  // 3. PUT: ย้ายตารางเรียนทั้งหมดจากห้องเดิมไปห้องใหม่
+  const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+  const [moveRoomData, setMoveRoomData] = useState({ oldRoomId: '', newRoomId: '' });
+
+  const openMoveModal = (oldRoomId) => {
+    setMoveRoomData({ oldRoomId, newRoomId: '' });
+    setIsMoveModalOpen(true);
   };
 
-  const handleSaveEdit = async (e) => {
+  const handleMoveRoom = async () => {
     try {
-      const payload = {
-        department: editingSchedule.department,
-        study_year: editingSchedule.study_year,
-        program_type: editingSchedule.program_type,
-      };
-      const res = await api.put(`/schedules/${editingSchedule.id}`, payload);
-      
+      const res = await api.put(`/schedules/${moveRoomData.oldRoomId}`, {
+        new_room_id: moveRoomData.newRoomId
+      });
       if (res.data.success) {
         await fetchSchedules();
-        return { success: true }; 
+        return { success: true, message: res.data.message, updatedRows: res.data.updatedRows };
       }
-      return { success: false };
+      return { success: false, message: res.data.message };
     } catch (error) {
-      console.error('Edit Error:', error);
-      throw error; 
+      console.error('Move Room Error:', error);
+      throw error;
     }
   };
-
   // 4. POST: เลือกไฟล์ใหม่และส่งไป Preview
   const triggerFileInput = (id) => {
     setCurrentReuploadId(id);
@@ -147,10 +137,10 @@ export const useSchedule = () => {
     }
   };
 
-  // 6. GET: ดึงรายวิชาของชุดตารางเรียนนั้น
-  const fetchSubjects = async (unique_schedules) => {
+  // 6. GET: ดึงรายวิชาที่ไม่ซ้ำกันในห้องนั้น (โดยใช้ room_id)
+  const fetchSubjects = async (roomId) => {
     try {
-      const res = await api.get(`/schedules/subjects/${unique_schedules}`);
+      const res = await api.get(`/schedules/subjects/${roomId}`);
       return res.data.subjects || [];
     } catch (error) {
       console.error('Fetch Subjects Error:', error);
@@ -158,24 +148,24 @@ export const useSchedule = () => {
     }
   };
 
-  // 7. PATCH: แก้ไขข้อมูลรายวิชาในชุดตาราง
-  const editSubjectSchedule = async (unique_schedules, payload) => {
+  // 7. PATCH: แก้ไขข้อมูลรายวิชา (ส่ง room_id เดิมเป็น URL param)
+  const editSubjectSchedule = async (oldRoomId, payload) => {
     try {
-      const res = await api.patch(`/schedules/editSubjects/${unique_schedules}`, payload);
-      return { success: true, message: res.data.message };
+      const res = await api.patch(`/schedules/editSubjects/${oldRoomId}`, payload);
+      return { success: true, message: res.data.message, canceled_conflicts: res.data.canceled_conflicts };
     } catch (error) {
       console.error('Edit Subject Schedule Error:', error);
       throw error;
     }
   };
 
-  // 8. DELETE: ลบรายวิชาออกจากชุดตาราง
-  const deleteSubjectSchedule = async (unique_schedules, subject_name, sec) => {
+  // 8. DELETE: ลบรายวิชาออกจากห้อง (ต้องส่ง course_code, subject_name, sec)
+  const deleteSubjectSchedule = async (roomId, course_code, subject_name, sec) => {
     try {
-      const res = await api.delete(`/schedules/deleteSubjects/${unique_schedules}`, {
-        data: { subject_name, sec }
+      const res = await api.delete(`/schedules/deleteSubjects/${roomId}`, {
+        data: { course_code, subject_name, sec }
       });
-      return { success: true, message: res.data.message };
+      return { success: true, message: res.data.message, deleted_count: res.data.deleted_count };
     } catch (error) {
       console.error('Delete Subject Schedule Error:', error);
       throw error;
@@ -183,9 +173,10 @@ export const useSchedule = () => {
   };
 
   return {
-    schedules, isLoading, isEditModalOpen, setIsEditModalOpen, editingSchedule, setEditingSchedule,
+    schedules, isLoading,
+    isMoveModalOpen, setIsMoveModalOpen, moveRoomData, setMoveRoomData, openMoveModal, handleMoveRoom,
     isPreviewModalOpen, setIsPreviewModalOpen, isUploading, previewData, previewErrors, fileInputRef,
-    handleDelete, openEditModal, handleSaveEdit, triggerFileInput, handleFileChange, handleConfirmReupload,
+    handleDelete, triggerFileInput, handleFileChange, handleConfirmReupload,
     fetchSubjects, editSubjectSchedule, deleteSubjectSchedule
   };
 };
