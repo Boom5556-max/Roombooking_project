@@ -29,8 +29,11 @@ export const formatCalendarEvents = (bookingsData, schedulesData, defaultRoomId 
     const isUploadItem = item.is_upload === 1 || item.is_upload === true || item.source === 'excel';
 
     const roomPrefix = (finalRoomName && finalRoomName !== "ไม่ระบุเลขห้อง" && !isRoomView) ? `${finalRoomName} ` : "";
+    const courseCodePrefix = item.course_code ? `${item.course_code} ` : "";
+    const prefix = type === "booking" ? roomPrefix : courseCodePrefix;
+    
     const originalTitle = type === "booking" ? (item.purpose || "จองใช้ห้อง") : (item.subject_name || "ตารางเรียนหลัก");
-    const displayTitle = isClosed ? `(งดใช้ห้อง) ${roomPrefix}${originalTitle}` : `${roomPrefix}${originalTitle}`;
+    const displayTitle = isClosed ? `(งดใช้ห้อง) ${prefix}${originalTitle}` : `${prefix}${originalTitle}`;
 
     const roomTheme = getRoomColor(finalRoomId);
     let finalBgColor = roomTheme.bg;
