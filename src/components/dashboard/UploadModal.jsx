@@ -22,6 +22,8 @@ const UploadModal = ({ isOpen, onClose }) => {
 
   const [validData, setValidData] = useState([]);
   const [invalidData, setInvalidData] = useState([]);
+  const [availableTerms, setAvailableTerms] = useState([]);
+  const [selectedTerm, setSelectedTerm] = useState("");
   const [summary, setSummary] = useState({ total: 0 });
   const [importResult, setImportResult] = useState(null);
   const [expandedSubject, setExpandedSubject] = useState(null);
@@ -41,6 +43,8 @@ const UploadModal = ({ isOpen, onClose }) => {
     setExpandedSubject(null);
     setExpandedError(null);
     setCriticalError(null);
+    setAvailableTerms([]);
+    setSelectedTerm("");
     onClose();
   };
 
@@ -52,7 +56,7 @@ const UploadModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleProcessFile = async (uploadedFile) => {
+  const handleProcessFile = async (uploadedFile, term = null) => {
     // ใช้ uploadedFile ที่รับมาจาก onFileChange โดยตรง
     if (!uploadedFile) {
       alert("กรุณาเลือกไฟล์ Excel ก่อนครับ");
@@ -63,7 +67,10 @@ const UploadModal = ({ isOpen, onClose }) => {
     
     // 1. สร้าง FormData และแนบแค่ไฟล์
     const formData = new FormData();
-    formData.append("file", uploadedFile); 
+    formData.append("file", uploadedFile);
+    if (term) {
+      formData.append("term", term);
+    }
 
     try {
       // 2. ยิง API โยนไฟล์ไปให้ Backend (Axios จะจัดการ Header Multipart และ Boundary ให้เองอัตโนมัติ)
@@ -71,6 +78,15 @@ const UploadModal = ({ isOpen, onClose }) => {
       const result = response.data;
 
       // 3. นำข้อมูลที่ Backend ตอบกลับมาใช้งานได้ทันที
+      if (result.require_term_selection) {
+        setAvailableTerms(result.available_terms || []);
+        if (result.available_terms?.length > 0) {
+          setSelectedTerm(result.available_terms[0].term);
+        }
+        setStep("select_term");
+        return;
+      }
+
       setValidData(result.previewData || []);
       setInvalidData(result.errors || []);
       setSummary({ total: result.total_rows_excel || 0 });
@@ -131,10 +147,12 @@ const UploadModal = ({ isOpen, onClose }) => {
             <header className="mb-4 sm:mb-6 pr-8">
               <h2 className="text-lg sm:text-xl font-bold text-[#302782] dark:text-white">
                 {step === "upload" && "นำเข้าตารางเรียน"}
+                {step === "select_term" && "เลือกเทอมการศึกษา"}
                 {step === "preview" && "ตรวจสอบความถูกต้อง"}
               </h2>
               <div className="flex items-center gap-2 mt-1">
                 <div className={`h-1.5 w-12 rounded-full ${step === 'upload' ? 'bg-[#302782]' : 'bg-gray-200'}`} />
+                <div className={`h-1.5 w-12 rounded-full ${step === 'select_term' ? 'bg-[#302782]' : 'bg-gray-200'}`} />
                 <div className={`h-1.5 w-12 rounded-full ${step === 'preview' ? 'bg-[#302782]' : 'bg-gray-200'}`} />
               </div>
             </header>
@@ -167,6 +185,41 @@ const UploadModal = ({ isOpen, onClose }) => {
                     </p>
                   </>
                 )}
+              </div>
+            )}
+
+            {/* STEP 1.5: Select Term */}
+            {step === "select_term" && (
+              <div className="flex flex-col items-center justify-center p-4 sm:p-8">
+                <AlertCircle size={48} className="text-[#302782] dark:text-[#B2BB1E] mb-4" />
+                <p className="text-sm font-bold text-center text-gray-800 dark:text-white mb-6">
+                  กรุณาเลือกเทอมที่ต้องการนำเข้าข้อมูลตารางเรียน
+                </p>
+                <div className="w-full max-w-xs relative mb-6">
+                  <select
+                    className="w-full appearance-none bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-[14px] px-4 py-3 pr-10 text-black dark:text-white font-bold outline-none focus:border-[#302782] dark:focus:border-[#B2BB1E] transition-colors"
+                    value={selectedTerm}
+                    onChange={(e) => setSelectedTerm(e.target.value)}
+                  >
+                    {availableTerms.map((t) => (
+                      <option key={t.term} value={t.term}>
+                        เทอม {t.term} ({t.start_date} ถึง {t.end_date})
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+                </div>
+                <div className="flex gap-3 w-full max-w-xs">
+                  <Button onClick={() => setStep("upload")} variant="danger" className="flex-1 py-3 rounded-[14px]">
+                    ยกเลิก
+                  </Button>
+                  <Button 
+                    onClick={() => handleProcessFile(file, selectedTerm)} 
+                    className="flex-1 bg-[#B2BB1E] text-white py-3 rounded-[14px] font-bold shadow-md"
+                  >
+                    ยืนยัน
+                  </Button>
+                </div>
               </div>
             )}
 
