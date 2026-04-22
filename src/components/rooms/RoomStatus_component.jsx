@@ -50,8 +50,8 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
   >
     <div className="flex justify-between items-start mb-8 sm:mb-12">
       <div>
-        <h3 className="font-black text-[10px] sm:text-xs text-black dark:text-white uppercase tracking-[0.2em] mb-1">
-          สถานะ ปัจจุบัน
+        <h3 className="font-black text-[10px] sm:text-xs text-black dark:text-white uppercase tracking-normal mb-1">
+          สถานะปัจจุบัน
         </h3>
       </div>
       <div
@@ -61,7 +61,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
             : "bg-[#10B981] shadow-lg shadow-[#10B981]/20"
         }`}
       >
-        {!isAvailable ? "มีผู้ใช่" : "ว่าง"}
+        {!isAvailable ? "ห้องไม่ว่าง" : "ว่าง"}
       </div>
     </div>
 
@@ -73,7 +73,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
             <Clock size={32} strokeWidth={2.5} className="sm:w-10 sm:h-10" />
           </div>
           <div>
-            <p className="text-xs font-black text-black dark:text-white uppercase tracking-widest mb-1">ช่วงเวลาที่จอง</p>
+            <p className="text-xs font-black text-black dark:text-white uppercase tracking-widest mb-1">ช่วงเวลา</p>
             <p className="text-2xl sm:text-4xl font-black text-[#302782] tracking-tight">
               {item.start_time} - {item.end_time} <span className="text-lg text-black dark:text-white ml-1 font-bold">น.</span>
             </p>
@@ -95,7 +95,7 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
           </div>
 
           <div className="flex-[1] min-w-0 bg-gray-50/70 dark:bg-white/5 p-5 rounded-[28px] border border-gray-100 dark:border-white/10">
-            <p className="text-[10px] font-black text-black dark:text-white uppercase tracking-widest mb-2.5">จำนวนคน</p>
+            <p className="text-[10px] font-black text-black dark:text-white uppercase tracking-widest mb-2.5">จำนวนนิสิต</p>
             <div className="flex items-center gap-3 justify-center sm:justify-start">
               <Users size={16} className="text-[#B2BB1E]" />
               <p className="text-sm sm:text-lg font-black text-[#302782] dark:text-white">
@@ -108,10 +108,10 @@ export const CurrentBookingCard = ({ item, isAvailable, capacity }) => (
         {/* วัตถุประสงค์ (ใช้พื้นหลังเข้มเพื่อความเด่น) */}
         <div className="bg-[#302782] p-6 sm:p-8 rounded-[32px] text-[#FFFFFF] shadow-[0_20px_40px_-15px_rgba(48,39,130,0.3)] relative overflow-hidden group">
           <FileText size={80} className="absolute -right-4 -bottom-4 text-white/5 rotate-12 transition-transform group-hover:scale-110" />
-          <p className="text-[10px] font-black text-[#FFFFFF]/50 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+          <p className="text-xs sm:text-sm font-black text-white uppercase tracking-normal mb-3 flex items-center gap-2">
              วัตถุประสงค์การใช้งาน
           </p>
-          <p className="text-base sm:text-xl font-bold leading-relaxed relative z-10">
+          <p className="text-xl sm:text-3xl font-black text-white leading-relaxed relative z-10">
             {item.purpose || "ไม่ระบุวัตถุประสงค์"}
           </p>
         </div>
@@ -159,7 +159,7 @@ export const ScheduleItem = ({ item, capacity }) => (
         <div className="flex items-center gap-2 bg-gray-50 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-gray-100/50 dark:border-white/10">
           <Users size={14} className="text-[#302782] dark:text-[#B2BB1E]" />
           <span className="text-[10px] sm:text-xs font-black text-[#302782] dark:text-white uppercase">
-            {capacity || 0} Seats
+            จำนวนนิสิต {capacity || 0} คน
           </span>
         </div>
       </div>

@@ -31,28 +31,34 @@ const Navbar = () => {
         const res = await api.get("/bookings/pending");
         setPendingCount(res.data?.length || 0);
       } else if (role === "teacher") {
-        // 🚩 กิมมิกสำหรับ Teacher: ดึงแค่ history มาเช็ค approved และ cancelled (เพื่อหลีกเลี่ยงรายการซ้ำ)
-        const historyRes = await api.get("/bookings/my-bookings/history");
+        // 🚩 Notification Logic สำหรับ Teacher: นับเฉพาะรายการที่ "เปลี่ยนสถานะ" และ "ยังไม่ได้กดดู"
+        const [activeRes, historyRes] = await Promise.all([
+          api.get("/bookings/my-bookings/active"),
+          api.get("/bookings/my-bookings/history")
+        ]);
+        
+        const active = activeRes.data || [];
         const history = historyRes.data || [];
         
-        // กรองเฉพาะ approved หรือ cancelled
-        const alerts = history.filter(i => 
-          i.status === 'approved' || i.status === 'cancelled'
+        // กรองเฉพาะรายการที่เปลี่ยนสถานะแล้ว (ไม่เอา Pending)
+        const allBookings = [...active, ...history];
+        const statusChangedItems = allBookings.filter(i => 
+          i.status === 'approved' || i.status === 'rejected' || i.status === 'cancelled'
         );
         
-        // สร้าง unique key สำหรับแต่ละการจองและสถานะ (หากเปลี่ยนสถานะ จะกลายเป็นคีย์ใหม่)
-        const alertKeys = alerts.map(i => `${i.booking_id}_${i.status}`);
+        // สร้าง unique key (ID + Status) เพื่อเช็คว่า User เห็นสถานะล่าสุดนี้หรือยัง
+        const alertKeys = statusChangedItems.map(i => `${i.booking_id || i.id}_${i.status}`);
         const storageKey = `seenBookingAlerts_${decoded.id || 'teacher'}`;
 
         if (location.pathname === '/manage-booking') {
-          // หากผู้ใช้อยู่หน้าจัดการจอง ให้ถือว่ากดดูแล้ว -> บันทึกทับทันที และเซ็ตการแจ้งเตือนเป็น 0
+          // เมื่อเข้าหน้าจัดการการจอง -> มาร์คว่าเห็นทุกอย่างแล้ว -> เลขเป็น 0
           localStorage.setItem(storageKey, JSON.stringify(alertKeys));
           setPendingCount(0);
         } else {
-          // หากอยู่หน้าอื่น ให้เช็คว่ามีอันไหนที่ยังไม่เคยเห็น (กดดู) บ้างไหม
+          // เช็คว่ามีคีย์ไหนที่ "ยังไม่เคยเห็น" บ้าง
           const seenKeys = JSON.parse(localStorage.getItem(storageKey) || "[]");
-          const unseen = alertKeys.filter(k => !seenKeys.includes(k));
-          setPendingCount(unseen.length);
+          const unseenCount = alertKeys.filter(k => !seenKeys.includes(k)).length;
+          setPendingCount(unseenCount);
         }
       } else {
         // สำหรับ role อื่นๆ ที่เหลือ (นศ.) 

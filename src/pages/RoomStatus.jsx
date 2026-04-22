@@ -99,7 +99,7 @@ const RoomStatus = () => {
                   </h2>
                 </div>
                 <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-1 bg-gray-50 dark:bg-gray-700 sm:bg-transparent sm:dark:bg-transparent px-4 py-2 sm:p-0 rounded-2xl w-full sm:w-auto border border-gray-100 dark:border-gray-600 sm:border-0">
-                  <p className="text-[10px] sm:text-xs font-black text-black dark:text-white uppercase tracking-widest">Update</p>
+                  <p className="text-[10px] sm:text-xs font-black text-black dark:text-white uppercase tracking-widest">วันที่</p>
                   <span className="text-xs sm:text-sm font-bold text-black dark:text-white">
                     {roomData ? formatDate(roomData.date) : '-'}
                   </span>
@@ -121,8 +121,8 @@ const RoomStatus = () => {
               <section className="space-y-6">
                 <div className="flex items-center gap-4 px-2">
                   <div className="h-0.5 flex-grow bg-gray-100 dark:bg-gray-700 rounded-full" />
-                  <h4 className="text-[10px] sm:text-xs font-black text-black dark:text-white whitespace-nowrap uppercase tracking-[0.2em]">
-                    {isAvailable ? "ตารางการใช้ห้องวันนี้" : "รายการจองถัดไป"}
+                  <h4 className="text-[10px] sm:text-xs font-black text-black dark:text-white whitespace-nowrap uppercase tracking-normal">
+                    {isAvailable ? "ตารางการใช้ห้องวันนี้" : "รายการจองห้อง เวลาอื่น"}
                   </h4>
                   <div className="h-0.5 flex-grow bg-gray-100 dark:bg-gray-700 rounded-full" />
                 </div>
