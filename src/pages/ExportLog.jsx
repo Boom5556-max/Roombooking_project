@@ -116,6 +116,39 @@ const ExportLog = () => {
     }
   };
 
+  // เติมวันที่ทั้งปีการศึกษา: จากเทอมต้น start_date ถึงเทอมฤดูร้อน end_date
+  const fillFullYear = async () => {
+    try {
+      const response = await api.get(`${API_BASE_URL}/terms/showTerm`);
+      const termData = response.data.data;
+
+      if (!termData || termData.length === 0) {
+        showFeedback('error', 'ไม่พบข้อมูลเทอมในระบบ กรุณาตั้งค่าปีการศึกษาก่อน');
+        return;
+      }
+
+      const firstTerm = termData.find((t) => t.term === 'first');
+      const summerTerm = termData.find((t) => t.term === 'summer');
+
+      if (!firstTerm || !firstTerm.start_date) {
+        showFeedback('error', 'ไม่พบข้อมูลวันเริ่มต้นของเทอมต้น กรุณาตั้งค่าวันที่เทอมก่อน');
+        return;
+      }
+      if (!summerTerm || !summerTerm.end_date) {
+        showFeedback('error', 'ไม่พบข้อมูลวันสิ้นสุดของเทอมฤดูร้อน กรุณาตั้งค่าวันที่เทอมก่อน');
+        return;
+      }
+
+      setStartDate(firstTerm.start_date);
+      setEndDate(summerTerm.end_date);
+      setFeedback(null);
+
+    } catch (error) {
+      console.error('Error fetching terms:', error);
+      showFeedback('error', 'เกิดข้อผิดพลาดในการดึงข้อมูลเทอมจากระบบ');
+    }
+  };
+
   const showFeedback = (type, message) => {
     setFeedback({ type, message });
     if (type === "success") {
@@ -282,14 +315,24 @@ const ExportLog = () => {
                 </div>
               </div>
 
-              <button
-                onClick={fillCurrentTerm}
-                disabled={isLoading}
-                className="w-full mb-4 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-dashed border-[#B2BB1E]/60 hover:border-[#B2BB1E] bg-[#B2BB1E]/5 hover:bg-[#B2BB1E]/10 text-[#302782] dark:text-[#B2BB1E] font-black text-xs transition-all active:scale-[0.98] disabled:opacity-50"
-              >
-                <Zap size={14} className="shrink-0" />
-                กรอกวันที่เทอมปัจจุบันอัตโนมัติ
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                <button
+                  onClick={fillCurrentTerm}
+                  disabled={isLoading}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-dashed border-[#B2BB1E]/60 hover:border-[#B2BB1E] bg-[#B2BB1E]/5 hover:bg-[#B2BB1E]/10 text-[#302782] dark:text-[#B2BB1E] font-black text-xs transition-all active:scale-[0.98] disabled:opacity-50"
+                >
+                  <Zap size={14} className="shrink-0" />
+                  กรอกวันที่เทอมปัจจุบัน
+                </button>
+                <button
+                  onClick={fillFullYear}
+                  disabled={isLoading}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-dashed border-[#302782]/40 hover:border-[#302782] bg-[#302782]/5 hover:bg-[#302782]/10 text-[#302782] dark:text-[#B2BB1E] font-black text-xs transition-all active:scale-[0.98] disabled:opacity-50"
+                >
+                  <CalendarRange size={14} className="shrink-0" />
+                  กรอกวันที่ทั้งปีการศึกษา
+                </button>
+              </div>
 
               <div className="grid grid-cols-2 gap-3 mb-5">
                 <div className="flex flex-col gap-1">

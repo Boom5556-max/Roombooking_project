@@ -201,11 +201,14 @@ const UploadModal = ({ isOpen, onClose }) => {
                     value={selectedTerm}
                     onChange={(e) => setSelectedTerm(e.target.value)}
                   >
-                    {availableTerms.map((t) => (
-                      <option key={t.term} value={t.term}>
-                        เทอม {t.term} ({t.start_date} ถึง {t.end_date})
-                      </option>
-                    ))}
+                    {availableTerms.map((t) => {
+                      const termLabel = { first: 'เทอมต้น', end: 'เทอมปลาย', summer: 'เทอมฤดูร้อน' }[t.term] || t.term;
+                      return (
+                        <option key={t.term} value={t.term}>
+                          {termLabel} ({t.start_date} ถึง {t.end_date})
+                        </option>
+                      );
+                    })}
                   </select>
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
                 </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import { useSchedule } from "../hooks/useSchedule";
@@ -18,10 +18,12 @@ import {
   User,
   MapPin,
   Calendar,
+  CalendarRange,
   Hash,
   ArrowRight,
   ArrowRightLeft,
 } from "lucide-react";
+import api from "../api/axios.js";
 import ActionModal from "../components/common/ActionModal";
 import PageReveal from "../components/common/PageReveal";
 
@@ -84,6 +86,69 @@ const ScheduleManagement = () => {
   const [subjectEditScheduleId, setSubjectEditScheduleId] = useState(null);
   const [editingSubjectData, setEditingSubjectData] = useState({});
   const [isSavingSubject, setIsSavingSubject] = useState(false);
+
+  // --- State สำหรับข้อมูลเทอม (ใช้เติมวันที่อัตโนมัติ) ---
+  const [termData, setTermData] = useState(null);
+  const [isLoadingTerms, setIsLoadingTerms] = useState(false);
+
+  useEffect(() => {
+    const fetchTermData = async () => {
+      try {
+        const res = await api.get("/terms/showTerm");
+        const data = res.data?.data;
+        if (data && Array.isArray(data) && data.length > 0) {
+          setTermData(data);
+        }
+      } catch (err) {
+        console.error("Fetch term data error:", err);
+      }
+    };
+    fetchTermData();
+  }, []);
+
+  // ฟังก์ชันเติมวันที่ตั้งแต่เทอมต้น ถึง สิ้นสุดเทอมฤดูร้อน
+  const fillFullYearDates = () => {
+    if (!termData || termData.length === 0) {
+      showResultAlert(false, "", "ไม่พบข้อมูลเทอมในระบบ กรุณาตั้งค่าวันที่เทอมก่อน");
+      return;
+    }
+
+    // หาเทอมต้น (first) และเทอมฤดูร้อน (summer)
+    const firstTerm = termData.find((t) => t.term === "first");
+    const summerTerm = termData.find((t) => t.term === "summer");
+
+    if (!firstTerm || !firstTerm.start_date) {
+      showResultAlert(false, "", "ไม่พบข้อมูลวันเริ่มต้นของเทอมต้น กรุณาตั้งค่าวันที่เทอมก่อน");
+      return;
+    }
+    if (!summerTerm || !summerTerm.end_date) {
+      showResultAlert(false, "", "ไม่พบข้อมูลวันสิ้นสุดของเทอมฤดูร้อน กรุณาตั้งค่าวันที่เทอมก่อน");
+      return;
+    }
+
+    const startDate = new Date(firstTerm.start_date);
+    const endDate = new Date(summerTerm.end_date);
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      showResultAlert(false, "", "วันที่ในระบบไม่ถูกต้อง กรุณาตรวจสอบการตั้งค่าเทอม");
+      return;
+    }
+
+    // คำนวณจำนวนสัปดาห์
+    const diffMs = endDate.getTime() - startDate.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    const weeks = Math.ceil(diffDays / 7);
+    const clampedWeeks = Math.max(1, Math.min(weeks, 20)); // จำกัดไม่เกิน 20
+
+    // Format start_date เป็น YYYY-MM-DD
+    const formattedDate = formatDateForInput(firstTerm.start_date);
+
+    setEditingSubjectData((prev) => ({
+      ...prev,
+      date: formattedDate,
+      repeat: clampedWeeks,
+    }));
+  };
 
   const TimePickerField = ({
     label,
@@ -1271,6 +1336,21 @@ const ScheduleManagement = () => {
                         * ระบบจะสร้างตารางเรียนรายสัปดาห์ตามจำนวนที่ระบุ
                       </p>
                     </div>
+                  </div>
+                  {/* ปุ่มเติมวันที่ทั้งปีการศึกษา */}
+                  <div className="sm:col-span-2">
+                    <button
+                      type="button"
+                      onClick={fillFullYearDates}
+                      disabled={isLoadingTerms}
+                      className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 bg-gradient-to-r from-[#302782] to-indigo-600 hover:from-[#3d32a8] hover:to-indigo-700 text-white rounded-2xl font-bold text-sm transition-all shadow-lg shadow-indigo-500/20 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <CalendarRange size={18} />
+                      เติมวันที่ทั้งปีการศึกษา (เทอมต้น → ฤดูร้อน)
+                    </button>
+                    <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2 ml-1 italic">
+                      * ระบบจะเติมวันที่เริ่มต้นของเทอมต้น และคำนวณจำนวนสัปดาห์ถึงสิ้นสุดเทอมฤดูร้อนให้อัตโนมัติ
+                    </p>
                   </div>
                 </div>
               </div>
