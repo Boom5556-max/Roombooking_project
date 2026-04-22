@@ -119,7 +119,7 @@ const BookingDetailModal = ({
               <EditField icon={FileText} label="หมายเหตุเพิ่มเติม" value={editForm.additional_notes} onChange={v => setEditForm({...editForm, additional_notes: v})} />
 
               <EditField icon={Calendar} label="วันที่ต้องการใช้งาน" type="date" value={editForm.date} onChange={v => setEditForm({...editForm, date: v})} />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {renderTimeDropdown("start_time", "เวลาเริ่ม")}
                 {renderTimeDropdown("end_time", "เวลาสิ้นสุด")}
               </div>

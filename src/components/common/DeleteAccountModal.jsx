@@ -58,7 +58,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
 
         {/* Confirmation Input Section */}
         <div className="px-6 pb-6">
-          <label className="block text-sm font-bold text-black dark:text-white mb-2">
+          <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2">
             พิมพ์{" "}
             <span className="font-black text-[#302782] dark:text-[#B2BB1E] bg-[#302782]/5 dark:bg-[#B2BB1E]/10 px-2 py-0.5 rounded-lg text-xs tracking-wide select-all">
               {confirmText}
@@ -70,7 +70,7 @@ const DeleteAccountModal = ({ userData, onConfirmDelete, onClose }) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={confirmText}
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-black dark:text-white placeholder:text-black dark:placeholder:text-white focus:outline-none focus:border-[#EF4444] focus:ring-2 focus:ring-[#EF4444]/10 dark:focus:ring-[#EF4444]/20 transition-all"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-[#EF4444] focus:ring-2 focus:ring-[#EF4444]/10 dark:focus:ring-[#EF4444]/20 transition-all"
             autoFocus
           />
 

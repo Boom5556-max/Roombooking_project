@@ -181,7 +181,7 @@ const BookingScopeModal = ({ isOpen, onClose, onUpdate }) => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {renderTimeSelect("opening_time", "เวลาเปิดระบบ")}
                 {renderTimeSelect("closing_time", "เวลาปิดระบบ")}
                 <div className="space-y-2">

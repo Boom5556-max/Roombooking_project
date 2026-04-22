@@ -334,14 +334,14 @@ const ExportLog = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 mb-5">
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-black dark:text-white flex items-center gap-1"><CalendarRange size={12} /> วันที่เริ่มต้น</label>
-                  <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} disabled={isLoading} className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-3 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:border-[#302782] transition-all" />
+              <div className="flex flex-col gap-4 mb-5">
+                <div className="flex flex-col gap-1.5 w-full max-w-[80%]">
+                  <label className="text-xs font-bold text-black dark:text-white flex items-center gap-1.5"><CalendarRange size={14} className="text-[#302782] dark:text-[#B2BB1E]" /> วันที่เริ่มต้น</label>
+                  <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} disabled={isLoading} className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-gray-100 dark:border-gray-600 rounded-2xl px-4 py-3 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:border-[#B2BB1E] transition-all" />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-black dark:text-white flex items-center gap-1"><CalendarRange size={12} /> วันที่สิ้นสุด</label>
-                  <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} disabled={isLoading} className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-3 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:border-[#302782] transition-all" />
+                <div className="flex flex-col gap-1.5 w-full max-w-[80%]">
+                  <label className="text-xs font-bold text-black dark:text-white flex items-center gap-1.5"><CalendarRange size={14} className="text-[#302782] dark:text-[#B2BB1E]" /> วันที่สิ้นสุด</label>
+                  <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} disabled={isLoading} className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-gray-100 dark:border-gray-600 rounded-2xl px-4 py-3 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:border-[#B2BB1E] transition-all" />
                 </div>
               </div>
 
@@ -393,9 +393,9 @@ const ExportLog = () => {
                           <h3 className={`text-sm font-black ${term.textColor}`}>{term.label}</h3>
                         </div>
                         <div className="2xl:ml-auto flex flex-col sm:flex-row items-center gap-2 w-full 2xl:w-auto">
-                          <input type="date" value={termDates[term.key].start_date} onChange={(e) => handleTermDateChange(term.key, 'start_date', e.target.value)} className="w-full sm:flex-1 bg-white dark:bg-gray-700 border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold" />
+                          <input type="date" value={termDates[term.key].start_date} onChange={(e) => handleTermDateChange(term.key, 'start_date', e.target.value)} className="w-full sm:flex-1 min-w-0 bg-white dark:bg-gray-700 border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold" />
                           <span className="text-gray-400 font-bold hidden sm:block">-</span>
-                          <input type="date" value={termDates[term.key].end_date} onChange={(e) => handleTermDateChange(term.key, 'end_date', e.target.value)} className="w-full sm:flex-1 bg-white dark:bg-gray-700 border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold" />
+                          <input type="date" value={termDates[term.key].end_date} onChange={(e) => handleTermDateChange(term.key, 'end_date', e.target.value)} className="w-full sm:flex-1 min-w-0 bg-white dark:bg-gray-700 border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold" />
                         </div>
                       </div>
                     </div>

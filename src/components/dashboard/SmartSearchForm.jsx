@@ -13,7 +13,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
 
   // คำนวณขอบเขตวันที่ (Min/Max)
   const now = new Date();
-  
+
   const formatDateForInput = (date) => {
     const y = date.getFullYear();
     const m = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -22,16 +22,16 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
   };
 
   const minDate = new Date(now.getTime() + (currentScope.min_advance_hours || 0) * 60 * 60 * 1000);
-  
+
   // 🚩 เช็คว่าเวลาเร็วที่สุดที่จองได้ (minDate) เกินเวลาปิดทำการ (closing_mins) ของวันนั้นไปหรือยัง
   const minDateTimeMins = minDate.getHours() * 60 + minDate.getMinutes();
   if (minDateTimeMins >= currentScope.closing_mins) {
     // ถ้าเกินเวลาปิดแล้ว ให้ปัดไปเริ่มวันพรุ่งนี้แทน
     minDate.setDate(minDate.getDate() + 1);
   }
-  
+
   const minDateStr = formatDateForInput(minDate);
-  
+
   const maxDate = new Date(now.getTime() + (currentScope.max_advance_days || 0) * 24 * 60 * 60 * 1000);
   const maxDateStr = formatDateForInput(maxDate);
 
@@ -99,7 +99,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
       baseTimes.push(`${h}:30`);
     }
   }
-  
+
 
   const renderTimeDropdown = (key) => {
     const label = key === "start_time" ? "เวลาเริ่ม" : "เวลาสิ้นสุด";
@@ -113,7 +113,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
         const [h, m] = t.split(":").map(Number);
         const [y, mon, d] = searchQuery.date.split("-").map(Number);
         const bookingDateTime = new Date(y, mon - 1, d, h, m, 0, 0);
-        
+
         const diffMs = bookingDateTime - now;
         const diffHours = diffMs / (1000 * 60 * 60);
 
@@ -136,8 +136,8 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
           </summary>
           <ul className="absolute left-0 top-[calc(100%+8px)] w-full max-h-[220px] overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl z-50 py-2 border border-gray-200 dark:border-gray-700">
             {availableTimes.map((t) => (
-              <li 
-                key={t} 
+              <li
+                key={t}
                 className="px-5 py-3 text-[#302782] dark:text-white text-sm font-bold hover:bg-[#B2BB1E] hover:text-white cursor-pointer transition-colors"
                 onClick={() => {
                   setSearchQuery({ ...searchQuery, [key]: t });
@@ -166,10 +166,10 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
             <h3 className="text-xl font-black text-[#302782] dark:text-white leading-tight">ค้นหาห้องว่าง</h3>
             <div className="flex items-center gap-2 mt-1">
               <p className="text-black dark:text-white text-xs font-medium">ระบุเวลาและจำนวนคนเพื่อกรองห้อง</p>
-              
+
               {/* Settings Button for Admin/Staff */}
               {role === "staff" && (
-                <button 
+                <button
                   type="button"
                   onClick={onOpenScope}
                   className="flex items-center px-4 py-2 bg-[#B2BB1E]/10 dark:bg-[#B2BB1E]/20 hover:bg-[#B2BB1E] text-[#302782] dark:text-[#B2BB1E] hover:text-white dark:hover:text-white rounded-xl text-xs font-black transition-all active:scale-95 border border-[#B2BB1E]/30 shadow-sm ml-2"
@@ -181,23 +181,67 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
             </div>
           </div>
         </div>
-        
+
         <form onSubmit={onSubmit} className="flex flex-col gap-5 h-full">
-          
+
           {/* แถวที่ 1: วันที่ & จำนวนนิสิต */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-2">
               <label className="text-[11px] font-black text-black dark:text-white ml-2 uppercase tracking-wide">วันที่เข้าใช้งาน</label>
-              <div className="relative">
-                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-white" size={20} />
+              <div className="relative group/date cursor-pointer">
+                {/* 1. ไอคอนทางซ้าย (ที่จะกดได้แล้ว) */}
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-white z-20 pointer-events-none" size={20} />
+                
+                {/* 2. ส่วนแสดงผล พ.ศ. */}
+                <div className="absolute inset-0 flex items-center pl-12 pr-5 pointer-events-none z-10">
+                  <span className={`text-sm font-bold ${searchQuery.date ? 'text-[#302782] dark:text-white' : 'text-gray-400 dark:text-white/30'}`}>
+                    {searchQuery.date 
+                      ? new Date(searchQuery.date).toLocaleDateString('th-TH', { 
+                          year: 'numeric', 
+                          month: '2-digit', 
+                          day: '2-digit' 
+                        }) 
+                      : "เลือกวันที่"}
+                  </span>
+                </div>
+
+                {/* 3. Native Input ที่คลุมทั้งพื้นที่ (เพิ่ม CSS พิเศษเพื่อให้กดตรงไหนก็เด้ง) */}
                 <input 
                   type="date"
                   min={effectiveMinDateStr}
                   max={effectiveMaxDateStr}
                   value={searchQuery.date}
                   onChange={(e) => setSearchQuery({ ...searchQuery, date: e.target.value })}
-                  className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-5 text-[#302782] dark:text-white outline-none text-sm font-bold focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 transition-all [color-scheme:light] dark:[color-scheme:dark]"
+                  onClick={(e) => {
+                    try {
+                      // สั่งเปิดปฏิทินทันทีเมื่อคลิก
+                      e.target.showPicker();
+                    } catch (err) {
+                      console.log("Picker not supported");
+                    }
+                  }}
+                  className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-5 text-transparent outline-none text-sm font-bold focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 transition-all [color-scheme:light] dark:[color-scheme:dark] relative z-30 cursor-pointer opacity-0"
+                  style={{
+                    // ขยายจุดกดปฏิทินของ Browser ให้เต็มพื้นที่
+                    WebkitAppearance: 'none',
+                    MozAppearance: 'none'
+                  }}
                 />
+                
+                {/* CSS พิเศษสำหรับขยายพื้นที่คลิกของปฏิทิน (สำหรับ Chrome/Safari/Edge) */}
+                <style dangerouslySetInnerHTML={{ __html: `
+                  input[type="date"]::-webkit-calendar-picker-indicator {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    margin: 0;
+                    padding: 0;
+                    cursor: pointer;
+                    opacity: 0;
+                  }
+                `}} />
               </div>
             </div>
 
@@ -205,12 +249,12 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
               <label className="text-[11px] font-black text-black dark:text-white ml-2 uppercase tracking-wide">จำนวนนิสิต</label>
               <div className="relative">
                 <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-black dark:text-white" size={18} />
-                <input 
-                  type="number" 
-                  min="1" 
-                  max="200" 
+                <input
+                  type="number"
+                  min="1"
+                  max="200"
                   value={searchQuery.capacity}
-                  placeholder="เช่น 50" 
+                  placeholder="เช่น 50"
                   className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-4 text-[#302782] dark:text-white outline-none font-bold transition-all placeholder:text-gray-400 dark:placeholder:text-white/30"
                   onKeyDown={(e) => {
                     if (["-", "+", "e", "E", "."].includes(e.key)) {

@@ -1287,7 +1287,7 @@ const ScheduleManagement = () => {
                       className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 text-black dark:text-white p-3.5 rounded-2xl focus:ring-2 focus:ring-[#B2BB1E] focus:border-transparent outline-none transition-all"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 ml-1">
                         เวลาเริ่ม
@@ -1337,21 +1337,7 @@ const ScheduleManagement = () => {
                       </p>
                     </div>
                   </div>
-                  {/* ปุ่มเติมวันที่ทั้งปีการศึกษา */}
-                  <div className="sm:col-span-2">
-                    <button
-                      type="button"
-                      onClick={fillFullYearDates}
-                      disabled={isLoadingTerms}
-                      className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 bg-gradient-to-r from-[#302782] to-indigo-600 hover:from-[#3d32a8] hover:to-indigo-700 text-white rounded-2xl font-bold text-sm transition-all shadow-lg shadow-indigo-500/20 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <CalendarRange size={18} />
-                      เติมวันที่ทั้งปีการศึกษา (เทอมต้น → ฤดูร้อน)
-                    </button>
-                    <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2 ml-1 italic">
-                      * ระบบจะเติมวันที่เริ่มต้นของเทอมต้น และคำนวณจำนวนสัปดาห์ถึงสิ้นสุดเทอมฤดูร้อนให้อัตโนมัติ
-                    </p>
-                  </div>
+
                 </div>
               </div>
             </form>
