@@ -43,6 +43,30 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
     }
   }, [minDateStr, maxDateStr, searchQuery.date, isStaffExempt]);
 
+  // 🚩 เพิ่มการดักตรวจสอบเวลาที่เลือกไว้ (Start/End Time) ให้สอดคล้องกับเงื่อนไข Advance Hours
+  useEffect(() => {
+    if (!isStaffExempt && searchQuery.date && (searchQuery.start_time || searchQuery.end_time)) {
+      const minLeadTime = (currentScope.min_advance_hours || 0);
+      const [y, mon, d] = searchQuery.date.split("-").map(Number);
+      const nowTime = new Date();
+
+      const validateTime = (timeStr) => {
+        if (!timeStr) return true;
+        const [h, m] = timeStr.split(":").map(Number);
+        const targetDate = new Date(y, mon - 1, d, h, m, 0, 0);
+        const diffHours = (targetDate - nowTime) / (1000 * 60 * 60);
+        return diffHours >= minLeadTime;
+      };
+
+      if (!validateTime(searchQuery.start_time)) {
+        setSearchQuery(prev => ({ ...prev, start_time: "" }));
+      }
+      if (!validateTime(searchQuery.end_time)) {
+        setSearchQuery(prev => ({ ...prev, end_time: "" }));
+      }
+    }
+  }, [searchQuery.date, searchQuery.start_time, searchQuery.end_time, isStaffExempt, currentScope.min_advance_hours]);
+
   const baseTimes = [];
   const startHour = Math.floor(currentScope.opening_mins / 60);
   const endHour = Math.floor(currentScope.closing_mins / 60);
@@ -79,8 +103,8 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
       // กรองตาม min_advance_hours (เช็คทุกวัน ไม่ใช่แค่ Today) - ยกเว้นเฉพาะระดับ Staff/Admin
       if (!isStaffExempt && searchQuery.date) {
         const [h, m] = t.split(":").map(Number);
-        const bookingDateTime = new Date(searchQuery.date);
-        bookingDateTime.setHours(h, m, 0, 0);
+        const [y, mon, d] = searchQuery.date.split("-").map(Number);
+        const bookingDateTime = new Date(y, mon - 1, d, h, m, 0, 0);
         
         const diffMs = bookingDateTime - now;
         const diffHours = diffMs / (1000 * 60 * 60);
