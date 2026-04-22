@@ -39,6 +39,13 @@ export const BookingCard = ({ req, variant, onClick, getFullName }) => {
       Icon: Hash,
       label: "ยกเลิกคลาส"
     },
+    completed: {
+      borderColor: "border-[#10B981]/20 dark:border-[#10B981]/40",
+      statusColor: "text-[#10B981]",
+      bgColor: "bg-[#10B981]/10",
+      Icon: CheckCircle2,
+      label: "สำเร็จแล้ว"
+    },
   };
 
   const { borderColor, statusColor, bgColor, Icon, label } = styles[variant] || styles.pending;

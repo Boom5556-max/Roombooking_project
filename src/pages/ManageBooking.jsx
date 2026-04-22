@@ -69,7 +69,11 @@ const ManageBooking = () => {
 
   const filteredPending = filterByRoom(pendingRequests);
   const filteredApproved = filterByRoom(approvedRequests);
-  const filteredHistory = filterByRoom(historyRequests);
+  
+  // 🚩 กรองหน้าประวัติให้แสดงเฉพาะสถานะที่สิ้นสุดแล้วเท่านั้น
+  const filteredHistory = filterByRoom(historyRequests).filter(b => 
+    ["rejected", "cancelled", "completed", "class_cancelled"].includes(b.status)
+  );
 
   const showAlert = (
     title,
