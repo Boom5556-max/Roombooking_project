@@ -98,6 +98,20 @@ const Calendar = () => {
       });
       return false;
     }
+
+    // 🚩 ตรวจสอบว่ากิจกรรมเป็นอดีตหรือไม่ (เช็คจากเวลาสิ้นสุดของกิจกรรม)
+    const eventEnd = event.end ? new Date(event.end) : null;
+    const now = new Date();
+    if (eventEnd && eventEnd < now) {
+      setAlertConfig({
+        show: true,
+        title: "ดำเนินการไม่ได้",
+        msg: "ไม่สามารถจัดการรายการที่ผ่านมาแล้วได้ครับ เพื่อป้องกันความผิดพลาดของข้อมูลย้อนหลัง",
+        type: "error",
+      });
+      return false;
+    }
+
     const ownerId = String(props?.teacher_id || props?.user_id || "");
     const myId = String(userData.id || "");
     if (ownerId === myId || userData.role === "staff") return true;

@@ -35,6 +35,10 @@ const CalendarView = ({
     const isBooking = props.type === "booking";
     const isClosed = props.temporarily_closed;
 
+    // 🚩 เช็คว่าเป็นรายการในอดีตหรือไม่ (จากเวลาสิ้นสุด)
+    const eventEnd = eventInfo.event.end ? new Date(eventInfo.event.end) : null;
+    const isPast = eventEnd && eventEnd < new Date();
+
     const ownerId = String(props.teacher_id || props.user_id || "");
     const myId = String(currentUserId || "");
 
@@ -45,8 +49,9 @@ const CalendarView = ({
     const isStaff = String(currentUserRole || "").toLowerCase().trim() === "staff";
     const hasPermission = isOwner || isStaff;
 
-    const shouldElevate = isCancelMode && isSchedule && hasPermission && !isClosed;
-    const shouldRestore = isCancelMode && isSchedule && hasPermission && isClosed;
+    // 🚩 เพิ่มเงื่อนไข !isPast เข้าไป เพื่อให้จัดการไม่ได้ถ้าเป็นอดีต
+    const shouldElevate = isCancelMode && isSchedule && hasPermission && !isClosed && !isPast;
+    const shouldRestore = isCancelMode && isSchedule && hasPermission && isClosed && !isPast;
 
     const getDotConfig = () => {
       if (isClosed) return { bg: "#9CA3AF", border: "border-transparent" };
