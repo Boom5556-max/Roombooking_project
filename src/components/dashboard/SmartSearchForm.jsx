@@ -22,6 +22,14 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
   };
 
   const minDate = new Date(now.getTime() + (currentScope.min_advance_hours || 0) * 60 * 60 * 1000);
+  
+  // 🚩 เช็คว่าเวลาเร็วที่สุดที่จองได้ (minDate) เกินเวลาปิดทำการ (closing_mins) ของวันนั้นไปหรือยัง
+  const minDateTimeMins = minDate.getHours() * 60 + minDate.getMinutes();
+  if (minDateTimeMins >= currentScope.closing_mins) {
+    // ถ้าเกินเวลาปิดแล้ว ให้ปัดไปเริ่มวันพรุ่งนี้แทน
+    minDate.setDate(minDate.getDate() + 1);
+  }
+  
   const minDateStr = formatDateForInput(minDate);
   
   const maxDate = new Date(now.getTime() + (currentScope.max_advance_days || 0) * 24 * 60 * 60 * 1000);
