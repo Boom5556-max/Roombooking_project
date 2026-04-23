@@ -21,7 +21,6 @@ export const verifyAndRefreshToken = async (forceRefresh = false) => {
 
     // 🚨 กรณีที่ 1: เลยช่วงอนุโลมไปแล้ว หรือโดนบังคับ Refresh แต่ Token ดิบก็พังเกินเยียวยา
     if (!forceRefresh && currentTime > hardExpiryTime) {
-      console.log('เลยเวลาอนุโลมไปแล้ว - เตรียมเตะออก');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       return false; 
@@ -30,9 +29,6 @@ export const verifyAndRefreshToken = async (forceRefresh = false) => {
     // 🔄 เงื่อนไขที่ 2: Access Token หมดอายุแล้ว หรือ โดนบังคับให้ต้อง Refresh (จาก 401 Interceptor)
     // เพิ่ม Leeway 60 วินาที เพื่อกันปัญหาเวลาเครื่องผู้ใช้ช้า/เร็วไม่เท่ากับ Server
     if (forceRefresh || (currentTime + 60) > decoded.exp) {
-      if (forceRefresh) console.log('🔄 Forced Refresh: ได้รับ 401 จาก Server -> กำลังลองต่ออายุ...');
-      else console.log('🔄 Access Token หมดอายุ -> กำลังลองต่ออายุ...');
-      
       if (isRefreshing) return refreshPromise;
       
       isRefreshing = true;
@@ -48,13 +44,11 @@ export const verifyAndRefreshToken = async (forceRefresh = false) => {
           const newToken = response.data.token || response.data.access_token;
           if (newToken) {
             localStorage.setItem('token', newToken);
-            console.log('✅ ต่ออายุสำเร็จ');
             resolve(true);
           } else {
             resolve(false);
           }
         } catch (refreshError) {
-          console.error('❌ ไม่สามารถต่ออายุ Token ได้');
           resolve(false);
         } finally {
           isRefreshing = false;
@@ -68,7 +62,6 @@ export const verifyAndRefreshToken = async (forceRefresh = false) => {
     return true; 
 
   } catch (error) {
-    console.error('Token ไม่ถูกต้อง');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     return false;

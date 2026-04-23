@@ -14,7 +14,6 @@ export const useRooms = () => {
     try {
       const response = await api.get("/rooms/");
       setRooms(response.data);
-      // console.log(response)
     } catch (error) {
       console.error(
         "Error fetching rooms:",

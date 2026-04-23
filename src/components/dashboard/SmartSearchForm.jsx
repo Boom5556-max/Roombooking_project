@@ -216,9 +216,7 @@ const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenSc
                     try {
                       // สั่งเปิดปฏิทินทันทีเมื่อคลิก
                       e.target.showPicker();
-                    } catch (err) {
-                      console.log("Picker not supported");
-                    }
+                    } catch (err) {}
                   }}
                   className="w-full bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-500 rounded-[16px] h-[56px] pl-12 pr-5 text-transparent outline-none text-sm font-bold focus:bg-white dark:focus:bg-gray-800 focus:border-[#302782]/20 dark:focus:border-gray-500 transition-all [color-scheme:light] dark:[color-scheme:dark] relative z-30 cursor-pointer opacity-0"
                   style={{

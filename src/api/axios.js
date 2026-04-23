@@ -9,7 +9,7 @@ const api = axios.create({
     "Content-Type": "application/json",
     "ngrok-skip-browser-warning": "true",
   },
-  withCredentials: true // 🚨 จำเป็นมากสำหรับให้อ่าน Refresh Token ใน Cookie ได้
+  withCredentials: true 
 });
 
 let isRedirecting = false;
@@ -143,13 +143,11 @@ api.interceptors.response.use(
         originalRequest._retry = true;
 
         try {
-          console.log('พบ 401 - กำลังลองขอ Token ใหม่และRetry...');
           const isRefreshed = await verifyAndRefreshToken(true);
           
           if (isRefreshed) {
             const newToken = localStorage.getItem('token');
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            console.log('Refresh สำเร็จ - กำลังส่งคำขอเดิมซ้ำ (Retry)');
             return api(originalRequest); // ยิงใหม่!
           }
         } catch (refreshErr) {
