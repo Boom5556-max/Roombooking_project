@@ -13,9 +13,9 @@ import {
   Check,
   AlertCircle,
 } from "lucide-react";
-import { useRoomResults } from "../hooks/useRoomResults";
-import Navbar from "../components/layout/Navbar";
-import LoadingSpinner from "../components/common/LoadingSpinner";
+import { useRoomResults } from "../hooks/useRoomResults.js";
+import Navbar from "../components/layout/Navbar.jsx";
+import LoadingSpinner from "../components/common/LoadingSpinner.jsx";
 
 const RoomResults = () => {
   const location = useLocation();

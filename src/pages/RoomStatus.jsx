@@ -7,8 +7,8 @@ import {
   ScheduleItem,
   CurrentBookingCard,
 } from "../components/rooms/RoomStatus_component.jsx";
-import ActionModal from "../components/common/ActionModal";
-import PageReveal from "../components/common/PageReveal";
+import ActionModal from "../components/common/ActionModal.jsx";
+import PageReveal from "../components/common/PageReveal.jsx";
 
 const RoomStatus = () => {
   const { id } = useParams();

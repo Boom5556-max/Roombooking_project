@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-import { API_BASE_URL } from './config';
+import { API_BASE_URL } from './config.js';
 
 let isRefreshing = false;
 let refreshPromise = null;

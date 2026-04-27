@@ -12,7 +12,7 @@ import { useUsers } from "../hooks/useUsers";
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
 import UserFormModal from "../components/user/UserFormModal.jsx";
-import PageReveal from "../components/common/PageReveal";
+import PageReveal from "../components/common/PageReveal.jsx";
 
 const Users = () => {
   const navigate = useNavigate();

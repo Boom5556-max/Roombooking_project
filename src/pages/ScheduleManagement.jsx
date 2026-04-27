@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/layout/Navbar";
-import { useSchedule } from "../hooks/useSchedule";
-import { useRooms } from "../hooks/useRooms";
+import Navbar from "../components/layout/Navbar.jsx";
+import { useSchedule } from "../hooks/useSchedule.js";
+import { useRooms } from "../hooks/useRooms.js";
 import {
   Edit2,
   Trash2,

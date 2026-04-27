@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
-import api from "../api/axios";
+import api from "../api/axios.js";
 
 export const useManageBooking = () => {
   const [pendingRequests, setPendingRequests] = useState([]);

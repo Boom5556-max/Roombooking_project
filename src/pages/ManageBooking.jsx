@@ -17,7 +17,7 @@ import {
 import Navbar from "../components/layout/Navbar.jsx";
 import ActionModal from "../components/common/ActionModal.jsx";
 import BookingDetailModal from "../components/managebooking/BookingDetailModal.jsx";
-import PageReveal from "../components/common/PageReveal";
+import PageReveal from "../components/common/PageReveal.jsx";
 
 const isPastDate = (dateString) => {
   if (!dateString) return false;

@@ -4,7 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import googleCalendarPlugin from "@fullcalendar/google-calendar";
-import { minsToTime } from "../../utils/timeUtils";
+import { minsToTime } from "../../utils/timeUtils.js";
 
 const CalendarView = ({
   events,

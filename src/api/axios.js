@@ -1,13 +1,12 @@
 import axios from "axios";
-import { API_BASE_URL } from "./config";
+import { API_BASE_URL } from "./config.js";
 import Swal from "sweetalert2";
-import { verifyAndRefreshToken } from "./auth";
+import { verifyAndRefreshToken } from "./auth.js";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
-    "ngrok-skip-browser-warning": "true",
   },
   withCredentials: true 
 });

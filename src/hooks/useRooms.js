@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import api from "../api/axios";
+import api from "../api/axios.js";
 import { data } from "react-router-dom";
 
 export const useRooms = () => {

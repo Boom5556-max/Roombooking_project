@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import api from "../api/axios";
-import { getBookingScope } from "../api/bookingScope";
+import api from "../api/axios.js";
+import { getBookingScope } from "../api/bookingScope.js";
 
 export const useBookingLogic = (initialId) => {
   const navigate = useNavigate();

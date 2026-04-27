@@ -1,7 +1,7 @@
 import React from "react";
 import { Mail, Lock, RefreshCw, Send, AlertCircle } from "lucide-react";
-import InputField from "../common/InputField";
-import Button from "../common/Button";
+import InputField from "../common/InputField.jsx";
+import Button from "../common/Button.jsx";
 
 const LoginForm = ({
   email,

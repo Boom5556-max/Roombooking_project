@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import api from "../api/axios.js";
 
 export const useRoomStatusLogic = (id) => {
   const navigate = useNavigate();

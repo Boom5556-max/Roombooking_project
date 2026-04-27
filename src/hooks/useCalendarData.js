@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import api from "../api/axios";
 import { formatCalendarEvents } from "../utils/calendarHelper.js";
-import { getBookingScope } from "../api/bookingScope";
+import { getBookingScope } from "../api/bookingScope.js";
 
 export const useCalendarData = (roomIdFromUrl) => {
   const [rooms, setRooms] = useState([]);

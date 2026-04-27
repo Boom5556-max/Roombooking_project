@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../api/axios"; // Import ตัว instance ที่เราสร้างไว้
+import api from "../api/axios.js"; // Import ตัว instance ที่เราสร้างไว้
 
 export const useAuth = () => {
   const [timer, setTimer] = useState(0);

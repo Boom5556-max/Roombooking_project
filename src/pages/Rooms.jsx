@@ -10,14 +10,14 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useRooms } from "../hooks/useRooms";
+import { useRooms } from "../hooks/useRooms.js";
 import { jwtDecode } from "jwt-decode";
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
-import RoomCard from "../components/rooms/RoomCard";
-import ActionModal from "../components/common/ActionModal";
-import RoomFormModal from "../components/rooms/RoomFormModal";
-import PageReveal from "../components/common/PageReveal";
+import RoomCard from "../components/rooms/RoomCard.jsx";
+import ActionModal from "../components/common/ActionModal.jsx";
+import RoomFormModal from "../components/rooms/RoomFormModal.jsx";
+import PageReveal from "../components/common/PageReveal.jsx";
 
 const Rooms = () => {
   const navigate = useNavigate();

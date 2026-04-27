@@ -10,7 +10,7 @@ import {
   CalendarDays
 } from "lucide-react";
 import Button from "../common/Button.jsx";
-import LoadingSpinner from "../common/LoadingSpinner";
+import LoadingSpinner from "../common/LoadingSpinner.jsx";
 
 export const LoadingState = () => (
   <div className="h-screen flex flex-col items-center justify-center bg-[#F8F9FA] dark:bg-gray-900 font-sans">

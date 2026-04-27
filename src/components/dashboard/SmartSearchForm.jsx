@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Clock, Users, ArrowRight, Search, Settings } from "lucide-react";
-import { getBookingScope } from "../../api/bookingScope";
+import { getBookingScope } from "../../api/bookingScope.js";
 
 const SmartSearchForm = ({ searchQuery, setSearchQuery, onSubmit, role, onOpenScope, scope }) => {
   // Use a fallback scope while loading or if not provided

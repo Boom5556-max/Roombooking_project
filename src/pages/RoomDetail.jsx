@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, CheckCircle2, AlertTriangle } from "lucide-react";
-import { useRoomDetail } from "../hooks/useRoomDetail"; 
+import { useRoomDetail } from "../hooks/useRoomDetail.js"; 
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
-import RoomInfo from "../components/rooms/RoomInfo";
-import PageReveal from "../components/common/PageReveal";
+import RoomInfo from "../components/rooms/RoomInfo.jsx";
+import PageReveal from "../components/common/PageReveal.jsx";
 
 const RoomDetail = () => {
   const { id } = useParams();

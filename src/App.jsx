@@ -2,24 +2,24 @@ import React, { useEffect, useState } from 'react'; // 🚩 เพิ่ม useE
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { verifyAndRefreshToken } from './api/auth';
 
-import LoginPage from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Rooms from './pages/Rooms';
+import LoginPage from './pages/Login.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Rooms from './pages/Rooms.jsx';
 
-import QrFirstpage from './pages/QrFirstpage'; 
-import QRScanner from './pages/QRScanner';     
+import QrFirstpage from './pages/QrFirstpage.jsx'; 
+import QRScanner from './pages/QRScanner.jsx';     
 
-import ManageBooking from './pages/ManageBooking';
-import RoomStatus from './pages/RoomStatus';
-import Calendar from './pages/Calendar';
-import RoomDetail from './pages/RoomDetail';
-import BookingRoom from './pages/Booking';
-import RoomResults from './pages/RoomResults'; 
-import Users from './pages/Users'; 
+import ManageBooking from './pages/ManageBooking.jsx';
+import RoomStatus from './pages/RoomStatus.jsx';
+import Calendar from './pages/Calendar.jsx';
+import RoomDetail from './pages/RoomDetail.jsx';
+import BookingRoom from './pages/Booking.jsx';
+import RoomResults from './pages/RoomResults.jsx'; 
+import Users from './pages/Users.jsx'; 
 
-import ScheduleManagement from './pages/ScheduleManagement'; 
-import ExportLog from './pages/ExportLog';
-import TermManagement from './pages/TermManagement';
+import ScheduleManagement from './pages/ScheduleManagement.jsx'; 
+import ExportLog from './pages/ExportLog.jsx';
+import TermManagement from './pages/TermManagement.jsx';
 
 // 🎨 Theme Controller: คอยจัดการสีของหน้าเว็บ (เวอร์ชันจำสีตลอดเวลา)
 const ThemeController = () => {

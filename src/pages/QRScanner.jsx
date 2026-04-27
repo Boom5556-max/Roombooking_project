@@ -13,7 +13,7 @@ import {
   Lock,
   Download,
 } from "lucide-react";
-import Navbar from "../components/layout/Navbar";
+import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
 import { useQRScanner } from "../hooks/useQRScanner.js";
 import { useRooms } from "../hooks/useRooms.js"; // ดึง Hook ข้อมูลห้องมาใช้
@@ -22,7 +22,7 @@ import {
   LoadingOverlay,
   CameraErrorOverlay,
 } from "../components/qrscan/ScannerOverlays.jsx";
-import ActionModal from "../components/common/ActionModal";
+import ActionModal from "../components/common/ActionModal.jsx";
 
 const QRScanner = () => {
   const navigate = useNavigate();

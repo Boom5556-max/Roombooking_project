@@ -1,5 +1,5 @@
-import api from "./axios";
-import { minsToTime, timeToMins } from "../utils/timeUtils";
+import api from "./axios.js";
+import { minsToTime, timeToMins } from "../utils/timeUtils.js";
 
 /**
  * ดึงข้อมูลการตั้งค่าเงื่อนไขการจองล่าสุด

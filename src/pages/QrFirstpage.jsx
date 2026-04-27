@@ -21,8 +21,8 @@ import {
   LoadingOverlay,
   CameraErrorOverlay,
 } from "../components/qrscan/ScannerOverlays.jsx";
-import ActionModal from "../components/common/ActionModal";
-import PageReveal from "../components/common/PageReveal";
+import ActionModal from "../components/common/ActionModal.jsx";
+import PageReveal from "../components/common/PageReveal.jsx";
 
 const QrFirstpage = () => {
   const [activeTab, setActiveTab] = useState("camera");

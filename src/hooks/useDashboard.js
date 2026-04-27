@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import api from "../api/axios"; // ใช้ axios instance ที่เราเซ็ตไว้
+import api from "../api/axios.js"; // ใช้ axios instance ที่เราเซ็ตไว้
 
 export const useDashboard = () => {
   const [data, setData] = useState({

@@ -18,7 +18,7 @@ import {
 import Navbar from "../components/layout/Navbar.jsx";
 import { API_BASE_URL } from "../api/config.js";
 import api from "../api/axios.js";
-import PageReveal from "../components/common/PageReveal";
+import PageReveal from "../components/common/PageReveal.jsx";
 
 // ข้อมูลเทอมแบบ Static ทั้ง 3 ชนิด
 const TERM_CONFIG = [

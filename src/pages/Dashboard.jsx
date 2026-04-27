@@ -4,19 +4,19 @@ import { LayoutGrid, FilePlus, AlertCircle, Download } from "lucide-react";
 import { useDashboard } from "../hooks/useDashboard";
 import Navbar from "../components/layout/Navbar.jsx";
 import Button from "../components/common/Button.jsx";
-import StatusCards from "../components/dashboard/StatusCards";
-import UploadModal from "../components/dashboard/UploadModal";
-import ActionModal from "../components/common/ActionModal";
-import PageReveal from "../components/common/PageReveal";
+import StatusCards from "../components/dashboard/StatusCards.jsx";
+import UploadModal from "../components/dashboard/UploadModal.jsx";
+import ActionModal from "../components/common/ActionModal.jsx";
+import PageReveal from "../components/common/PageReveal.jsx";
 
 // Import ส่วนที่แบ่งไป
-import SmartSearchForm from "../components/dashboard/SmartSearchForm";
-import BookingScopeModal from "../components/dashboard/BookingScopeModal";
-import DashboardFooter from "../components/dashboard/DashboardFooter";
-import { useReport } from "../hooks/useReport";
-import RoomReportSection from "../components/rooms/RoomReportSection";
+import SmartSearchForm from "../components/dashboard/SmartSearchForm.jsx";
+import BookingScopeModal from "../components/dashboard/BookingScopeModal.jsx";
+import DashboardFooter from "../components/dashboard/DashboardFooter.jsx";
+import { useReport } from "../hooks/useReport.js";
+import RoomReportSection from "../components/rooms/RoomReportSection.jsx";
 import StaffReportSection from "../components/rooms/StaffReportSection.jsx";
-import { getBookingScope } from "../api/bookingScope";
+import { getBookingScope } from "../api/bookingScope.js";
 
 const Dashboard = () => {
   const navigate = useNavigate();

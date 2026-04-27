@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useCalendarData } from "../hooks/useCalendarData";
+import { useCalendarData } from "../hooks/useCalendarData.js";
 import {
   CheckCircle,
   X,
@@ -12,11 +12,11 @@ import {
   Calendar as CalendarIcon,
 } from "lucide-react";
 import Navbar from "../components/layout/Navbar.jsx";
-import RoomSelector from "../components/calendar/RoomSelector";
-import CalendarView from "../components/calendar/CalendarView";
-import EventModal from "../components/calendar/EventModal";
+import RoomSelector from "../components/calendar/RoomSelector.jsx";
+import CalendarView from "../components/calendar/CalendarView.jsx";
+import EventModal from "../components/calendar/EventModal.jsx";
 import ActionModal from "../components/common/ActionModal.jsx";
-import PageReveal from "../components/common/PageReveal";
+import PageReveal from "../components/common/PageReveal.jsx";
 import { jwtDecode } from "jwt-decode";
 
 const Calendar = () => {

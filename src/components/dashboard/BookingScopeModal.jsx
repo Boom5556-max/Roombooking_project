@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Save, Clock, Timer, CalendarClock, ArrowRightCircle, Loader2, CheckCircle2, AlertCircle, ChevronDown, Check } from "lucide-react";
-import { getBookingScope, updateBookingScope } from "../../api/bookingScope";
-import { minsToTime, timeToMins, getAllDay30MinSlots } from "../../utils/timeUtils";
+import { getBookingScope, updateBookingScope } from "../../api/bookingScope.js";
+import { minsToTime, timeToMins, getAllDay30MinSlots } from "../../utils/timeUtils.js";
 
 const BookingScopeModal = ({ isOpen, onClose, onUpdate }) => {
   const [bookingScope, setBookingScope] = useState({
