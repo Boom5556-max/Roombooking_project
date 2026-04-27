@@ -15,14 +15,70 @@ export const useRoomStatusLogic = (id) => {
       setIsLoading(true);
       setError(null);
 
-      // ยิง API ได้เลยไม่ต้องเช็ค Token 
-      // (Backend ของน้องต้องเปิด Endpoint /bookings/:id และ /rooms/:id ให้เป็น Public ด้วยนะ)
-      const [bookingRes, roomRes] = await Promise.all([
+      // ดึงข้อมูลทั้ง 3 เส้น: การจองผ่านระบบ, ตารางเรียน, รายละเอียดห้อง
+      const [bookingRes, scheduleRes, roomRes] = await Promise.all([
         api.get(`/bookings/${id}`),
+        api.get(`/schedules/${id}`).catch(() => ({ data: { schedules: [] } })),
         api.get(`/rooms/${id}`),
       ]);
 
-      setRoomData(bookingRes.data);
+      const bookingData = bookingRes.data;
+      const rawSchedules = scheduleRes.data?.schedules || scheduleRes.data || [];
+
+      // กรองเฉพาะ schedule ของวันนี้ และแปลงให้อยู่ในรูปแบบเดียวกับ booking
+      const todayStr = new Date().toISOString().split("T")[0];
+      const todaySchedules = (Array.isArray(rawSchedules) ? rawSchedules : [])
+        .filter((s) => {
+          // กรองเฉพาะตารางเรียนที่ไม่ได้ถูกงดใช้ห้อง
+          if (s.temporarily_closed === true || s.temporarily_closed === 1 || s.temporarily_closed === "1") {
+            return false;
+          }
+          const dateSource = s.date || s.schedule_date;
+          if (!dateSource) return false;
+          const d = new Date(dateSource);
+          const schedDate = !isNaN(d.getTime())
+            ? d.toLocaleDateString("en-CA", { timeZone: "Asia/Bangkok" })
+            : String(dateSource).split("T")[0];
+          return schedDate === todayStr;
+        })
+        .map((s) => {
+          // สร้างชื่อเต็มจาก teacher_name + teacher_surname (field จริงจาก API)
+          const teacherFullName = (s.teacher_name && s.teacher_surname)
+            ? `${s.teacher_name} ${s.teacher_surname}`
+            : s.teacher_name || s.full_name || "ตารางเรียน";
+
+          return {
+            booking_id: `schedule-${s.schedule_id}`,
+            start_time: s.start_time,
+            end_time: s.end_time,
+            full_name: teacherFullName,
+            first_name: s.teacher_name || "",
+            last_name: s.teacher_surname || "",
+            student_count: s.student_count || null,
+            purpose: s.subject_name
+              ? `${s.course_code ? s.course_code + " " : ""}${s.subject_name}`
+              : "ตารางเรียน",
+            type: "schedule",
+          };
+        });
+
+      // รวม booking + schedule เข้าด้วยกัน
+      const mergedSchedule = [
+        ...(bookingData?.schedule || []).map((b) => ({ ...b, type: "booking" })),
+        ...todaySchedules,
+      ];
+
+      // เรียงตามเวลาเริ่มต้น
+      mergedSchedule.sort((a, b) => {
+        const timeA = a.start_time || "";
+        const timeB = b.start_time || "";
+        return timeA.localeCompare(timeB);
+      });
+
+      setRoomData({
+        ...bookingData,
+        schedule: mergedSchedule,
+      });
       setRoomDetail(roomRes.data);
     } catch (err) {
       console.error("Fetch Error:", err);
