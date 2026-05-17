@@ -47,10 +47,31 @@ const BookingScopeModal = ({ isOpen, onClose, onUpdate }) => {
     setIsSaving(true);
     setFeedback(null);
 
+    // ✅ ตรวจสอบ: ระยะเวลาสูงสุด ต้อง ≤ (เวลาปิด - เวลาเปิด)
+    const openingMins = timeToMins(bookingScope.opening_time);
+    const closingMins = timeToMins(bookingScope.closing_time);
+    const availableHours = Math.floor((closingMins - openingMins) / 60);
+    let finalMaxDuration = Number(bookingScope.max_duration_hours);
+
+    if (finalMaxDuration > availableHours) {
+      finalMaxDuration = Math.max(1, availableHours);
+
+      // อัปเดต State ให้ UI แสดงค่าที่ถูกปรับแล้ว
+      setBookingScope(prev => ({ ...prev, max_duration_hours: finalMaxDuration }));
+
+      // แจ้งเตือนแบบ inline แล้วหยุด — รอผู้ใช้กดบันทึกเอง
+      setFeedback({
+        type: "warning",
+        message: `เนื่องจากระยะเวลาสูงสุดมากกว่าระยะเปิดทำการ จึงปรับเป็น ${finalMaxDuration} ชม. กรุณากดบันทึกอีกครั้ง`
+      });
+      setIsSaving(false);
+      return;
+    }
+
     const payload = {
-      opening_mins: timeToMins(bookingScope.opening_time),
-      closing_mins: timeToMins(bookingScope.closing_time),
-      max_duration_hours: Number(bookingScope.max_duration_hours),
+      opening_mins: openingMins,
+      closing_mins: closingMins,
+      max_duration_hours: finalMaxDuration,
       max_advance_days: Number(bookingScope.max_advance_days),
       min_advance_hours: Number(bookingScope.min_advance_hours),
     };
@@ -229,7 +250,11 @@ const BookingScopeModal = ({ isOpen, onClose, onUpdate }) => {
 
               {feedback && (
                 <div className={`p-4 rounded-2xl flex items-center gap-3 text-sm font-bold animate-in slide-in-from-top-1 ${
-                  feedback.type === "success" ? "bg-green-50 text-green-600 border border-green-100" : "bg-red-50 text-red-600 border border-red-100"
+                  feedback.type === "success" 
+                    ? "bg-green-50 text-green-600 border border-green-100" 
+                    : feedback.type === "warning"
+                    ? "bg-amber-50 text-amber-600 border border-amber-100"
+                    : "bg-red-50 text-red-600 border border-red-100"
                 }`}>
                   {feedback.type === "success" ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
                   {feedback.message}
