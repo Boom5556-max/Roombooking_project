@@ -5,6 +5,7 @@ import { data } from "react-router-dom";
 export const useRooms = () => {
   const [rooms, setRooms] = useState([]);
   const [buildings, setBuildings] = useState([]);
+  const [roomTypes, setRoomTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isBuildingsLoading, setIsBuildingsLoading] = useState(false);
 
@@ -44,6 +45,18 @@ export const useRooms = () => {
     }
   }, []);
 
+  // 1.2 ดึงประเภทห้องทั้งหมด
+  const fetchRoomTypes = useCallback(async () => {
+    try {
+      const response = await api.get("/rooms/types");
+      if (response.data.success) {
+        setRoomTypes(response.data.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching room types:", error);
+    }
+  }, []);
+
   // 2. เพิ่มห้องใหม่ (POST /rooms)
   // แก้ไขบรรทัดที่ 20
   const addRoom = async (roomId, roomData) => {
@@ -53,6 +66,7 @@ export const useRooms = () => {
       await api.post("/rooms/", roomData);
       await fetchRooms();
       await fetchBuildings();
+      await fetchRoomTypes();
       return { success: true };
     } catch (error) {
       return {
@@ -72,6 +86,7 @@ export const useRooms = () => {
       });
       await fetchRooms();
       await fetchBuildings();
+      await fetchRoomTypes();
       return { success: true, message: response.data.message };
     } catch (error) {
       return {
@@ -114,11 +129,13 @@ export const useRooms = () => {
   useEffect(() => {
     fetchRooms();
     fetchBuildings();
-  }, [fetchRooms, fetchBuildings]);
+    fetchRoomTypes();
+  }, [fetchRooms, fetchBuildings, fetchRoomTypes]);
 
   return {
     rooms,
     buildings,
+    roomTypes,
     isLoading,
     isBuildingsLoading,
     fetchRooms,

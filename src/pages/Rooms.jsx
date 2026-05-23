@@ -21,7 +21,7 @@ import PageReveal from "../components/common/PageReveal.jsx";
 
 const Rooms = () => {
   const navigate = useNavigate();
-  const { rooms, buildings, isLoading, addRoom, updateRoom, deleteRoom } = useRooms();
+  const { rooms, buildings, roomTypes, isLoading, addRoom, updateRoom, deleteRoom } = useRooms();
 
   const [userRole, setUserRole] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -291,6 +291,7 @@ const Rooms = () => {
         <RoomFormModal
           room={editingRoom}
           buildings={buildings}
+          roomTypes={roomTypes}
           onClose={() => setIsModalOpen(false)}
           onSave={editingRoom ? updateRoom : addRoom}
           showAlert={showAlert}

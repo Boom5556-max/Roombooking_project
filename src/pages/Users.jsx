@@ -6,6 +6,8 @@ import {
   Trash2,
   UserCog,
   Mail,
+  Ban,
+  CheckCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUsers } from "../hooks/useUsers";
@@ -16,7 +18,7 @@ import PageReveal from "../components/common/PageReveal.jsx";
 
 const Users = () => {
   const navigate = useNavigate();
-  const { users, isLoading, addUser, updateUser, deleteUser } = useUsers();
+  const { users, isLoading, addUser, updateUser, deleteUser, toggleUserActive } = useUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
 
@@ -57,6 +59,19 @@ const Users = () => {
         showAlert("ลบไม่สำเร็จ: " + (result.message || "เกิดข้อผิดพลาด"));
       } else {
         showAlert("ลบผู้ใช้งานสำเร็จ");
+      }
+    });
+  };
+
+  // 4. ฟังก์ชันระงับ/เปิดใช้งานบัญชี
+  const handleToggleActive = async (user) => {
+    const actionText = user.is_active !== false ? "ระงับบัญชี" : "เปิดใช้งานบัญชี";
+    showAlert(`คุณแน่ใจหรือไม่ที่จะ${actionText}ผู้ใช้รายนี้?`, null, async () => {
+      const result = await toggleUserActive(user.user_id);
+      if (!result.success) {
+        showAlert(`ล้มเหลว: ` + (result.message || "เกิดข้อผิดพลาด"));
+      } else {
+        showAlert(result.message || `เปลี่ยนสถานะสำเร็จ`);
       }
     });
   };
@@ -120,7 +135,7 @@ const Users = () => {
                           <span className="truncate">{u.email}</span>
                         </p>
 
-                        <div className="mt-2.5">
+                        <div className="mt-2.5 flex items-center gap-2">
                           <span className="inline-block px-3 py-1 rounded-full text-[10px] bg-[#302782]/5 dark:bg-[#302782]/20 text-[#302782] dark:text-[#B2BB1E] font-black uppercase tracking-widest border border-[#302782]/10 dark:border-[#302782]/30">
                             {u.role === "teacher"
                               ? "บุคลากร"
@@ -128,11 +143,23 @@ const Users = () => {
                                 ? "ผู้ดูแลระบบ"
                                 : u.role}
                           </span>
+                          {u.is_active === false && (
+                            <span className="inline-block px-3 py-1 rounded-full text-[10px] bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-black uppercase tracking-widest border border-red-200 dark:border-red-800">
+                              ถูกระงับ
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
 
                     <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50 dark:border-gray-700 mt-1 sm:mt-0 shrink-0">
+                      <button
+                        onClick={() => handleToggleActive(u)}
+                        className={`flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl transition-all active:scale-[0.98] flex justify-center items-center ${u.is_active !== false ? 'text-black dark:text-white hover:text-orange-500 hover:border-orange-200' : 'text-orange-500 border-orange-200 dark:border-orange-800 hover:text-green-600 hover:border-green-200'}`}
+                        title={u.is_active !== false ? "ระงับบัญชี" : "เปิดใช้งานบัญชี"}
+                      >
+                        {u.is_active !== false ? <Ban size={20} /> : <CheckCircle size={20} />}
+                      </button>
                       <button
                         onClick={() => openModal(u)}
                         className="flex-1 sm:flex-none p-3 bg-gray-50 dark:bg-gray-700 sm:bg-white sm:dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl sm:rounded-2xl text-black dark:text-white hover:text-[#302782] dark:hover:text-[#B2BB1E] hover:border-[#302782]/20 transition-all active:scale-[0.98] flex justify-center items-center"

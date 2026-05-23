@@ -7,6 +7,7 @@ const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    'ngrok-skip-browser-warning': 'true' // << เติมบรรทัดนี้เข้าไป!
   },
   withCredentials: true 
 });
@@ -109,6 +110,31 @@ api.interceptors.response.use(
     // 🚨 1. ป้องกัน Loop: ถ้าเส้นที่พังคือเส้น refresh-token เอง ให้ยอมแพ้ ห้ามวนลูป!
     if (originalRequest.url && originalRequest.url.includes('/refresh-token')) {
       return Promise.reject(error);
+    }
+
+    // ถ้าพบ Error 403 (Forbidden) โดนแบน/ระงับบัญชี
+    if (error.response && error.response.status === 403) {
+      if (error.response.data && error.response.data.code === 'ACCOUNT_SUSPENDED') {
+        if (!isRedirecting) {
+          isRedirecting = true;
+          setTimeout(() => { isRedirecting = false; }, 10000);
+          Swal.fire({
+            icon: 'error',
+            title: 'ถูกระงับบัญชี',
+            text: error.response.data.message || 'บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อเจ้าหน้าที่',
+            confirmButtonText: 'รับทราบและออกจากระบบ',
+            confirmButtonColor: '#d33',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            customClass: { backdrop: 'swal-backdrop-blur', popup: 'rounded-3xl', confirmButton: 'rounded-lg' }
+          }).then(() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = '/login';
+          });
+        }
+        return Promise.reject(error);
+      }
     }
 
     // ถ้าพบ Error 401 (Unauthorized / Token มีปัญหา)

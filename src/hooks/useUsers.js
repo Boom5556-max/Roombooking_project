@@ -53,7 +53,21 @@ export const useUsers = () => {
   }
 };
 
+  const toggleUserActive = async (userId) => {
+    try {
+      const res = await api.patch(`/users/toggle-active/${userId}`);
+      await fetchUsers();
+      return { success: true, message: res.data?.message };
+    } catch (err) {
+      console.error(err);
+      return { 
+        success: false, 
+        message: err.response?.data?.message || "ไม่สามารถเปลี่ยนสถานะผู้ใช้งานได้" 
+      };
+    }
+  };
+
   useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
-  return { users, isLoading, addUser, updateUser, deleteUser };
+  return { users, isLoading, addUser, updateUser, deleteUser, toggleUserActive };
 };

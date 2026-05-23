@@ -3,7 +3,7 @@ import { X, Monitor, Save, Check, AlertCircle, Plus, CornerUpLeft } from "lucide
 import Button from "../common/Button.jsx";
 import InputField from "../common/InputField.jsx";
 
-const RoomFormModal = ({ room, onClose, onSave, showAlert, buildings = [] }) => {
+const RoomFormModal = ({ room, onClose, onSave, showAlert, buildings = [], roomTypes = [] }) => {
   const [isCustomLocation, setIsCustomLocation] = useState(false);
   const [formData, setFormData] = useState({
     room_id: room?.room_id || "",
@@ -23,6 +23,23 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert, buildings = [] }) => 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // ตรวจสอบการเว้นวรรคล้วน (Space bar only)
+    if (!formData.room_id.trim() || !formData.room_type.trim()) {
+      showAlert(
+        "กรุณากรอกรหัสห้องและประเภทห้องให้ชัดเจน (ไม่อนุญาตให้ใส่แค่ช่องว่าง)",
+        <AlertCircle size={50} className="text-red-500" />,
+        null,
+        false,
+        false,
+        "danger",
+        true,
+        true,
+        false,
+      );
+      return;
+    }
+
     const payload = {
       ...formData,
       room_id: formData.room_id.trim(),
@@ -104,12 +121,20 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert, buildings = [] }) => 
             <InputField
               label="ประเภทห้อง"
               placeholder="เช่น ห้องบรรยาย"
+              list="room-type-options"
               value={formData.room_type}
               onChange={(e) =>
                 setFormData({ ...formData, room_type: e.target.value })
               }
               required
             />
+            
+            {/* Datalist สำหรับแสดงประเภทห้องที่เคยมีคนพิมพ์ไว้แล้ว */}
+            <datalist id="room-type-options">
+              {roomTypes.map((type, idx) => (
+                <option key={idx} value={type} />
+              ))}
+            </datalist>
           </div>
 
           {/* Location Select */}
@@ -120,7 +145,10 @@ const RoomFormModal = ({ room, onClose, onSave, showAlert, buildings = [] }) => 
               </label>
               <button
                 type="button"
-                onClick={() => setIsCustomLocation(!isCustomLocation)}
+                onClick={() => {
+                  setIsCustomLocation(!isCustomLocation);
+                  setFormData({ ...formData, location: "" });
+                }}
                 className={`text-[10px] font-bold px-3 py-1.5 rounded-full transition-all flex items-center gap-1 shadow-sm ${
                   isCustomLocation 
                     ? "bg-gray-100 dark:bg-gray-700 text-gray-600 hover:bg-gray-200"
