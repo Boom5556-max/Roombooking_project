@@ -27,6 +27,18 @@ import { minsToTime, timeToMins, getAllDay30MinSlots } from "../utils/timeUtils.
 // ข้อมูลเทอมแบบ Static ทั้ง 3 ชนิด
 const TERM_CONFIG = [
   {
+    key: "summer",
+    label: "เทอมฤดูร้อน",
+    icon: Sun,
+    gradient: "from-amber-500 to-orange-600",
+    bgLight: "bg-amber-50",
+    bgDark: "dark:bg-amber-900/20",
+    borderLight: "border-amber-100",
+    borderDark: "dark:border-amber-800",
+    textColor: "text-amber-600 dark:text-amber-400",
+    iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
+  },
+  {
     key: "first",
     label: "เทอมต้น",
     icon: BookOpen,
@@ -49,18 +61,6 @@ const TERM_CONFIG = [
     borderDark: "dark:border-emerald-800",
     textColor: "text-emerald-600 dark:text-emerald-400",
     iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
-  },
-  {
-    key: "summer",
-    label: "เทอมฤดูร้อน",
-    icon: Sun,
-    gradient: "from-amber-500 to-orange-600",
-    bgLight: "bg-amber-50",
-    bgDark: "dark:bg-amber-900/20",
-    borderLight: "border-amber-100",
-    borderDark: "dark:border-amber-800",
-    textColor: "text-amber-600 dark:text-amber-400",
-    iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
   },
 ];
 

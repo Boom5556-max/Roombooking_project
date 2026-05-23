@@ -112,7 +112,11 @@ const Users = () => {
           <div className="w-full">
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-6">
               {users.length > 0 ? (
-                users.map((u) => (
+                // 1. ก๊อปปี้ Array ด้วย [...users] เพื่อป้องกันการแก้ไข State โดยตรง
+                // 2. ใช้ sort และ localeCompare เพื่อเรียง ก-ฮ และ A-Z
+                [...users]
+                  .sort((a, b) => a.name.localeCompare(b.name, 'th'))
+                  .map((u) => (
                   <div
                     key={u.user_id}
                     className="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-[30px] sm:rounded-[35px] shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group"
