@@ -23,6 +23,18 @@ import PageReveal from "../components/common/PageReveal.jsx";
 // ข้อมูลเทอมแบบ Static ทั้ง 3 ชนิด
 const TERM_CONFIG = [
   {
+    key: "summer",
+    label: "เทอมฤดูร้อน",
+    icon: Sun,
+    gradient: "from-amber-500 to-orange-600",
+    bgLight: "bg-amber-50",
+    bgDark: "dark:bg-amber-900/20",
+    borderLight: "border-amber-100",
+    borderDark: "dark:border-amber-800",
+    textColor: "text-amber-600 dark:text-amber-400",
+    iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
+  },
+  {
     key: "first",
     label: "เทอมต้น",
     icon: BookOpen,
@@ -46,19 +58,15 @@ const TERM_CONFIG = [
     textColor: "text-emerald-600 dark:text-emerald-400",
     iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
   },
-  {
-    key: "summer",
-    label: "เทอมฤดูร้อน",
-    icon: Sun,
-    gradient: "from-amber-500 to-orange-600",
-    bgLight: "bg-amber-50",
-    bgDark: "dark:bg-amber-900/20",
-    borderLight: "border-amber-100",
-    borderDark: "dark:border-amber-800",
-    textColor: "text-amber-600 dark:text-amber-400",
-    iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
-  },
 ];
+
+const getThaiDayOfWeek = (dateString) => {
+  if (!dateString) return "";
+  const days = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"];
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
+  return days[date.getDay()];
+};
 
 const ExportLog = () => {
   const navigate = useNavigate();
@@ -127,15 +135,15 @@ const ExportLog = () => {
         return;
       }
 
-      const firstTerm = termData.find((t) => t.term === 'first');
-      const summerTerm = termData.find((t) => t.term === 'summer');
+      const firstTerm = termData.find((t) => t.term === 'summer');
+      const summerTerm = termData.find((t) => t.term === 'end');
 
       if (!firstTerm || !firstTerm.start_date) {
-        showFeedback('error', 'ไม่พบข้อมูลวันเริ่มต้นของเทอมต้น กรุณาตั้งค่าวันที่เทอมก่อน');
+        showFeedback('error', 'ไม่พบข้อมูลวันเริ่มต้นของเทอมฤดูร้อน กรุณาตั้งค่าวันที่เทอมก่อน');
         return;
       }
       if (!summerTerm || !summerTerm.end_date) {
-        showFeedback('error', 'ไม่พบข้อมูลวันสิ้นสุดของเทอมฤดูร้อน กรุณาตั้งค่าวันที่เทอมก่อน');
+        showFeedback('error', 'ไม่พบข้อมูลวันสิ้นสุดของเทอมปลาย กรุณาตั้งค่าวันที่เทอมก่อน');
         return;
       }
 
@@ -371,11 +379,11 @@ const ExportLog = () => {
                 </div>
 
                 {/* Academic Year (B.E.) Display */}
-                {termDates.first.start_date && !isNaN(new Date(termDates.first.start_date).getFullYear()) && (
+                {termDates.summer.start_date && !isNaN(new Date(termDates.summer.start_date).getFullYear()) && (
                   <div className="flex flex-col items-end">
                     <div className="text-base sm:text-lg font-black text-[#302782] dark:text-white flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full bg-[#B2BB1E]"></span>
-                      ปีการศึกษา {new Date(termDates.first.start_date).getFullYear() + 543}
+                      ปีการศึกษา {new Date(termDates.summer.start_date).getFullYear() + 543}
                     </div>
                   </div>
                 )}
@@ -392,10 +400,37 @@ const ExportLog = () => {
                           <div className={`w-10 h-10 ${term.iconBg} rounded-xl flex items-center justify-center`}><Icon size={18} className={term.textColor} /></div>
                           <h3 className={`text-sm font-black ${term.textColor}`}>{term.label}</h3>
                         </div>
-                        <div className="2xl:ml-auto flex flex-col sm:flex-row items-center gap-2 w-full 2xl:w-auto">
-                          <input type="date" value={termDates[term.key].start_date} onChange={(e) => handleTermDateChange(term.key, 'start_date', e.target.value)} className="w-full sm:flex-1 min-w-0 bg-white dark:bg-gray-700 border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold" />
-                          <span className="text-gray-400 font-bold hidden sm:block">-</span>
-                          <input type="date" value={termDates[term.key].end_date} onChange={(e) => handleTermDateChange(term.key, 'end_date', e.target.value)} className="w-full sm:flex-1 min-w-0 bg-white dark:bg-gray-700 border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold" />
+                        <div className="2xl:ml-auto flex flex-col sm:flex-row items-start sm:items-start gap-2 w-full 2xl:w-auto">
+                          <div className="w-full sm:flex-1 min-w-0 flex flex-col">
+                            {(() => {
+                              const isNotMonday = termDates[term.key].start_date && new Date(termDates[term.key].start_date).getDay() !== 1;
+                              return (
+                                <>
+                                  <input 
+                                    type="date" 
+                                    value={termDates[term.key].start_date} 
+                                    onChange={(e) => handleTermDateChange(term.key, 'start_date', e.target.value)} 
+                                    className={`w-full bg-white dark:bg-gray-700 border rounded-lg px-3 py-2 text-sm font-bold focus:outline-none focus:ring-2 transition-all ${isNotMonday ? 'border-red-500 focus:ring-red-500/30 focus:border-red-500' : 'border-gray-200 focus:ring-gray-200'}`} 
+                                  />
+                                  {termDates[term.key].start_date && (
+                                    <span className={`text-[11px] text-center mt-1.5 ${isNotMonday ? 'text-red-500 font-bold' : 'text-gray-500 dark:text-gray-400'}`}>
+                                      {getThaiDayOfWeek(termDates[term.key].start_date)}
+                                    </span>
+                                  )}
+                                  {isNotMonday && (
+                                    <span className="text-[10px] text-red-500 text-center mt-0.5 leading-tight font-medium">
+                                      *ควรเริ่มวันจันทร์เพื่อป้องกันข้อผิดพลาดในการเพิ่มรายวิชาผ่านไฟล์
+                                    </span>
+                                  )}
+                                </>
+                              );
+                            })()}
+                          </div>
+                          <span className="text-gray-400 font-bold hidden sm:block mt-2">-</span>
+                          <div className="w-full sm:flex-1 min-w-0 flex flex-col">
+                            <input type="date" value={termDates[term.key].end_date} onChange={(e) => handleTermDateChange(term.key, 'end_date', e.target.value)} className="w-full bg-white dark:bg-gray-700 border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold" />
+                            {termDates[term.key].end_date && <span className="text-[11px] text-gray-500 dark:text-gray-400 text-center mt-1.5">{getThaiDayOfWeek(termDates[term.key].end_date)}</span>}
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -51,6 +51,11 @@ const UploadModal = ({ isOpen, onClose }) => {
   const onFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        alert("ไฟล์มีขนาดใหญ่เกินไป (จำกัดไม่เกิน 10MB)");
+        e.target.value = '';
+        return;
+      }
       setFile(selectedFile);
       handleProcessFile(selectedFile); // 👈 โยนไฟล์เข้าฟังก์ชันตรงๆ เพื่อเลี่ยงปัญหา State อัปเดตไม่ทัน
     }
@@ -241,7 +246,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                 return acc;
               }, {});
 
-              // Group invalidData by row and reason
+              // Group invalidData by subject and reason
               const groupedInvalidData = invalidData.reduce((acc, item) => {
                 const match = item.message.match(/^\((Week \d+: [^)]+)\)\s*(.*)$/);
                 let weekDate = "";
@@ -252,12 +257,13 @@ const UploadModal = ({ isOpen, onClose }) => {
                   reason = match[2];
                 }
                 
-                const rowNum = item.row ? item.row - 1 : '-';
-                const groupKey = `${rowNum}_${reason}`;
+                const subjectName = item.subject_name || (item.row ? `Row ${item.row}` : '-');
+                const subject = item.sec ? `${subjectName} (Sec ${item.sec})` : subjectName;
+                const groupKey = `${subject}_${reason}`;
                 
                 if (!acc[groupKey]) {
                   acc[groupKey] = {
-                    row: rowNum,
+                    subject: subject,
                     reason: reason,
                     items: []
                   };
@@ -378,7 +384,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                       <table className="w-full text-left">
                         <thead className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 font-bold border-b dark:border-gray-600">
                           <tr>
-                            <th className="p-2 w-16 text-center">วิชาที่</th>
+                            <th className="p-2 w-32 sm:w-48 text-left pl-4">ชื่อวิชา</th>
                             <th className="p-2">สาเหตุ</th>
                           </tr>
                         </thead>
@@ -398,7 +404,7 @@ const UploadModal = ({ isOpen, onClose }) => {
                                     onClick={() => hasItems && setExpandedError(isExpanded ? null : key)}
                                     className={`${hasItems ? "hover:bg-red-50/50 dark:hover:bg-red-900/10 cursor-pointer" : ""} transition-colors`}
                                   >
-                                    <td className="p-3 sm:p-4 text-center text-black dark:text-white font-medium align-top pt-3.5 sm:pt-4">{group.row}</td>
+                                    <td className="p-3 sm:p-4 text-left text-black dark:text-white font-medium align-top pt-3.5 sm:pt-4 pl-4 max-w-[120px] sm:max-w-[200px] break-words whitespace-normal" title={group.subject}>{group.subject}</td>
                                     <td className="p-3 sm:p-4">
                                       <div className="flex items-start gap-2">
                                         {hasItems && (

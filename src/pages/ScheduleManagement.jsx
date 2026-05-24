@@ -419,14 +419,15 @@ const ScheduleManagement = () => {
 
   // ย้ายห้อง: ส่ง API ย้ายตารางเรียนไปห้องใหม่
   const [isMoving, setIsMoving] = useState(false);
-  const onMoveRoom = async () => {
+  const onMoveRoom = async (forceCancel) => {
+    const isForce = typeof forceCancel === 'boolean' ? forceCancel : false;
     if (!moveRoomData.newRoomId) {
       showResultAlert(false, "", "กรุณาเลือกห้องที่ต้องการย้ายไป");
       return;
     }
     setIsMoving(true);
     try {
-      const res = await handleMoveRoom();
+      const res = await handleMoveRoom(isForce);
       setIsMoveModalOpen(false);
       showResultAlert(
         true,
@@ -434,8 +435,66 @@ const ScheduleManagement = () => {
         "",
       );
     } catch (error) {
-      const errMsg = error.response?.data?.message || "เกิดข้อผิดพลาดในการย้ายห้อง";
-      showResultAlert(false, "", errMsg);
+      const isConflict = error.response?.status === 409 || error.response?.data?.code === "BOOKING_CONFLICT";
+      const isScheduleConflict = error.response?.status === 400 && error.response?.data?.conflicts;
+
+      if (isConflict) {
+        setAlertConfig({
+          isOpen: true,
+          title: error.response?.data?.message || "พบตารางจองที่ทับซ้อน คุณต้องการดำเนินการต่อหรือไม่?",
+          icon: <AlertCircle size={50} className="text-yellow-500" />,
+          variant: "warning",
+          showConfirm: true,
+          showButtons: true,
+          autoClose: false,
+          onConfirm: async () => {
+            closeAlert();
+            await onMoveRoom(true);
+          },
+        });
+      } else if (isScheduleConflict) {
+        const conflicts = error.response.data.conflicts;
+        setAlertConfig({
+          isOpen: true,
+          title: (
+            <div className="text-left w-full max-h-80 overflow-y-auto mt-2 pr-2">
+              <p className="font-bold text-red-600 dark:text-red-400 mb-4 text-center text-lg">
+                ไม่อนุญาตให้ย้ายห้อง
+                <span className="block text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">
+                  พบตารางเรียนซ้ำซ้อนในห้อง {moveRoomData.newRoomId} จำนวน {conflicts.length} รายการ
+                </span>
+              </p>
+              <ul className="space-y-3">
+                {conflicts.map((c, i) => (
+                  <li key={i} className="p-3 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/50 shadow-sm flex flex-col gap-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-sm font-semibold text-gray-800 dark:text-white line-clamp-2 leading-snug">{c.old_subject}</span>
+                      <span className="text-xs px-2 py-1 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 rounded font-medium whitespace-nowrap">ชนกับ</span>
+                    </div>
+                    <div className="text-sm font-semibold text-red-600 dark:text-red-400 leading-snug line-clamp-2">
+                      {c.conflict_subject}
+                    </div>
+                    <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                      <span className="font-medium">วันที่:</span> {c.conflict_date} <span className="mx-1">•</span> <span className="font-medium">เวลา:</span> {String(c.start_time).substring(0,5)}-{String(c.end_time).substring(0,5)} น.
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ),
+          icon: <X size={50} className="text-red-500" />,
+          variant: "danger",
+          showConfirm: false,
+          showCloseButton: true,
+          closeText: "ปิด",
+          showButtons: true,
+          autoClose: false,
+          onClose: closeAlert,
+        });
+      } else {
+        const errMsg = error.response?.data?.message || "เกิดข้อผิดพลาดในการย้ายห้อง";
+        showResultAlert(false, "", errMsg);
+      }
     } finally {
       setIsMoving(false);
     }
@@ -1143,6 +1202,7 @@ const ScheduleManagement = () => {
             </div>
 
             <form
+              id="edit-subject-form"
               onSubmit={onSaveSubjectEdit}
               className="overflow-y-auto flex-grow p-8 space-y-8"
             >
@@ -1352,7 +1412,8 @@ const ScheduleManagement = () => {
                 ยกเลิก
               </button>
               <button
-                onClick={onSaveSubjectEdit}
+                type="submit"
+                form="edit-subject-form"
                 disabled={isSavingSubject}
                 className="px-10 py-3 bg-[#B2BB1E] hover:bg-[#9fa719] text-white rounded-2xl transition-all font-bold text-sm shadow-lg shadow-lime-500/20 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
               >

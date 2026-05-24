@@ -64,6 +64,14 @@ const TERM_CONFIG = [
   },
 ];
 
+const getThaiDayOfWeek = (dateString) => {
+  if (!dateString) return "";
+  const days = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"];
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
+  return days[date.getDay()];
+};
+
 const TermManagement = () => {
   const navigate = useNavigate();
 
@@ -314,11 +322,11 @@ const TermManagement = () => {
           </div>
           
           {/* Academic Year (B.E.) Display */}
-          {termDates.first && !isNaN(new Date(termDates.first).getFullYear()) && (
+          {termDates.summer && !isNaN(new Date(termDates.summer).getFullYear()) && (
             <div className="flex flex-col items-end">
               <div className="text-lg sm:text-xl font-black text-[#302782] dark:text-white flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#B2BB1E]"></span>
-                ปีการศึกษา {new Date(termDates.first).getFullYear() + 543}
+                ปีการศึกษา {new Date(termDates.summer).getFullYear() + 543}
               </div>
             </div>
           )}
@@ -387,15 +395,34 @@ const TermManagement = () => {
                               <CalendarRange size={12} />
                               วันที่
                             </label>
-                            <input
-                              type="date"
-                              value={termDates[term.key]}
-                              onChange={(e) =>
-                                handleDateChange(term.key, e.target.value)
-                              }
-                              disabled={isLoading}
-                              className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#302782]/30 dark:focus:ring-[#B2BB1E]/30 focus:border-[#302782] dark:focus:border-[#B2BB1E] transition-all disabled:opacity-50"
-                            />
+                            <div className="flex flex-col">
+                              {(() => {
+                                const isNotMonday = termDates[term.key] && new Date(termDates[term.key]).getDay() !== 1;
+                                return (
+                                  <>
+                                    <input
+                                      type="date"
+                                      value={termDates[term.key]}
+                                      onChange={(e) =>
+                                        handleDateChange(term.key, e.target.value)
+                                      }
+                                      disabled={isLoading}
+                                      className={`w-full bg-white dark:bg-gray-700 border rounded-xl px-4 py-3 text-sm font-bold text-[#302782] dark:text-white focus:outline-none focus:ring-2 transition-all disabled:opacity-50 ${isNotMonday ? 'border-red-500 focus:ring-red-500/30 focus:border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-600 focus:ring-[#302782]/30 dark:focus:ring-[#B2BB1E]/30 focus:border-[#302782] dark:focus:border-[#B2BB1E]'}`}
+                                    />
+                                    {termDates[term.key] && (
+                                      <span className={`text-[11px] mt-1.5 ml-2 ${isNotMonday ? 'text-red-500 font-bold' : 'text-gray-500 dark:text-gray-400'}`}>
+                                        {getThaiDayOfWeek(termDates[term.key])}
+                                      </span>
+                                    )}
+                                    {isNotMonday && (
+                                      <span className="text-[10px] text-red-500 mt-0.5 ml-2 leading-tight font-medium">
+                                        *ควรเริ่มวันจันทร์เพื่อป้องกันข้อผิดพลาดในการอัปโหลดไฟล์ตารางเรียน
+                                      </span>
+                                    )}
+                                  </>
+                                );
+                              })()}
+                            </div>
                           </div>
                         </div>
                       </div>

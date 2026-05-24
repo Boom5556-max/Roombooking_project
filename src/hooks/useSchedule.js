@@ -69,10 +69,11 @@ export const useSchedule = () => {
     setIsMoveModalOpen(true);
   };
 
-  const handleMoveRoom = async () => {
+  const handleMoveRoom = async (force_cancel = false) => {
     try {
       const res = await api.put(`/schedules/${moveRoomData.oldRoomId}`, {
-        new_room_id: moveRoomData.newRoomId
+        new_room_id: moveRoomData.newRoomId,
+        force_cancel
       });
       if (res.data.success) {
         await fetchSchedules();
@@ -95,6 +96,12 @@ export const useSchedule = () => {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file || !currentReuploadId) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("ไฟล์มีขนาดใหญ่เกินไป (จำกัดไม่เกิน 10MB)");
+      e.target.value = null;
+      return;
+    }
 
     setIsUploading(true);
     const formData = new FormData();

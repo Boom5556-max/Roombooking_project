@@ -13,6 +13,8 @@ const ActionModal = ({
   variant = "primary",
   showBg = true,
   autoClose = false,
+  closeText = "ยกเลิก",
+  confirmText = "ยืนยัน",
 }) => {
   
   // Logic: ปุ่มจะแสดงก็ต่อเมื่อ showButtons เป็น true 
@@ -59,10 +61,10 @@ const ActionModal = ({
                 className="flex-1 py-3 flex items-center justify-center gap-2 bg-gray-100 dark:bg-gray-700 text-black dark:text-white rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95 transition-all font-medium text-sm"
               >
                 <X size={16} />
-                ยกเลิก
+                {closeText}
               </button>
             )}
-            {showConfirm !== null && (
+            {showConfirm && (
               <button 
                 onClick={onConfirm} 
                 className={`flex-1 py-3 flex items-center justify-center gap-2 text-white rounded-xl active:scale-95 transition-all font-medium text-sm ${
@@ -74,7 +76,7 @@ const ActionModal = ({
                 }`}
               >
                 <Check size={16} />
-                ยืนยัน
+                {confirmText}
               </button>
             )}
           </div>
