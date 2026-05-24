@@ -179,7 +179,7 @@ const Rooms = () => {
                     <ChevronLeft size={24} className="transition-transform group-hover:-translate-x-0.5" />
                   </button>
                   <h1 className="text-xl font-black text-[#302782] dark:text-white leading-tight">
-                    จัดการห้องเรียน
+                    {userRole === "teacher" ? "รายการห้องเรียน" : "จัดการห้องเรียน"}
                   </h1>
                 </div>
 
